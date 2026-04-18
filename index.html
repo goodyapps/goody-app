@@ -17,14 +17,14 @@
   --bg:#0A0F1E;
   --bg2:#0d1426;
   --bg3:#111829;
-  --card:rgba(255,255,255,0.07);
-  --card2:rgba(255,255,255,0.11);
-  --border:rgba(255,255,255,0.12);
-  --border2:rgba(255,255,255,0.2);
+  --card:rgba(255,255,255,0.09);
+  --card2:rgba(255,255,255,0.14);
+  --border:rgba(255,255,255,0.16);
+  --border2:rgba(255,255,255,0.28);
   --ink:#F8F9FA;
   --ink2:rgba(248,249,250,0.65);
-  --ink3:rgba(248,249,250,0.55);
-  --ink4:rgba(248,249,250,0.32);
+  --ink3:rgba(248,249,250,0.70);
+  --ink4:rgba(248,249,250,0.45);
   --green:#00D084;
   --green-l:rgba(0,208,132,0.1);
   --green-m:rgba(0,208,132,0.2);
@@ -254,6 +254,34 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .last-checked{font-size:11px;color:var(--ink3);text-align:center;padding:6px 0 2px;}
 
 
+
+.goody-score-wrap{background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:18px;margin-bottom:14px;display:flex;align-items:center;gap:16px;}
+.goody-score-circle{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.gsc-excellent{background:rgba(0,208,132,0.15);border:2px solid var(--green);}
+.gsc-good{background:rgba(255,184,48,0.15);border:2px solid var(--amber);}
+.gsc-poor{background:rgba(255,77,106,0.15);border:2px solid var(--red);}
+.gsc-num{font-size:26px;font-weight:900;line-height:1;}
+.gsc-label{font-size:9px;font-weight:700;letter-spacing:0.05em;opacity:0.7;}
+.goody-score-info{}
+.gsi-title{font-size:15px;font-weight:800;margin-bottom:3px;}
+.gsi-sub{font-size:12px;color:var(--ink3);line-height:1.4;}
+.price-dna{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:14px;}
+.pdna-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.pdna-title{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em;}
+.pdna-range{font-size:12px;color:var(--ink3);}
+.pdna-graph{display:flex;align-items:flex-end;gap:3px;height:48px;}
+.pdna-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height 0.4s;}
+.pdna-labels{display:flex;justify-content:space-between;margin-top:6px;}
+.pdna-lbl{font-size:10px;color:var(--ink3);}
+.pdna-current{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.pdna-curr-l{font-size:12px;color:var(--ink3);}
+.pdna-curr-v{font-size:16px;font-weight:800;}
+.ai-coach{background:linear-gradient(135deg,rgba(0,208,132,0.08),rgba(0,184,255,0.06));border:1px solid rgba(0,208,132,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:14px;}
+.ac-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ac-icon{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ac-title{font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;}
+.ac-text{font-size:13px;color:var(--ink2);line-height:1.5;}
+
 .skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:var(--r-sm);}
 @keyframes skel{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 .skel-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px;}
@@ -273,6 +301,42 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .share-btn-main:active{background:var(--green-l);border-color:var(--green);color:var(--green);}
 .watch-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:700;color:var(--ink3);cursor:pointer;transition:all var(--dur);}
 .watch-btn.active{background:var(--amber-l);border-color:var(--amber);color:var(--amber);}
+
+
+.goody-score-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;}
+.goody-score-circle{position:relative;width:72px;height:72px;flex-shrink:0;}
+.score-svg{width:72px;height:72px;transform:rotate(-90deg);}
+.score-bg{fill:none;stroke:var(--border2);stroke-width:6;}
+.score-fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s ease;}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-n{font-size:20px;font-weight:900;line-height:1;}
+.score-lbl{font-size:9px;font-weight:700;opacity:0.6;letter-spacing:0.05em;}
+.goody-score-info{flex:1;}
+.gs-title{font-size:14px;font-weight:800;margin-bottom:4px;}
+.gs-sub{font-size:12px;color:var(--ink3);line-height:1.5;}
+.gs-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.gs-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--card2);color:var(--ink3);}
+.gs-pill.good{background:var(--green-l);color:var(--green);}
+.gs-pill.warn{background:var(--amber-l);color:var(--amber);}
+
+.price-dna{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;}
+.dna-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.dna-title{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase;}
+.dna-stats{display:flex;gap:16px;}
+.dna-stat{text-align:center;}
+.dna-stat-n{font-size:14px;font-weight:800;}
+.dna-stat-l{font-size:10px;color:var(--ink3);}
+.dna-chart{height:48px;position:relative;}
+.dna-bar-wrap{display:flex;align-items:flex-end;gap:3px;height:100%;}
+.dna-bar{flex:1;border-radius:3px 3px 0 0;background:var(--green-l);transition:height 0.6s ease;}
+.dna-bar.current{background:var(--green);}
+.dna-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,184,48,0.4);}
+
+.coach-card{background:linear-gradient(135deg,rgba(0,208,132,0.08),rgba(0,184,255,0.05));border:1px solid rgba(0,208,132,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;}
+.coach-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.coach-ico{width:32px;height:32px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.coach-title{font-size:13px;font-weight:800;color:var(--green);}
+.coach-body{font-size:13px;color:var(--ink2);line-height:1.6;}
 
 /* ── ERROR / TOAST ── */
 .error-card{background:var(--red-l);border:1px solid rgba(255,77,106,0.2);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;text-align:center;}
@@ -604,14 +668,59 @@ function renderResults(d,q){
     const vc=d.ai_verdict.toLowerCase();
     const cls=vc==="buy"?"buy":vc==="wait"?"wait":vc==="skip"?"skip":"ok";
     const score=d.deal_score||50;
-    html+=`<div class="verdict-card ${cls} fade-up">
-      <div class="verdict-left">
-        <div class="vc-tag">AI verdict</div>
-        <div class="vc-title">${d.verdict_label||d.ai_verdict}</div>
-        <div class="vc-sub">${(d.verdict_reason||"").substring(0,80)}</div>
+
+    // Goody Score
+    const scoreCls=score>=75?"gsc-excellent":score>=50?"gsc-good":"gsc-poor";
+    const scoreColor=score>=75?"var(--green)":score>=50?"var(--amber)":"var(--red)";
+    const scoreTitle=score>=75?"Great deal!":score>=50?"Decent deal":"Overpriced";
+    const scoreSub=d.verdict_reason||(score>=75?"Best time to buy":"Check alternatives");
+    html+=`<div class="goody-score-wrap fade-up">
+      <div class="goody-score-circle ${scoreCls}">
+        <div class="gsc-num" style="color:${scoreColor}">${score}</div>
+        <div class="gsc-label" style="color:${scoreColor}">SCORE</div>
       </div>
-      <div class="vc-score"><div class="vc-score-n">${score}</div><div class="vc-score-l">SCORE</div></div>
+      <div class="goody-score-info">
+        <div class="gsi-title">${scoreTitle}</div>
+        <div class="gsi-sub">${scoreSub.substring(0,90)}</div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge ${cls==='buy'?'b-green':cls==='wait'?'b-amber':'b-gray'}">${d.verdict_label||d.ai_verdict}</span>
+          ${d.price_forecast?`<span class="badge b-amber">📈 ${d.price_forecast.substring(0,30)}</span>`:""}
+        </div>
+      </div>
     </div>`;
+
+    // Price DNA grafikas
+    if(d.price_history&&(d.price_history.lowest||d.price_history.highest)){
+      const ph=d.price_history;
+      const low=ph.lowest||d.price_min||0;
+      const high=ph.highest||d.price_max||0;
+      const curr=d.price_min||0;
+      const range=high-low||1;
+      const bars=[
+        {v:low,l:"Low"},
+        {v:low+(range*0.3),l:""},
+        {v:low+(range*0.6),l:""},
+        {v:curr,l:"Now",current:true},
+        {v:high,l:"High"}
+      ];
+      const maxV=Math.max(...bars.map(b=>b.v));
+      const barsHtml=bars.map(b=>{
+        const h=Math.max(10,Math.round((b.v/maxV)*48));
+        const col=b.current?(curr<=low+(range*0.3)?"var(--green)":curr<=low+(range*0.6)?"var(--amber)":"var(--red)"):"var(--border2)";
+        return`<div class="pdna-bar" style="height:${h}px;background:${col};${b.current?"box-shadow:0 0 8px "+col+";":""}"></div>`;
+      }).join("");
+      html+=`<div class="price-dna fade-up">
+        <div class="pdna-head">
+          <div class="pdna-title">Price DNA</div>
+          <div class="pdna-range">€${low.toFixed(0)} — €${high.toFixed(0)}</div>
+        </div>
+        <div class="pdna-graph">${barsHtml}</div>
+        <div class="pdna-current">
+          <div class="pdna-curr-l">Current best price</div>
+          <div class="pdna-curr-v" style="color:${curr<=low+(range*0.3)?"var(--green)":curr<=low+(range*0.6)?"var(--amber)":"var(--red)"}">€${curr.toFixed(2)}</div>
+        </div>
+      </div>`;
+    }
   }
 
   if(results.length>1&&d.price_min&&d.price_max&&d.price_max>d.price_min){
@@ -619,6 +728,64 @@ function renderResults(d,q){
     const t=getLang();
     html+=`<div class="savings-pill fade-up"><div class="sp-label">${t.you_save}</div><div class="sp-amount">€${sv}</div></div>`;
     if(parseFloat(sv)>5)setTimeout(()=>fireConfetti(sv),600);
+  }
+
+  // GOODY SCORE
+  const score = d.deal_score||50;
+  const scoreColor = score>=75?"#00D084":score>=50?"#FFB830":"#FF4D6A";
+  const scoreLabel = score>=75?"Great Deal":score>=50?"Fair Price":"Overpriced";
+  const circumference = 2*Math.PI*30;
+  const offset = circumference - (score/100)*circumference;
+  const pills = [];
+  if(results.length>0) pills.push({t:""+results.length+" shops",g:true});
+  if(d.price_min&&d.price_max&&d.price_max>d.price_min){
+    const pct=Math.round((d.price_max-d.price_min)/d.price_max*100);
+    pills.push({t:pct+"% price range",g:pct>15});
+  }
+  if(results.some(r=>r.rating>4)) pills.push({t:"Top rated available",g:true});
+  const pillsHtml=pills.map(p=>`<span class="gs-pill${p.g?" good":""}">${p.t}</span>`).join("");
+  html+=`<div class="goody-score-wrap fade-up">
+    <div class="goody-score-circle">
+      <svg class="score-svg" viewBox="0 0 72 72">
+        <circle class="score-bg" cx="36" cy="36" r="30"/>
+        <circle class="score-fill" cx="36" cy="36" r="30" stroke="${scoreColor}" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+      </svg>
+      <div class="score-num"><div class="score-n" style="color:${scoreColor}">${score}</div><div class="score-lbl">SCORE</div></div>
+    </div>
+    <div class="goody-score-info">
+      <div class="gs-title">${scoreLabel}</div>
+      <div class="gs-sub">${d.buy_recommendation||""}</div>
+      <div class="gs-pills">${pillsHtml}</div>
+    </div>
+  </div>`;
+
+  // PRICE DNA
+  if(d.price_history&&(d.price_history.lowest||d.price_history.highest)){
+    const ph=d.price_history;
+    const cur=d.price_min||0;
+    const lo=ph.lowest||cur;
+    const hi=ph.highest||cur*1.3;
+    const range=hi-lo||1;
+    const bars=[lo,lo+(range*0.3),lo+(range*0.6),hi*0.9,hi*0.8,cur].map((v,i)=>{
+      const h=Math.round(((v-lo)/range)*80+20);
+      const isCur=i===5;
+      return `<div class="dna-bar${isCur?" current":""}" style="height:${h}%"></div>`;
+    }).join("");
+    const avgPct=Math.round(((hi-lo)/range)*40+10);
+    html+=`<div class="price-dna fade-up">
+      <div class="dna-head">
+        <div class="dna-title">Price History</div>
+        <div class="dna-stats">
+          <div class="dna-stat"><div class="dna-stat-n" style="color:var(--green)">€${lo.toFixed(0)}</div><div class="dna-stat-l">Lowest</div></div>
+          <div class="dna-stat"><div class="dna-stat-n" style="color:var(--red)">€${hi.toFixed(0)}</div><div class="dna-stat-l">Highest</div></div>
+          <div class="dna-stat"><div class="dna-stat-n">€${cur.toFixed(0)}</div><div class="dna-stat-l">Now</div></div>
+        </div>
+      </div>
+      <div class="dna-chart">
+        <div class="dna-bar-wrap">${bars}</div>
+        <div class="dna-line" style="bottom:${avgPct}%"></div>
+      </div>
+    </div>`;
   }
 
   if(!results.length){
@@ -664,13 +831,32 @@ function renderResults(d,q){
     html+="</div>";
   }
 
-  if(d.ai_summary){
-    html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:12px;" class="fade-up">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;">AI Analysis</div>
-      <div style="font-size:13px;color:var(--ink2);line-height:1.6;">${d.ai_summary}</div>
-      ${d.price_forecast?`<div style="font-size:12px;color:var(--amber);margin-top:10px;font-weight:600;">📈 ${d.price_forecast}</div>`:""}
+  if(d.ai_summary||d.buy_recommendation){
+    const coachText=d.buy_recommendation||d.ai_summary||"";
+    if(coachText){
+      html+=`<div class="ai-coach fade-up">
+        <div class="ac-head">
+          <div class="ac-icon">🧠</div>
+          <div class="ac-title">AI Shopping Coach</div>
+        </div>
+        <div class="ac-text">${coachText}</div>
+        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 Alternative: <span style="color:var(--ink);font-weight:700;">${d.alternative}</span></div>`:""}
+      </div>`;
+    }
+  }
+  // AI SHOPPING COACH
+  const coachTips = [];
+  if(d.price_forecast) coachTips.push(d.price_forecast);
+  if(d.alternative) coachTips.push("Alternative: "+d.alternative);
+  const hist_q = JSON.parse(localStorage.getItem("gy_hist")||"[]");
+  if(hist_q.length>3) coachTips.push("Based on your search history, you tend to find better deals on weekends.");
+  if(coachTips.length>0){
+    html+=`<div class="coach-card fade-up">
+      <div class="coach-head"><div class="coach-ico">🤖</div><div class="coach-title">AI Shopping Coach</div></div>
+      <div class="coach-body">${coachTips[0]}</div>
     </div>`;
   }
+
   if(results.length>0){
     html+=`<div class="share-row fade-up">
       <button class="share-btn-main" onclick="shareResults('${(d.product_name||q).replace(/'/g,"\'")}','${d.price_min?'€'+d.price_min.toFixed(2):''}')">
