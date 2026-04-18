@@ -17,14 +17,14 @@
   --bg:#0A0F1E;
   --bg2:#0d1426;
   --bg3:#111829;
-  --card:rgba(255,255,255,0.04);
-  --card2:rgba(255,255,255,0.07);
-  --border:rgba(255,255,255,0.08);
-  --border2:rgba(255,255,255,0.14);
+  --card:rgba(255,255,255,0.07);
+  --card2:rgba(255,255,255,0.11);
+  --border:rgba(255,255,255,0.12);
+  --border2:rgba(255,255,255,0.2);
   --ink:#F8F9FA;
   --ink2:rgba(248,249,250,0.65);
-  --ink3:rgba(248,249,250,0.38);
-  --ink4:rgba(248,249,250,0.2);
+  --ink3:rgba(248,249,250,0.55);
+  --ink4:rgba(248,249,250,0.32);
   --green:#00D084;
   --green-l:rgba(0,208,132,0.1);
   --green-m:rgba(0,208,132,0.2);
@@ -252,6 +252,27 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .lang-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--dur);}
 .lang-btn.on{background:var(--green-l);border-color:var(--green);color:var(--green);}
 .last-checked{font-size:11px;color:var(--ink3);text-align:center;padding:6px 0 2px;}
+
+
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:var(--r-sm);}
+@keyframes skel{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.skel-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px;}
+.skel-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.skel-circle{width:34px;height:34px;border-radius:9px;flex-shrink:0;}
+.skel-lines{flex:1;margin-left:10px;}
+.skel-line{height:10px;margin-bottom:6px;border-radius:4px;}
+.skel-price{width:70px;height:28px;border-radius:6px;}
+.shop-status{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px;margin-top:4px;}
+.shop-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.price-trend{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;}
+.trend-up{background:var(--red-l);color:var(--red);}
+.trend-down{background:var(--green-l);color:var(--green);}
+.share-row{display:flex;justify-content:center;margin:8px 0 16px;}
+.share-btn-main{display:inline-flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);padding:10px 20px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--dur);}
+.share-btn-main:active{background:var(--green-l);border-color:var(--green);color:var(--green);}
+.watch-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:700;color:var(--ink3);cursor:pointer;transition:all var(--dur);}
+.watch-btn.active{background:var(--amber-l);border-color:var(--amber);color:var(--amber);}
 
 /* ── ERROR / TOAST ── */
 .error-card{background:var(--red-l);border:1px solid rgba(255,77,106,0.2);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;text-align:center;}
@@ -629,7 +650,10 @@ function renderResults(d,q){
             <div class="pc-logo">${logo}</div>
             <div><div class="pc-name">${r.shop||"Shop"}</div><div class="pc-delivery">${delivery}</div></div>
           </div>
-          <div class="pc-price">${r.price>0?"€"+r.price.toFixed(2):"—"}</div>
+          <div style="text-align:right;">
+            <div class="pc-price">${r.price>0?"€"+r.price.toFixed(2):"—"}</div>
+            ${r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_price.toFixed(0)} ${r.original_currency}</div>`:""}
+          </div>
         </div>
         <div class="pc-bot">
           <div class="pc-badges">${badges||rating}</div>
@@ -641,13 +665,26 @@ function renderResults(d,q){
   }
 
   if(d.ai_summary){
-    html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:24px;" class="fade-up">
+    html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:12px;" class="fade-up">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;">AI Analysis</div>
       <div style="font-size:13px;color:var(--ink2);line-height:1.6;">${d.ai_summary}</div>
+      ${d.price_forecast?`<div style="font-size:12px;color:var(--amber);margin-top:10px;font-weight:600;">📈 ${d.price_forecast}</div>`:""}
+    </div>`;
+  }
+  if(results.length>0){
+    html+=`<div class="share-row fade-up">
+      <button class="share-btn-main" onclick="shareResults('${(d.product_name||q).replace(/'/g,"\'")}','${d.price_min?'€'+d.price_min.toFixed(2):''}')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 000 8h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Share deal
+      </button>
+      <button class="watch-btn" id="watch-btn-${(d.product_name||q).replace(/\s/g,'_')}" onclick="toggleWatch('${(d.product_name||q).replace(/'/g,"\'")}','${d.price_min||0}')" style="margin-left:8px;">
+        🔔 Watch price
+      </button>
     </div>`;
   }
 
   document.getElementById("res-body").innerHTML=html;
+  setTimeout(()=>initWatchBtn(d.product_name||q),100);
 }
 
 function getShopLogo(shop){
@@ -981,10 +1018,68 @@ function fireConfetti(savings){
 
 /* ── LOADING MESSAGES ── */
 function showLoading(){
-  const msgs=getLang().loading_msgs;
-  let i=0;
-  document.getElementById("res-body").innerHTML=`<div class="loading-wrap"><div class="ldots"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div><div class="loading-text" id="load-txt">${msgs[0]}</div></div>`;
-  return setInterval(()=>{i=(i+1)%msgs.length;const el=document.getElementById("load-txt");if(el)el.textContent=msgs[i];},1800);
+  const shops=["Varle.lt","Pigu.lt","Senukai.lt","Topo centras","Elesen.lt","1a.lt","Amazon.de","Amazon.pl"];
+  let si=0;
+  const skeletons=[1,2,3].map(()=>`
+    <div class="skel-card">
+      <div class="skel-row">
+        <div class="skel-circle skeleton"></div>
+        <div class="skel-lines">
+          <div class="skel-line skeleton" style="width:60%"></div>
+          <div class="skel-line skeleton" style="width:40%"></div>
+        </div>
+        <div class="skel-price skeleton"></div>
+      </div>
+    </div>`).join("");
+  document.getElementById("res-body").innerHTML=`
+    <div style="padding:0 0 12px;">
+      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">Connecting...</span></div>
+    </div>
+    ${skeletons}`;
+  return setInterval(()=>{
+    si=(si+1)%shops.length;
+    const el=document.getElementById("shop-status-txt");
+    if(el)el.textContent="Checking "+shops[si]+"...";
+  },800);
+}
+
+
+/* ── SHARE & WATCH ── */
+function shareResults(name, price){
+  const text=`Found ${name} for ${price} on Goody! goodyapp.eu`;
+  if(navigator.share){
+    navigator.share({title:"Goody deal",text,url:"https://goodyapp.eu"}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text).then(()=>toast("🔗 Link copied!"));
+  }
+}
+
+function toggleWatch(name, price){
+  const key="gy_watch";
+  let watches=JSON.parse(localStorage.getItem(key)||"[]");
+  const id=name.replace(/\s/g,'_');
+  const btn=document.getElementById("watch-btn-"+id);
+  const exists=watches.find(w=>w.name===name);
+  if(exists){
+    watches=watches.filter(w=>w.name!==name);
+    if(btn){btn.classList.remove("active");btn.textContent="🔔 Watch price";}
+    toast("Removed from watchlist");
+  } else {
+    watches.push({name,price,added:new Date().toISOString()});
+    if(btn){btn.classList.add("active");btn.innerHTML="✅ Watching";}
+    toast("💚 Added to watchlist!");
+  }
+  localStorage.setItem(key,JSON.stringify(watches));
+}
+
+function initWatchBtn(name){
+  const key="gy_watch";
+  const watches=JSON.parse(localStorage.getItem(key)||"[]");
+  const id=name.replace(/\s/g,'_');
+  const btn=document.getElementById("watch-btn-"+id);
+  if(btn&&watches.find(w=>w.name===name)){
+    btn.classList.add("active");btn.innerHTML="✅ Watching";
+  }
 }
 
 /* ── UTILS ── */
