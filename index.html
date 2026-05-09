@@ -348,6 +348,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .fade-up{animation:fadeUp 0.3s ease both;}
+
+/* PULL TO REFRESH */
+.ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(0,208,132,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
+.ptr-indicator.visible{opacity:1;}
+.ptr-arrow{font-size:18px;color:#0A0F1E;transition:transform .3s;}
+.ptr-arrow.ready{transform:rotate(180deg);}
+@keyframes ptrSpin{to{transform:rotate(360deg);}}
+.ptr-spinning{animation:ptrSpin .6s linear infinite;}
 </style>
 </head>
 <body>
@@ -401,8 +409,13 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
     <div class="cats" id="cats-grid"></div>
 
+    <div class="sec-head" id="popular-head">
+      <div class="sec-title">Popular</div>
+    </div>
+    <div class="recent" id="popular-list"></div>
+
     <div class="sec-head">
-      <div class="sec-title">Recent</div>
+      <div class="sec-title">My searches</div>
       <div class="sec-action" onclick="clearHistory()">Clear</div>
     </div>
     <div class="recent" id="recent-list">
@@ -560,7 +573,7 @@ let lastData=null, lastQ="";
 
 /* ── BOOT ── */
 window.addEventListener("DOMContentLoaded",()=>{
-  setLang(curLang); buildCats(); buildRecent(); buildSaved();
+  setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved();
   document.getElementById("be-url").textContent=API_BASE;
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
@@ -573,6 +586,26 @@ function buildCats(){
     const el=document.createElement("div"); el.className="cat";
     el.innerHTML=`<span class="cat-ic">${c.ic}</span><div class="cat-n">${c.n}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=c.q;doSearch();};
+    g.appendChild(el);
+  });
+}
+
+const POPULAR = [
+  {ic:"📱", q:"iPhone 16 Pro", price:"from €1,199"},
+  {ic:"💻", q:"MacBook Air M3", price:"from €1,299"},
+  {ic:"🎧", q:"Sony WH-1000XM5", price:"from €279"},
+  {ic:"🌀", q:"Dyson V15 Detect", price:"from €549"},
+  {ic:"📺", q:"Samsung QLED 65", price:"from €799"},
+  {ic:"🤖", q:"Xiaomi Robot Vacuum", price:"from €199"},
+];
+
+function buildPopular(){
+  const g=document.getElementById("popular-list"); if(!g)return;
+  g.innerHTML="";
+  POPULAR.forEach(p=>{
+    const el=document.createElement("div"); el.className="rec-item fade-up";
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 Trending</div></div></div><div class="rec-price">${p.price}</div>`;
+    el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
 }
@@ -1045,20 +1078,51 @@ function tryDecImg(dataUrl,b64){
 async function runScan(){
   const btn=document.getElementById("c-snap");btn.disabled=true;
   btn.innerHTML="<span>⏳</span><span>Analyzing...</span>";
+  // 1. Uždaryti kamerą iš karto
+  closeCam();
+  // 2. Rodyti results puslapį su loading
+  navTo("results");
+  document.getElementById("res-title").textContent="Scanning photo...";
+  document.getElementById("res-meta").textContent="AI identifying product";
+  const scanShops=["Varle.lt","Pigu.lt","Senukai.lt","Topo centras","Elesen.lt","1a.lt"];
+  let scanIdx=0;
+  const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
+  document.getElementById("res-body").innerHTML=`
+    <div style="text-align:center;padding:24px 0 16px;">
+      <div style="font-size:36px;margin-bottom:8px;">📷</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Analyzing your photo</div>
+      <div style="font-size:12px;color:var(--ink3);">AI is identifying the product...</div>
+    </div>
+    <div class="shop-status" style="margin-bottom:16px;"><div class="shop-dot"></div><span id="scan-status-txt">Checking Varle.lt...</span></div>
+    ${skels}`;
+  const scanTimer=setInterval(()=>{
+    scanIdx=(scanIdx+1)%scanShops.length;
+    const el=document.getElementById("scan-status-txt");
+    if(el)el.textContent="Checking "+scanShops[scanIdx]+"...";
+  },800);
   try{
     const _sc=new AbortController();const _st=setTimeout(()=>_sc.abort(),90000);
     const resp=await fetch(`${API_BASE}/api/scan-image`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:capturedB64}),signal:_sc.signal});
-    clearTimeout(_st);
+    clearTimeout(_st);clearInterval(scanTimer);
     const data=await resp.json();
-    // Jei produktas neatpažintas - nerodyti closeCam, rodyti klaidą kameroje
+    // Jei produktas neatpažintas
     if(data.error==="product_not_recognized"||(!data.scanned_product&&!data.product_name&&!(data.results&&data.results.length))){
-      btn.disabled=false;btn.style.background="var(--card2)";
-      btn.innerHTML="<span>📷</span><span>Try another photo</span>";
-      btn.onclick=()=>{capturedB64=null;document.getElementById("cp-wrap").style.display="none";resetSnap();};
-      document.getElementById("cprev").innerHTML=`<div class="cprev-ic">❌</div><div><div class="cprev-l" style="color:var(--red);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">Not recognized</div><div class="cprev-v">Try a clearer photo</div><div class="cprev-s">Make sure product name is visible</div></div>`;
+      document.getElementById("res-body").innerHTML=`
+        <div class="no-results">
+          <div class="nr-ico">❌</div>
+          <div class="nr-title">Not recognized</div>
+          <div class="nr-sub">Could not identify the product from your photo.</div>
+          <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>Make sure product name/label is clearly visible</span></div>
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🔆 <span>Try better lighting or a closer shot</span></div>
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">✏️ <span>Or just type the product name below</span></div>
+          </div>
+          <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#0A0F1E;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Try again</button>
+        </div>`;
+      document.getElementById("res-title").textContent="Not recognized";
+      document.getElementById("res-meta").textContent="";
       return;
     }
-    closeCam();
     if(data.results&&data.results.length>0){
       const q=data.scanned_product||data.product_name||"product";
       document.getElementById("srch-inp").value=q;
@@ -1075,6 +1139,7 @@ async function runScan(){
       doSearch();
     }
   }catch(e){
+    clearInterval(scanTimer);
     btn.disabled=false;btn.style.background="var(--green)";
     btn.innerHTML="<span>🔍</span><span>Analyze with AI →</span>";btn.onclick=()=>snapOrSearch();
     toast("Error: "+e.message);
@@ -1297,6 +1362,51 @@ function toast(m){
   const el=document.getElementById("toast");el.textContent=m;el.classList.add("on");
   clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove("on"),2800);
 }
+
+/* PULL TO REFRESH */
+(function(){
+  let startY=0,pulling=false,ind=null;
+  const THRESHOLD=65;
+  function getInd(){
+    if(!ind){ind=document.createElement("div");ind.className="ptr-indicator";ind.innerHTML='<span class="ptr-arrow">↓</span>';document.querySelector(".app").appendChild(ind);}
+    return ind;
+  }
+  document.addEventListener("touchstart",e=>{
+    const pg=document.querySelector(".page.on");
+    if(!pg||pg.scrollTop>0)return;
+    startY=e.touches[0].clientY;pulling=true;
+  },{passive:true});
+  document.addEventListener("touchmove",e=>{
+    if(!pulling)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy<10)return;
+    const i=getInd();
+    i.style.top=(dy*0.4-22)+"px";
+    i.classList.toggle("visible",dy>20);
+    i.querySelector(".ptr-arrow").classList.toggle("ready",dy>THRESHOLD);
+    i.style.opacity=Math.min(dy/THRESHOLD,1);
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!pulling)return;pulling=false;
+    const dy=e.changedTouches[0].clientY-startY;
+    const i=getInd();
+    if(dy>THRESHOLD){
+      i.innerHTML='<span class="ptr-arrow ptr-spinning">↻</span>';
+      i.style.top="12px";i.style.opacity="1";
+      const pg=document.querySelector(".page.on");
+      const pgId=pg?pg.id:"";
+      setTimeout(()=>{
+        i.classList.remove("visible");i.style.top="-50px";i.style.opacity=0;
+        if(pgId==="pg-results"&&lastQ){doSearch();}
+        else if(pgId==="pg-saved"){buildSaved();}
+        else{fetchRate();buildRecent();buildPopular();}
+        toast("🔄 Refreshed!");
+      },700);
+    } else {
+      i.classList.remove("visible");i.style.top="-50px";i.style.opacity=0;
+    }
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
