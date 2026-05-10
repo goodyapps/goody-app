@@ -396,6 +396,121 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--ink3);font-size:12px;font-weight:700;}
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
+
+/* ── GOODY WIN MOMENT v5.9 ── */
+.deal-win-card{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(39,224,138,.26), transparent 36%),
+    linear-gradient(135deg, rgba(39,224,138,.17), rgba(39,224,138,.045));
+  border:1px solid rgba(39,224,138,.34);
+  border-radius:26px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 0 0 1px rgba(39,224,138,.02), 0 18px 48px rgba(0,0,0,.18);
+}
+.deal-win-card.warn{
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255,184,48,.22), transparent 36%),
+    linear-gradient(135deg, rgba(255,184,48,.15), rgba(255,184,48,.04));
+  border-color:rgba(255,184,48,.34);
+}
+.deal-win-card.bad{
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255,136,136,.18), transparent 36%),
+    linear-gradient(135deg, rgba(255,136,136,.12), rgba(255,136,136,.035));
+  border-color:rgba(255,136,136,.28);
+}
+.deal-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(39,224,138,.15);
+  border:1px solid rgba(39,224,138,.28);
+  color:var(--green);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.deal-win-card.warn .deal-badge{background:rgba(255,184,48,.14);border-color:rgba(255,184,48,.28);color:var(--amber);}
+.deal-win-card.bad .deal-badge{background:rgba(255,136,136,.12);border-color:rgba(255,136,136,.24);color:var(--red);}
+.deal-title{
+  font-size:25px;
+  font-weight:950;
+  letter-spacing:-.03em;
+  line-height:1.08;
+  margin-bottom:7px;
+}
+.deal-hero{
+  font-size:40px;
+  font-weight:950;
+  letter-spacing:-.045em;
+  line-height:.98;
+  color:var(--green);
+  margin:10px 0 12px;
+  text-shadow:0 0 24px rgba(39,224,138,.17);
+}
+.deal-win-card.warn .deal-hero{color:var(--amber);text-shadow:0 0 20px rgba(255,184,48,.12);}
+.deal-win-card.bad .deal-hero{color:var(--red);text-shadow:0 0 20px rgba(255,136,136,.12);}
+.deal-sub{
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.45;
+  margin-bottom:14px;
+}
+.deal-metric-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:14px;
+}
+.deal-metric{
+  background:rgba(255,255,255,.065);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:15px;
+  padding:12px;
+}
+.deal-metric-label{
+  font-size:10px;
+  color:var(--ink3);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.075em;
+  margin-bottom:5px;
+}
+.deal-metric-value{
+  font-size:19px;
+  font-weight:950;
+  letter-spacing:-.02em;
+}
+.deal-proof{
+  margin-top:13px;
+  background:rgba(0,0,0,.12);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:11px 12px;
+  font-size:12.5px;
+  color:var(--ink2);
+  line-height:1.42;
+}
+.market-summary .ms-title{letter-spacing:.08em;}
+.market-summary.win{
+  background:linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.035));
+}
+.price-list-label{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--ink3);
+  margin:4px 0 10px;
+}
+
 </style>
 </head>
 <body>
@@ -676,75 +791,7 @@ function buildSaved(){
 
 function clearHistory(){hist=[];localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();toast("History cleared");}
 function clearData(){if(!confirm("Clear all data?"))return;localStorage.clear();location.reload();}
-function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}wl.push({q:lastQ,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();toast("💚 Saved!");}
-function removeWl(i){wl.splice(i,1);localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();}
-
-/* ── NAV ── */
-function navTo(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
-  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
-  document.getElementById("pg-"+id).classList.add("on");
-  const nb=document.getElementById("nav-"+id);
-  if(nb)nb.classList.add("on");
-  if(id==="saved")buildSaved();
-}
-
-/* ── SEARCH ── */
-async function doSearch(){
-  const q=document.getElementById("srch-inp").value.trim();
-  if(!q){toast("Enter a product name");return;}
-  lastQ=q;
-  navTo("results");
-  document.getElementById("res-title").textContent=q;
-  document.getElementById("res-meta").textContent="Searching...";
-  const loadTimer = showLoading();
-  try{
-    const _ctrl=new AbortController();const _tid=setTimeout(()=>_ctrl.abort(),90000);
-    const r=await fetch(`${API_BASE}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q}),signal:_ctrl.signal});
-    clearTimeout(_tid);
-    clearInterval(loadTimer);
-    if(!r.ok){const e=await r.json();throw new Error(e.message||"Server error");}
-    const d=await r.json();
-    lastData=d;
-    addToHist(q,d);
-    renderResults(d,q);
-    if(d._rate)updateRateUI(d._rate);
-  }catch(e){
-    document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">Server unreachable</div><div class="error-msg">Check backend: ${API_BASE}<br><br>Run: <code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:12px;">python server.py</code></div><button class="retry-btn" onclick="doSearch()">Try again</button></div></div>`;
-    document.getElementById("res-meta").textContent="Error";
-  }
-}
-
-function addToHist(q,d){
-  hist=hist.filter(h=>h.q!==q);
-  const icons={"phone":"📱","iphone":"📱","samsung":"📱","tv":"📺","televisor":"📺","laptop":"💻","macbook":"💻","headphone":"🎧","sony":"🎧","dyson":"🌀","vacuum":"🌀"};
-  let ic="🔍";
-  const ql=q.toLowerCase();
-  for(const[k,v]of Object.entries(icons)){if(ql.includes(k)){ic=v;break;}}
-  const now=new Date();
-  const timeStr=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
-  hist.unshift({q,ic,shops:d.results?.length||0,time:timeStr,price:d.price_min?"€"+d.price_min.toFixed(2):""});
-  hist=hist.slice(0,10);
-  localStorage.setItem("gy_hist",JSON.stringify(hist));
-  buildRecent();
-}
-
-function money(v){
-  const n=Number(v||0);
-  return "€"+n.toFixed(2);
-}
-
-function findScannedPrice(d,results){
-  if(Number(d.store_price)>1)return Number(d.store_price);
-  const scan=(results||[]).find(r=>r.source==="scan" || String(r.shop||"").toLowerCase().includes("scanned"));
-  return scan&&Number(scan.price)>1?Number(scan.price):0;
-}
-
-function isScanResult(r){
-  return r.source==="scan" || String(r.shop||"").toLowerCase().includes("scanned");
-}
-
-function renderResults(d,q){
+function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}wl.push({q:lastQ,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});locfunction renderResults(d,q){
   const results=d.results||[];
   const onlineResults=results.filter(r=>!isScanResult(r)&&Number(r.price)>0);
   const scannedPrice=findScannedPrice(d,results);
@@ -775,53 +822,96 @@ function renderResults(d,q){
     return;
   }
 
-  // Primary scan comparison: compare online best price against the user's photo/store price.
+  // Main UX principle:
+  // If user scanned a price, the hero card must celebrate / explain the comparison with THEIR price.
   if(scannedPrice>1 && bestOnline){
     const diff=scannedPrice-bestOnline.price;
     const pct=scannedPrice>0?(diff/scannedPrice*100):0;
     let cardCls="";
+    let badge="";
     let title="";
-    let savingText="";
+    let hero="";
     let sub="";
+    let proof="";
+    let bestColor="var(--green)";
 
-    if(diff>5){
+    if(diff>20){
       cardCls="";
-      title=isLt?"Pirkti internetu verta":"Buy online — worth it";
-      savingText=money(diff);
-      sub=(isLt?`${bestOnline.shop} yra ${Math.abs(pct).toFixed(1)} % pigiau nei tavo nuskenuota kaina.`:`${bestOnline.shop} is ${Math.abs(pct).toFixed(1)}% cheaper than your scanned price.`);
-      setTimeout(()=>fireConfetti(diff.toFixed(2)),600);
+      badge=isLt?"🔥 GOOD DEAL":"🔥 GOOD DEAL";
+      title=isLt?"Internetu radai geriau":"You found a better deal online";
+      hero=(isLt?"Sutaupai ":"Save ")+money(diff);
+      sub=isLt
+        ?`${bestOnline.shop} yra ${Math.abs(pct).toFixed(1)} % pigiau nei tavo matyta kaina.`
+        :`${bestOnline.shop} is ${Math.abs(pct).toFixed(1)}% cheaper than your scanned price.`;
+      proof=isLt
+        ?`Geras dealas: vietoje ${money(scannedPrice)} gali pirkti už ${money(bestOnline.price)}. Patikrink pristatymą ir pardavėjo sąlygas prieš perkant.`
+        :`Good deal: instead of ${money(scannedPrice)}, you can buy it for ${money(bestOnline.price)}. Check delivery and seller terms before buying.`;
+      setTimeout(()=>fireConfetti(diff.toFixed(2)),550);
+    }else if(diff>5){
+      cardCls="";
+      badge=isLt?"🟢 GOOD DEAL":"🟢 GOOD DEAL";
+      title=isLt?"Internete pigiau":"Cheaper online";
+      hero=(isLt?"Sutaupai ":"Save ")+money(diff);
+      sub=isLt
+        ?`${bestOnline.shop} yra pigiau nei tavo nuskenuota kaina.`
+        :`${bestOnline.shop} is cheaper than your scanned price.`;
+      proof=isLt
+        ?`Tai nėra milžiniškas skirtumas, bet vis tiek geras mažas laimėjimas — ypač jei pristatymas pigus.`
+        :`Not a huge gap, but still a small win — especially if delivery is cheap.`;
+      setTimeout(()=>fireConfetti(diff.toFixed(2)),700);
     }else if(diff>=-5){
       cardCls="warn";
-      title=isLt?"Kaina beveik tokia pati":"Price is almost the same";
-      savingText=isLt?"~tas pats":"~same";
-      sub=isLt?"Skirtumas mažas — spręsk pagal pristatymą, garantiją ir patogumą.":"Difference is small — decide by delivery, warranty and convenience.";
+      badge=isLt?"👌 FAIR DEAL":"👌 FAIR DEAL";
+      title=isLt?"Kaina beveik tokia pati":"Almost the same price";
+      hero=isLt?"Skirtumas mažas":"Small difference";
+      sub=isLt
+        ?"Tavo matyta kaina ir geriausia internete rasta kaina beveik nesiskiria."
+        :"Your scanned price and the best online price are almost the same.";
+      proof=isLt
+        ?"Spręsk pagal patogumą: pristatymas, garantija, grąžinimas ir ar nori pirkti iš karto."
+        :"Decide by convenience: delivery, warranty, returns and whether you want it now.";
+      bestColor="var(--amber)";
     }else{
       cardCls="bad";
-      title=isLt?"Tavo matyta kaina geresnė":"Your scanned price is better";
-      savingText=money(Math.abs(diff));
-      sub=(isLt?`Internetu rastas geriausias pasiūlymas yra ${money(Math.abs(diff))} brangesnis.`:`The best online offer is ${money(Math.abs(diff))} more expensive.`);
+      badge=isLt?"🛡️ TAVO KAINA GERESNĖ":"🛡️ YOUR PRICE WINS";
+      title=isLt?"Nepirk internetu brangiau":"Do not overpay online";
+      hero=(isLt?"Internete +":"Online +")+money(Math.abs(diff));
+      sub=isLt
+        ?`Geriausias internetinis pasiūlymas yra brangesnis nei tavo matyta kaina.`
+        :`The best online offer is more expensive than your scanned price.`;
+      proof=isLt
+        ?`Šiuo atveju tavo rasta kaina atrodo geresnė. Jeigu parduotuvėje sąlygos geros — verta svarstyti ją.`
+        :`In this case your scanned price looks better. If store terms are good, consider it.`;
+      bestColor="var(--red)";
     }
 
-    html+=`<div class="scan-compare-card ${cardCls} fade-up">
-      <div class="sc-kicker">${isLt?"Palyginimas su tavo kaina":"Compared with your photo price"}</div>
-      <div class="sc-title">${title}</div>
-      <div class="sc-saving">${diff>5?(isLt?"Sutaupai ":"Save "):diff<-5?(isLt?"Brangiau ":"More "):""}${savingText}</div>
-      <div class="sc-sub">${sub}</div>
-      <div class="sc-grid">
-        <div class="sc-box"><div class="sc-box-l">${isLt?"Tavo kaina":"Your price"}</div><div class="sc-box-v">${money(scannedPrice)}</div></div>
-        <div class="sc-box"><div class="sc-box-l">${isLt?"Geriausia rasta":"Best found"}</div><div class="sc-box-v" style="color:${diff>5?'var(--green)':diff<-5?'var(--red)':'var(--amber)'}">${money(bestOnline.price)}</div></div>
+    html+=`<div class="deal-win-card ${cardCls} fade-up">
+      <div class="deal-badge">${badge}</div>
+      <div class="deal-title">${title}</div>
+      <div class="deal-hero">${hero}</div>
+      <div class="deal-sub">${sub}</div>
+      <div class="deal-metric-grid">
+        <div class="deal-metric">
+          <div class="deal-metric-label">${isLt?"Tavo rasta kaina":"Your found price"}</div>
+          <div class="deal-metric-value">${money(scannedPrice)}</div>
+        </div>
+        <div class="deal-metric">
+          <div class="deal-metric-label">${isLt?"Goody rado":"Goody found"}</div>
+          <div class="deal-metric-value" style="color:${bestColor}">${money(bestOnline.price)}</div>
+        </div>
       </div>
-      <div class="sc-note">${isLt?`Geriausias pasiūlymas: ${bestOnline.shop}. Patikrink pristatymo kainą ir pardavėjo sąlygas prieš perkant.`:`Best offer: ${bestOnline.shop}. Check delivery cost and seller terms before buying.`}</div>
+      <div class="deal-proof">${proof}</div>
     </div>`;
   }else{
-    // Normal search without photo price: show a simpler market verdict, not a giant score.
+    // Normal search without photo price: still create an emotional verdict, but keep it factual.
     const score=d.deal_score||50;
-    const label=score>=75?(isLt?"Geras pasiūlymas":"Good deal"):score>=50?(isLt?"Normali kaina":"Fair price"):(isLt?"Gal verta palaukti":"Maybe wait");
+    const label=score>=75?(isLt?"🔥 GOOD DEAL":"🔥 GOOD DEAL"):score>=50?(isLt?"👌 FAIR DEAL":"👌 FAIR DEAL"):(isLt?"⚠️ GAL VERTA PALAUKTI":"⚠️ MAYBE WAIT");
+    const title=score>=75?(isLt?"Rasta gera kaina":"Good price found"):score>=50?(isLt?"Kaina atrodo normali":"Price looks fair"):(isLt?"Kaina neatrodo ypatinga":"Price is not exceptional");
     const sub=d.verdict_reason||d.buy_recommendation||"";
-    html+=`<div class="market-summary fade-up">
-      <div class="ms-title">${isLt?"Goody vertinimas":"Goody verdict"}</div>
-      <div style="font-size:20px;font-weight:900;margin-bottom:6px;">${label}</div>
-      <div style="font-size:13px;color:var(--ink2);line-height:1.45;">${sub}</div>
+    html+=`<div class="deal-win-card ${score>=75?"":score>=50?"warn":"bad"} fade-up">
+      <div class="deal-badge">${label}</div>
+      <div class="deal-title">${title}</div>
+      <div class="deal-sub">${sub}</div>
       <div class="mini-score"><span class="mini-score-pill">Score ${score}/100</span><span>${onlineResults.length||results.length} ${isLt?"pasiūlymai":"offers"}</span></div>
     </div>`;
   }
@@ -830,15 +920,17 @@ function renderResults(d,q){
   if(d.price_min&&d.price_max&&d.price_max>d.price_min){
     const spread=d.price_max-d.price_min;
     const pct=Math.round((spread/d.price_max)*100);
-    html+=`<div class="market-summary fade-up">
-      <div class="ms-title">${isLt?"Rinkos vaizdas":"Market snapshot"}</div>
-      <div class="ms-row"><span>${isLt?"Pigiausia":"Lowest"}</span><strong>${money(d.price_min)}</strong></div>
-      <div class="ms-row"><span>${isLt?"Brangiausia":"Highest"}</span><strong>${money(d.price_max)}</strong></div>
-      <div class="ms-row"><span>${isLt?"Kainų skirtumas":"Price range"}</span><strong>${money(spread)} · ${pct}%</strong></div>
+    html+=`<div class="market-summary win fade-up">
+      <div class="ms-title">${isLt?"Ką radome":"What we found"}</div>
+      <div class="ms-row"><span>${isLt?"Pigiausia kaina":"Lowest price"}</span><strong>${money(d.price_min)}</strong></div>
+      <div class="ms-row"><span>${isLt?"Brangiausia kaina":"Highest price"}</span><strong>${money(d.price_max)}</strong></div>
+      <div class="ms-row"><span>${isLt?"Skirtumas tarp kainų":"Market gap"}</span><strong>${money(spread)} · ${pct}%</strong></div>
     </div>`;
   }
 
+  html+=`<div class="price-list-label">${isLt?"Pasiūlymai":"Offers"}</div>`;
   html+='<div class="price-list">';
+
   results.forEach((r,i)=>{
     const best=r.is_cheapest||r.is_best_value;
     const scan=isScanResult(r);
@@ -850,8 +942,8 @@ function renderResults(d,q){
     if(scan){
       badges+=`<span class="badge b-gray">${isLt?"Tavo foto":"Your photo"}</span>`;
     }else{
-      if(r.is_cheapest)badges+=`<span class="badge b-green">${isLt?"Pigiausia":"Cheapest"}</span>`;
-      if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${isLt?"Geras dealas":"Best deal"}</span>`;
+      if(r.is_cheapest)badges+=`<span class="badge b-green">${isLt?"Geriausia kaina":"Best price"}</span>`;
+      if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${isLt?"Geras dealas":"Good deal"}</span>`;
       if(r.is_top_rated)badges+=`<span class="badge b-amber">${isLt?"Top reitingas":"Top rated"}</span>`;
     }
 
@@ -861,13 +953,75 @@ function renderResults(d,q){
         deltaHtml=`<div class="photo-delta neutral">${isLt?"Tavo matyta kaina":"Your scanned price"}</div>`;
       }else{
         const diff=scannedPrice-r.price;
-        if(diff>1)deltaHtml=`<div class="photo-delta good">${money(diff)} ${isLt?"pigiau nei tavo kaina":"cheaper than your price"}</div>`;
-        else if(diff<-1)deltaHtml=`<div class="photo-delta bad">${money(Math.abs(diff))} ${isLt?"brangiau nei tavo kaina":"more than your price"}</div>`;
+        if(diff>1)deltaHtml=`<div class="photo-delta good">${money(diff)} ${isLt?"pigiau už tavo kainą":"cheaper than your price"}</div>`;
+        else if(diff<-1)deltaHtml=`<div class="photo-delta bad">${money(Math.abs(diff))} ${isLt?"brangiau už tavo kainą":"more than your price"}</div>`;
         else deltaHtml=`<div class="photo-delta neutral">${isLt?"beveik kaip tavo kaina":"almost same as your price"}</div>`;
       }
     }
 
     let rating="";
+    if(r.rating>0){
+      const dots=[1,2,3,4,5].map(n=>`<div class="rdot${n<=Math.round(r.rating)?"":' e'}"></div>`).join("");
+      rating=`<div class="pc-rating">${dots}<span class="rc">${r.rating.toFixed(1)}${r.review_count>0?" · "+r.review_count.toLocaleString():""}</span></div>`;
+    }
+
+    const delivery=humanDelivery(r.delivery);
+    const btnLabel=best?(isLt?"Pirkti →":"Buy now →"):(isLt?"Peržiūrėti →":"View →");
+    const btnClass=best?"buy-link":"view-link";
+    const btnHtml=hasLink
+      ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener">${btnLabel}</a>`
+      :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${isLt?"Nėra nuorodos":"No link"}</span>`;
+
+    html+=`<div class="p-card${best&&!scan?" best":""} fade-up" style="animation-delay:${i*0.06}s">
+      ${best&&!scan?'<div class="p-card-shimmer"></div>':""}
+      <div class="pc-top">
+        <div class="pc-shop">
+          <div class="pc-logo">${logo}</div>
+          <div><div class="pc-name">${r.shop||"Shop"}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="pc-price">${r.price>0?money(r.price):"—"}</div>
+          ${r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_price.toFixed(0)} ${r.original_currency}</div>`:""}
+        </div>
+      </div>
+      <div class="pc-bot">
+        <div class="pc-badges">${badges||rating}</div>
+        ${btnHtml}
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+
+  if(d.ai_summary||d.buy_recommendation){
+    const coachText=d.buy_recommendation||d.ai_summary||"";
+    if(coachText){
+      html+=`<div class="ai-coach fade-up">
+        <div class="ac-head"><div class="ac-icon">🧠</div><div class="ac-title">AI Shopping Coach</div></div>
+        <div class="ac-text">${coachText}</div>
+        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 Alternative: <span style="color:var(--ink);font-weight:700;">${d.alternative}</span></div>`:""}
+      </div>`;
+    }
+  }
+
+  if(results.length>0){
+    const safeName=(d.product_name||q).replace(/'/g,"\\'");
+    html+=`<div class="share-row fade-up">
+      <button class="share-btn-main" onclick="shareResults('${safeName}','${d.price_min?money(d.price_min):''}')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 000 8h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ${isLt?"Dalintis":"Share deal"}
+      </button>
+      <button class="watch-btn" id="watch-btn-${(d.product_name||q).replace(/\s/g,'_')}" onclick="toggleWatch('${safeName}','${d.price_min||0}')" style="margin-left:8px;">
+        🔔 ${isLt?"Stebėti kainą":"Watch price"}
+      </button>
+    </div>`;
+  }
+
+  document.getElementById("res-body").innerHTML=html;
+  setTimeout(()=>initWatchBtn(d.product_name||q),100);
+}
+
+
+g="";
     if(r.rating>0){
       const dots=[1,2,3,4,5].map(n=>`<div class="rdot${n<=Math.round(r.rating)?"":' e'}"></div>`).join("");
       rating=`<div class="pc-rating">${dots}<span class="rc">${r.rating.toFixed(1)}${r.review_count>0?" · "+r.review_count.toLocaleString():""}</span></div>`;
