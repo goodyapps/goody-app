@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Goody — Never overpay again</title>
-<meta name="theme-color" content="#121A24">
+<meta name="theme-color" content="#0D1117">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Goody">
@@ -15,9 +15,9 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#121A24;
-  --bg2:#16202C;
-  --bg3:#1A2636;
+  --bg:#0D1117;
+  --bg2:#111820;
+  --bg3:#151C27;
   --card:rgba(255,255,255,0.05);
   --card2:rgba(255,255,255,0.09);
   --border:rgba(255,255,255,0.06);
@@ -63,7 +63,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .ring:nth-child(2){width:126px;height:126px;animation-delay:0.4s;}
 .ring:nth-child(3){width:100px;height:100px;animation-delay:0.8s;}
 @keyframes pulse{0%{opacity:0.6;transform:scale(0.85);}100%{opacity:0;transform:scale(1.08);}}
-.scan-btn{width:88px;height:88px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 0 0 rgba(39,224,138,0.4);}
+.scan-btn{width:88px;height:88px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 28px rgba(39,224,138,0.55),0 0 56px rgba(39,224,138,0.22);}
 .scan-btn:active{transform:scale(0.91);}
 .scan-btn svg{width:34px;height:34px;}
 .scan-btn.scanning{animation:heartbeat 1.2s ease infinite;}
@@ -416,8 +416,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="recent" id="popular-list"></div>
 
     <div class="sec-head">
-      <div class="sec-title">My searches</div>
-      <div class="sec-action" onclick="clearHistory()">Clear</div>
+      <div class="sec-title">Paskutiniai skenai</div>
+      <div class="sec-action" onclick="clearHistory()">Išvalyti</div>
     </div>
     <div class="recent" id="recent-list">
       <div style="padding:20px 0;text-align:center;color:var(--ink3);font-size:13px;">No recent searches</div>
@@ -557,14 +557,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 const API_BASE = "https://goody-backend.onrender.com";
 
 const CATS = [
-  {ic:"📱",n:"Phones",q:"iPhone 16 Pro"},
-  {ic:"💻",n:"Laptops",q:"MacBook Air M3"},
-  {ic:"📺",n:"TVs",q:"Samsung QLED 65"},
-  {ic:"🎧",n:"Audio",q:"Sony WH-1000XM5"},
-  {ic:"🌀",n:"Vacuum",q:"Dyson V15"},
-  {ic:"🤖",n:"Robots",q:"Xiaomi robot vacuum"},
-  {ic:"📷",n:"Cameras",q:"Sony A7 IV"},
-  {ic:"🎮",n:"Gaming",q:"PlayStation 5"},
+  {ic:"📱",n:"Telefonai",q:"iPhone 16 Pro"},
+  {ic:"💻",n:"Nešiojami",q:"MacBook Air M3"},
+  {ic:"📺",n:"Televizoriai",q:"Samsung QLED 65"},
+  {ic:"🎧",n:"Garsas",q:"Sony WH-1000XM5"},
+  {ic:"⌚",n:"Laikrodžiai",q:"Apple Watch Series 10"},
+  {ic:"🎮",n:"Žaidimai",q:"PlayStation 5"},
+  {ic:"📷",n:"Foto",q:"Sony A7 IV"},
+  {ic:"🏠",n:"Buitis",q:"Dyson V15"},
 ];
 
 let wl = JSON.parse(localStorage.getItem("gy_wl")||"[]");
@@ -613,7 +613,7 @@ function buildPopular(){
 
 function buildRecent(){
   const g=document.getElementById("recent-list"); g.innerHTML="";
-  if(!hist.length){g.innerHTML='<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">No recent searches</div>';return;}
+  if(!hist.length){g.innerHTML='<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">Nėra paskutinių skenų</div>';return;}
   hist.slice(0,5).forEach(h=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
     el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} shops · ${h.time||"recently"}</div></div></div><div class="rec-price">${h.price||""}</div>`;
@@ -1085,22 +1085,22 @@ async function runScan(){
   navTo("results");
   document.getElementById("res-title").textContent="Scanning photo...";
   document.getElementById("res-meta").textContent="AI identifying product";
-  const scanShops=["Varle.lt","Pigu.lt","Senukai.lt","Topo centras","Elesen.lt","1a.lt"];
+  const scanShops=["Amazon.DE","Elesen.lt"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
   document.getElementById("res-body").innerHTML=`
     <div style="text-align:center;padding:24px 0 16px;">
       <div style="font-size:36px;margin-bottom:8px;">📷</div>
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Analyzing your photo</div>
-      <div style="font-size:12px;color:var(--ink3);">AI is identifying the product...</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Analizuojama nuotrauka</div>
+      <div style="font-size:12px;color:var(--ink3);">AI atpažįsta produktą...</div>
     </div>
-    <div class="shop-status" style="margin-bottom:16px;"><div class="shop-dot"></div><span id="scan-status-txt">Checking Varle.lt...</span></div>
+    <div class="shop-status" style="margin-bottom:16px;"><div class="shop-dot"></div><span id="scan-status-txt">🔍 Tikriname ${scanShops[0]}...</span></div>
     ${skels}`;
   const scanTimer=setInterval(()=>{
     scanIdx=(scanIdx+1)%scanShops.length;
     const el=document.getElementById("scan-status-txt");
-    if(el)el.textContent="Checking "+scanShops[scanIdx]+"...";
-  },800);
+    if(el)el.textContent="🔍 Tikriname "+scanShops[scanIdx]+"...";
+  },1200);
   try{
     const _sc=new AbortController();const _st=setTimeout(()=>_sc.abort(),90000);
     const resp=await fetch(`${API_BASE}/api/scan-image`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:capturedB64}),signal:_sc.signal});
@@ -1294,7 +1294,7 @@ function fireConfetti(savings){
 
 /* ── LOADING MESSAGES ── */
 function showLoading(){
-  const shops=["Varle.lt","Pigu.lt","Senukai.lt","Topo centras","Elesen.lt","1a.lt","Amazon.de","Amazon.pl"];
+  const shops=["Amazon.DE","Elesen.lt"];
   let si=0;
   const skeletons=[1,2,3].map(()=>`
     <div class="skel-card">
@@ -1309,14 +1309,14 @@ function showLoading(){
     </div>`).join("");
   document.getElementById("res-body").innerHTML=`
     <div style="padding:0 0 12px;">
-      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">Connecting...</span></div>
+      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">🔍 Tikriname ${shops[0]}...</span></div>
     </div>
     ${skeletons}`;
   return setInterval(()=>{
     si=(si+1)%shops.length;
     const el=document.getElementById("shop-status-txt");
-    if(el)el.textContent="Checking "+shops[si]+"...";
-  },800);
+    if(el)el.textContent="🔍 Tikriname "+shops[si]+"...";
+  },1200);
 }
 
 
