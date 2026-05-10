@@ -4,36 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Goody — Never overpay again</title>
-<meta name="theme-color" content="#0A0F1E">
+<meta name="theme-color" content="#121A24">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Goody">
 <meta name="description" content="Scan any price tag. Find the best deal instantly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#0A0F1E;
-  --bg2:#0d1426;
-  --bg3:#111829;
-  --card:rgba(255,255,255,0.09);
-  --card2:rgba(255,255,255,0.14);
-  --border:rgba(255,255,255,0.16);
-  --border2:rgba(255,255,255,0.28);
-  --ink:#F8F9FA;
-  --ink2:rgba(248,249,250,0.65);
-  --ink3:rgba(248,249,250,0.70);
-  --ink4:rgba(248,249,250,0.45);
-  --green:#00D084;
-  --green-l:rgba(0,208,132,0.1);
-  --green-m:rgba(0,208,132,0.2);
-  --red:#FF4D6A;
-  --red-l:rgba(255,77,106,0.1);
+  --bg:#121A24;
+  --bg2:#16202C;
+  --bg3:#1A2636;
+  --card:rgba(255,255,255,0.05);
+  --card2:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.12);
+  --ink:#F1F4F8;
+  --ink2:rgba(241,244,248,0.70);
+  --ink3:rgba(241,244,248,0.50);
+  --ink4:rgba(241,244,248,0.35);
+  --green:#27E08A;
+  --green-l:rgba(39,224,138,0.10);
+  --green-m:rgba(39,224,138,0.20);
+  --red:#FF8888;
+  --red-l:rgba(255,136,136,0.10);
   --amber:#FFB830;
   --amber-l:rgba(255,184,48,0.1);
   --r:16px;--r-sm:10px;--r-lg:22px;
-  --ff:'DM Sans',system-ui,sans-serif;
+  --ff:'Inter',system-ui,sans-serif;
   --dur:0.18s;
 }
 html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff);overflow:hidden;}
@@ -62,7 +63,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .ring:nth-child(2){width:126px;height:126px;animation-delay:0.4s;}
 .ring:nth-child(3){width:100px;height:100px;animation-delay:0.8s;}
 @keyframes pulse{0%{opacity:0.6;transform:scale(0.85);}100%{opacity:0;transform:scale(1.08);}}
-.scan-btn{width:88px;height:88px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 0 0 rgba(0,208,132,0.4);}
+.scan-btn{width:88px;height:88px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 0 0 rgba(39,224,138,0.4);}
 .scan-btn:active{transform:scale(0.91);}
 .scan-btn svg{width:34px;height:34px;}
 .scan-btn.scanning{animation:heartbeat 1.2s ease infinite;}
@@ -71,7 +72,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .search-bar{margin:0 22px 20px;position:relative;}
 .search-bar input{width:100%;height:50px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:0 48px 0 18px;color:var(--ink);font-family:var(--ff);font-size:15px;outline:none;transition:border-color var(--dur),background var(--dur);}
 .search-bar input::placeholder{color:var(--ink3);}
-.search-bar input:focus{border-color:rgba(0,208,132,0.35);background:rgba(0,208,132,0.04);}
+.search-bar input:focus{border-color:rgba(39,224,138,0.35);background:rgba(39,224,138,0.04);}
 .search-go{position:absolute;right:0;top:0;height:50px;width:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);}
 
 .sec-head{display:flex;justify-content:space-between;align-items:center;padding:0 22px;margin-bottom:12px;}
@@ -124,7 +125,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cam-upload{display:flex;justify-content:center;padding:8px 20px;flex-shrink:0;}
 .upload-btn{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 20px;color:var(--ink3);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;}
 .cam-snap-wrap{padding:14px 20px 32px;flex-shrink:0;}
-.snap-btn{width:100%;height:54px;border-radius:var(--r);background:var(--green);border:none;color:#0A0F1E;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform var(--dur),background var(--dur);}
+.snap-btn{width:100%;height:54px;border-radius:var(--r);background:var(--green);border:none;color:#121A24;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform var(--dur),background var(--dur);}
 .snap-btn:active{transform:scale(0.97);}
 .snap-btn:disabled{opacity:0.5;cursor:not-allowed;}
 
@@ -139,7 +140,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .verdict-card{border-radius:var(--r-lg);padding:18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
 .verdict-card.buy{background:var(--green-l);border:1px solid var(--green-m);}
 .verdict-card.wait{background:var(--amber-l);border:1px solid rgba(255,184,48,0.2);}
-.verdict-card.skip{background:var(--red-l);border:1px solid rgba(255,77,106,0.2);}
+.verdict-card.skip{background:var(--red-l);border:1px solid rgba(255,136,136,0.2);}
 .verdict-card.ok{background:var(--card2);border:1px solid var(--border2);}
 .vc-tag{font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
 .verdict-card.buy .vc-tag{color:var(--green);}
@@ -153,9 +154,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .verdict-card.wait .vc-score{background:var(--amber);}
 .verdict-card.skip .vc-score{background:var(--red);}
 .verdict-card.ok .vc-score{background:var(--card2);}
-.vc-score-n{font-size:24px;font-weight:900;line-height:1;color:#0A0F1E;}
+.vc-score-n{font-size:24px;font-weight:900;line-height:1;color:#121A24;}
 .verdict-card.ok .vc-score-n{color:var(--ink);}
-.vc-score-l{font-size:10px;font-weight:700;color:#0A0F1E;opacity:0.7;}
+.vc-score-l{font-size:10px;font-weight:700;color:#121A24;opacity:0.7;}
 .verdict-card.ok .vc-score-l{color:var(--ink3);}
 
 .savings-pill{background:var(--green-l);border:1px solid var(--green-m);border-radius:var(--r);padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
@@ -165,8 +166,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .price-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
 .p-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;transition:all var(--dur);cursor:pointer;position:relative;overflow:hidden;}
 .p-card:active{transform:scale(0.98);}
-.p-card.best{background:rgba(0,208,132,0.06);border-color:rgba(0,208,132,0.25);}
-.p-card-shimmer{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,208,132,0.05),transparent);animation:sh 3.5s infinite;}
+.p-card.best{background:rgba(39,224,138,0.06);border-color:rgba(39,224,138,0.25);}
+.p-card-shimmer{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(39,224,138,0.05),transparent);animation:sh 3.5s infinite;}
 @keyframes sh{0%{left:-100%;}100%{left:200%;}}
 .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .pc-shop{display:flex;align-items:center;gap:10px;}
@@ -185,7 +186,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .rdot{width:6px;height:6px;border-radius:50%;background:var(--green);}
 .rdot.e{background:var(--border2);}
 .rc{font-size:11px;color:var(--ink3);margin-left:3px;}
-.buy-link{display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#0A0F1E;border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;transition:transform var(--dur);}
+.buy-link{display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#121A24;border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;transition:transform var(--dur);}
 .buy-link:active{transform:scale(0.94);}
 .view-link{display:inline-flex;align-items:center;gap:5px;background:var(--card2);color:var(--ink2);border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform var(--dur);}
 .view-link:active{transform:scale(0.94);}
@@ -244,7 +245,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .confetti-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:200;}
 .conf{position:absolute;width:8px;height:8px;border-radius:2px;animation:confFall linear forwards;}
 @keyframes confFall{0%{transform:translateY(-20px) rotate(0);opacity:1;}100%{transform:translateY(110vh) rotate(540deg);opacity:0;}}
-.save-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) scale(0.8);background:var(--green);color:#0A0F1E;padding:12px 24px;border-radius:40px;font-size:15px;font-weight:800;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:150;}
+.save-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) scale(0.8);background:var(--green);color:#121A24;padding:12px 24px;border-radius:40px;font-size:15px;font-weight:800;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:150;}
 .save-toast.on{opacity:1;transform:translateX(-50%) scale(1);}
 .share-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green-l);border:1px solid var(--green-m);border-radius:var(--r-sm);padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:700;color:var(--green);cursor:pointer;margin-top:10px;}
 .translate-bar{display:flex;align-items:center;gap:8px;padding:10px 22px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
@@ -257,9 +258,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 .goody-score-wrap{background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:18px;margin-bottom:14px;display:flex;align-items:center;gap:16px;}
 .goody-score-circle{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
-.gsc-excellent{background:rgba(0,208,132,0.15);border:2px solid var(--green);}
+.gsc-excellent{background:rgba(39,224,138,0.15);border:2px solid var(--green);}
 .gsc-good{background:rgba(255,184,48,0.15);border:2px solid var(--amber);}
-.gsc-poor{background:rgba(255,77,106,0.15);border:2px solid var(--red);}
+.gsc-poor{background:rgba(255,136,136,0.15);border:2px solid var(--red);}
 .gsc-num{font-size:26px;font-weight:900;line-height:1;}
 .gsc-label{font-size:9px;font-weight:700;letter-spacing:0.05em;opacity:0.7;}
 .goody-score-info{}
@@ -276,7 +277,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .pdna-current{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
 .pdna-curr-l{font-size:12px;color:var(--ink3);}
 .pdna-curr-v{font-size:16px;font-weight:800;}
-.ai-coach{background:linear-gradient(135deg,rgba(0,208,132,0.08),rgba(0,184,255,0.06));border:1px solid rgba(0,208,132,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:14px;}
+.ai-coach{background:linear-gradient(135deg,rgba(39,224,138,0.08),rgba(0,184,255,0.06));border:1px solid rgba(39,224,138,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:14px;}
 .ac-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .ac-icon{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .ac-title{font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;}
@@ -332,14 +333,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .dna-bar.current{background:var(--green);}
 .dna-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,184,48,0.4);}
 
-.coach-card{background:linear-gradient(135deg,rgba(0,208,132,0.08),rgba(0,184,255,0.05));border:1px solid rgba(0,208,132,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;}
+.coach-card{background:linear-gradient(135deg,rgba(39,224,138,0.08),rgba(0,184,255,0.05));border:1px solid rgba(39,224,138,0.2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;}
 .coach-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .coach-ico{width:32px;height:32px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .coach-title{font-size:13px;font-weight:800;color:var(--green);}
 .coach-body{font-size:13px;color:var(--ink2);line-height:1.6;}
 
 /* ── ERROR / TOAST ── */
-.error-card{background:var(--red-l);border:1px solid rgba(255,77,106,0.2);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;text-align:center;}
+.error-card{background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;text-align:center;}
 .error-ico{font-size:36px;margin-bottom:10px;}
 .error-title{font-size:16px;font-weight:800;color:var(--red);margin-bottom:6px;}
 .error-msg{font-size:13px;color:var(--ink3);line-height:1.5;}
@@ -350,9 +351,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .fade-up{animation:fadeUp 0.3s ease both;}
 
 /* PULL TO REFRESH */
-.ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(0,208,132,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
+.ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(39,224,138,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
 .ptr-indicator.visible{opacity:1;}
-.ptr-arrow{font-size:18px;color:#0A0F1E;transition:transform .3s;}
+.ptr-arrow{font-size:18px;color:#121A24;transition:transform .3s;}
 .ptr-arrow.ready{transform:rotate(180deg);}
 @keyframes ptrSpin{to{transform:rotate(360deg);}}
 .ptr-spinning{animation:ptrSpin .6s linear infinite;}
@@ -385,13 +386,13 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="ring"></div>
         <button class="scan-btn" id="main-scan-btn" onclick="openCam('price')">
           <svg viewBox="0 0 36 36" fill="none">
-            <path d="M5 11V8a3 3 0 013-3h3" stroke="#0A0F1E" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M31 11V8a3 3 0 00-3-3h-3" stroke="#0A0F1E" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M5 25v3a3 3 0 003 3h3" stroke="#0A0F1E" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M31 25v3a3 3 0 01-3 3h-3" stroke="#0A0F1E" stroke-width="2.5" stroke-linecap="round"/>
-            <rect x="10" y="10" width="16" height="16" rx="2.5" stroke="#0A0F1E" stroke-width="2"/>
-            <circle cx="18" cy="18" r="4" stroke="#0A0F1E" stroke-width="2"/>
-            <circle cx="18" cy="18" r="1.5" fill="#0A0F1E"/>
+            <path d="M5 11V8a3 3 0 013-3h3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M31 11V8a3 3 0 00-3-3h-3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M5 25v3a3 3 0 003 3h3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M31 25v3a3 3 0 01-3 3h-3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="10" y="10" width="16" height="16" rx="2.5" stroke="#121A24" stroke-width="2"/>
+            <circle cx="18" cy="18" r="4" stroke="#121A24" stroke-width="2"/>
+            <circle cx="18" cy="18" r="1.5" fill="#121A24"/>
           </svg>
         </button>
       </div>
@@ -628,7 +629,7 @@ function buildSaved(){
   g.innerHTML="";
   wl.forEach((item,i)=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">🛒</div><div><div class="rec-name">${item.q}</div><div class="rec-meta">Best: ${item.price||"—"}</div></div></div><button style="background:var(--red-l);border:1px solid rgba(255,77,106,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;" onclick="removeWl(${i})">Remove</button>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">🛒</div><div><div class="rec-name">${item.q}</div><div class="rec-meta">Best: ${item.price||"—"}</div></div></div><button style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;" onclick="removeWl(${i})">Remove</button>`;
     el.onclick=(e)=>{if(e.target.tagName!=="BUTTON"){document.getElementById("srch-inp").value=item.q;doSearch();}};
     g.appendChild(el);
   });
@@ -765,7 +766,7 @@ function renderResults(d,q){
 
   // GOODY SCORE
   const score = d.deal_score||50;
-  const scoreColor = score>=75?"#00D084":score>=50?"#FFB830":"#FF4D6A";
+  const scoreColor = score>=75?"#27E08A":score>=50?"#FFB830":"#FF8888";
   const scoreLabel = score>=75?"Great Deal":score>=50?"Fair Price":"Overpriced";
   const circumference = 2*Math.PI*30;
   const offset = circumference - (score/100)*circumference;
@@ -832,7 +833,7 @@ function renderResults(d,q){
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🏷 <span>Use brand + model, e.g. "Samsung Galaxy S24"</span></div>
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>Some shops may be temporarily unavailable</span></div>
       </div>
-      <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#0A0F1E;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Search again</button>
+      <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Search again</button>
     </div>`;
   } else {
     html+='<div class="price-list">';
@@ -1117,7 +1118,7 @@ async function runScan(){
             <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🔆 <span>Try better lighting or a closer shot</span></div>
             <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">✏️ <span>Or just type the product name below</span></div>
           </div>
-          <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#0A0F1E;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Try again</button>
+          <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Try again</button>
         </div>`;
       document.getElementById("res-title").textContent="Not recognized";
       document.getElementById("res-meta").textContent="";
@@ -1278,7 +1279,7 @@ function getLang(){return LANGS[curLang]||LANGS.en;}
 function fireConfetti(savings){
   const wrap=document.getElementById("confetti-wrap");
   wrap.innerHTML="";
-  const colors=["#00D084","#FFB830","#FF4D6A","#F8F9FA","#00B8FF"];
+  const colors=["#27E08A","#FFB830","#FF8888","#F8F9FA","#00B8FF"];
   for(let i=0;i<40;i++){
     const el=document.createElement("div");
     el.className="conf";
