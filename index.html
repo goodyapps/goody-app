@@ -644,6 +644,8 @@ window.addEventListener("DOMContentLoaded",()=>{
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
   fetchRate();
+  const qParam=new URLSearchParams(window.location.search).get("q");
+  if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
 });
 
 function buildCats(){
@@ -720,6 +722,7 @@ async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast("Enter a product name");return;}
   lastQ=q;
+  history.replaceState(null,"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
   document.getElementById("res-meta").textContent="Searching...";
@@ -1393,11 +1396,12 @@ function showLoading(){
 
 /* ── SHARE & WATCH ── */
 function shareResults(name, price){
-  const text=`Found ${name} for ${price} on Goody! goodyapp.eu`;
+  const url="https://goodyapp.eu/?q="+encodeURIComponent(name);
+  const text=`Found ${name} for ${price} on Goody!`;
   if(navigator.share){
-    navigator.share({title:"Goody deal",text,url:"https://goodyapp.eu"}).catch(()=>{});
+    navigator.share({title:"Goody — "+name,text,url}).catch(()=>{});
   } else {
-    navigator.clipboard.writeText(text).then(()=>toast("🔗 Link copied!"));
+    navigator.clipboard.writeText(url).then(()=>toast("🔗 Link copied!"));
   }
 }
 
