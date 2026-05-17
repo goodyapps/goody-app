@@ -422,6 +422,17 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .market-summary.win{background:linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.035));}
 .price-list-label{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin:4px 0 10px;}
 
+/* ── PRICE HISTORY CHART ── */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.chart-title{font-size:12px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;}
+.chart-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--green-l);color:var(--green);}
+.chart-wrap{position:relative;height:160px;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.chart-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink3);}
+.chart-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.chart-empty{text-align:center;padding:30px 0;font-size:13px;color:var(--ink3);}
+
 </style>
 </head>
 <body>
@@ -618,6 +629,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 </div>
 
 <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 const API_BASE = "https://goody-backend.onrender.com";
 
@@ -992,8 +1004,10 @@ function renderResults(d,q){
     </div>`;
   }
 
+  html += `<div id="price-history-wrap"></div>`;
   document.getElementById("res-body").innerHTML=html;
   setTimeout(()=>initWatchBtn(d.product_name||q),100);
+  fetchPriceHistory(d.product_name||q);
 }
 
 function getShopLogo(shop){
@@ -1431,6 +1445,89 @@ function initWatchBtn(name){
   if(btn&&watches.find(w=>w.name===name)){
     btn.classList.add("active");btn.innerHTML="✅ Watching";
   }
+}
+
+/* ── PRICE HISTORY CHART ── */
+const SHOP_COLORS = [
+  "#27E08A","#FF9900","#00B8FF","#FF5252","#FFB830",
+  "#AB47BC","#26C6DA","#FF7043","#66BB6A","#5C6BC0",
+];
+let _priceChart = null;
+
+async function fetchPriceHistory(q) {
+  const container = document.getElementById("price-history-wrap");
+  if (!container) return;
+  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span><span class="chart-badge">Loading...</span></div><div class="chart-empty">Loading chart...</div></div>`;
+  try {
+    const r = await fetch(`${API_BASE}/api/price-history?q=${encodeURIComponent(q)}`, {signal: AbortSignal.timeout(8000)});
+    if (!r.ok) { container.innerHTML = ""; return; }
+    const d = await r.json();
+    if (!d.labels || d.labels.length < 2) {
+      container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span></div><div class="chart-empty">Not enough data yet — check back after a few searches</div></div>`;
+      return;
+    }
+    renderPriceChart(container, d);
+  } catch(e) { container.innerHTML = ""; }
+}
+
+function renderPriceChart(container, d) {
+  const shopColors = {};
+  (d.datasets || []).forEach((ds, i) => { shopColors[ds.shop] = SHOP_COLORS[i % SHOP_COLORS.length]; });
+
+  const legendHtml = (d.datasets || []).map(ds =>
+    `<div class="chart-leg-item"><div class="chart-leg-dot" style="background:${shopColors[ds.shop]}"></div>${ds.shop}</div>`
+  ).join("");
+
+  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span><span class="chart-badge">${d.labels.length} days</span></div><div class="chart-wrap"><canvas id="ph-canvas"></canvas></div><div class="chart-legend">${legendHtml}</div></div>`;
+
+  if (_priceChart) { _priceChart.destroy(); _priceChart = null; }
+
+  const ctx = document.getElementById("ph-canvas").getContext("2d");
+  _priceChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: d.labels.map(l => l.slice(5)),
+      datasets: (d.datasets || []).map((ds, i) => ({
+        label: ds.shop,
+        data: ds.prices,
+        borderColor: SHOP_COLORS[i % SHOP_COLORS.length],
+        backgroundColor: "transparent",
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        tension: 0.3,
+        spanGaps: true,
+      })),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "#151C27",
+          borderColor: "rgba(255,255,255,0.1)",
+          borderWidth: 1,
+          titleColor: "#F1F4F8",
+          bodyColor: "rgba(241,244,248,0.7)",
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: €${ctx.parsed.y != null ? ctx.parsed.y.toFixed(2) : "—"}`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: "rgba(255,255,255,0.04)" },
+          ticks: { color: "rgba(241,244,248,0.4)", font: { size: 10 }, maxTicksLimit: 6 },
+        },
+        y: {
+          grid: { color: "rgba(255,255,255,0.04)" },
+          ticks: { color: "rgba(241,244,248,0.4)", font: { size: 10 }, callback: v => "€"+v },
+        },
+      },
+    },
+  });
 }
 
 /* ── UTILS ── */
