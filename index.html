@@ -113,8 +113,22 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .vfc.tr{top:0;right:0;border-width:2.5px 2.5px 0 0;border-radius:0 5px 0 0;}
 .vfc.bl{bottom:0;left:0;border-width:0 0 2.5px 2.5px;border-radius:0 0 0 5px;}
 .vfc.br{bottom:0;right:0;border-width:0 2.5px 2.5px 0;border-radius:0 0 5px 0;}
-.vf-scanline{position:absolute;left:4px;right:4px;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:scanLine 1.8s ease-in-out infinite;display:none;}
-@keyframes scanLine{0%{top:4px;}50%{top:calc(100% - 4px);}100%{top:4px;}}
+.vf-scanline{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#ff3b3b 20%,#fff 50%,#ff3b3b 80%,transparent);box-shadow:0 0 8px rgba(255,59,59,0.9),0 0 18px rgba(255,59,59,0.4);animation:scanLine 1.6s ease-in-out infinite;display:none;}
+@keyframes scanLine{0%{top:2px;}50%{top:calc(100% - 2px);}100%{top:2px;}}
+
+/* ── BARCODE UX ── */
+.vf-frame.locked{animation:bcLock 0.35s cubic-bezier(0.16,1,0.3,1) both;}
+@keyframes bcLock{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1.04);}}
+.vf-frame.locked .vfc{border-color:var(--green);transition:border-color 0.1s;}
+.bc-hint{position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.65);color:rgba(255,255,255,0.92);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;white-space:nowrap;backdrop-filter:blur(6px);letter-spacing:0.02em;display:none;}
+.green-flash{position:absolute;inset:0;background:rgba(39,224,138,0.5);pointer-events:none;opacity:0;z-index:15;transition:opacity 0.08s;}
+.green-flash.on{opacity:1;}
+.green-flash.off{opacity:0;transition:opacity 0.5s;}
+.bc-result-bar{position:absolute;bottom:0;left:0;right:0;background:var(--green);color:#121A24;padding:14px 18px;z-index:16;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.16,1,0.3,1);}
+.bc-result-bar.show{transform:translateY(0);}
+.bc-res-label{font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65;margin-bottom:3px;}
+.bc-res-name{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bc-res-code{font-size:11px;font-weight:600;opacity:0.6;margin-top:2px;}
 .cam-prev-wrap{padding:12px 20px;display:none;flex-shrink:0;}
 .cprev{background:var(--card);border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);}
 .cprev-img{width:52px;height:52px;border-radius:var(--r-sm);object-fit:cover;flex-shrink:0;}
@@ -565,12 +579,19 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="vf-wrap" id="vf-wrap">
       <video class="vf-video" id="vf-video" autoplay playsinline muted></video>
       <canvas class="vf-canvas" id="vf-canvas"></canvas>
+      <div class="green-flash" id="green-flash"></div>
       <div class="vf-overlay">
         <div class="vf-frame" id="vf-frame">
+          <div class="bc-hint" id="bc-hint">Point at barcode</div>
           <div class="vfc tl"></div><div class="vfc tr"></div>
           <div class="vfc bl"></div><div class="vfc br"></div>
           <div class="vf-scanline" id="vf-sl"></div>
         </div>
+      </div>
+      <div class="bc-result-bar" id="bc-result-bar">
+        <div class="bc-res-label">Barcode found</div>
+        <div class="bc-res-name" id="bc-res-name">Searching...</div>
+        <div class="bc-res-code" id="bc-res-code"></div>
       </div>
     </div>
     <div class="cam-prev-wrap" id="cp-wrap">
@@ -1061,7 +1082,10 @@ function stopCam(){
   clearInterval(scanLoop);scanLoop=null;
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
   document.getElementById("vf-wrap").style.display="none";
-  const fr=document.querySelector(".vf-frame");if(fr)fr.style.display="none";
+  const fr=document.querySelector(".vf-frame");if(fr){fr.style.display="none";fr.classList.remove("locked");}
+  const bar=document.getElementById("bc-result-bar");if(bar)bar.classList.remove("show");
+  const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
+  const flash=document.getElementById("green-flash");if(flash){flash.classList.remove("on");flash.classList.remove("off");}
 }
 function switchCM(mode){
   camMode=mode;
@@ -1069,6 +1093,7 @@ function switchCM(mode){
   document.getElementById("cm-pr").classList.toggle("on",mode==="price");
   document.getElementById("cam-title").textContent=mode==="barcode"?"Scan barcode":"Scan price tag";
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
+  const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   capturedB64=null;document.getElementById("cp-wrap").style.display="none";resetSnap();
 }
 function resetSnap(){
@@ -1095,8 +1120,22 @@ async function startCam(){
     else btn.innerHTML="<span>📷</span><span>Take photo</span>";
   }catch(e){btn.disabled=false;resetSnap();toast("Camera: "+e.message);}
 }
+function playBeep(){
+  try{
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ac.createOscillator(),gain=ac.createGain();
+    osc.connect(gain);gain.connect(ac.destination);
+    osc.type="square";osc.frequency.value=1320;
+    gain.gain.setValueAtTime(0.22,ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.13);
+    osc.start(ac.currentTime);osc.stop(ac.currentTime+0.13);
+  }catch(e){}
+}
 function startBcLoop(){
   if(typeof ZXing==="undefined"){setTimeout(startBcLoop,800);return;}
+  // Show "point at barcode" hint
+  const hint=document.getElementById("bc-hint");
+  if(hint)hint.style.display="block";
   const hints=new Map();
   hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.QR_CODE]);
   hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
@@ -1113,12 +1152,41 @@ function startBcLoop(){
   },200);
 }
 function onBcFound(code){
-  clearInterval(scanLoop);scanLoop=null;stopCam();
-  setPrevUI(null,"▦","Barcode found",code,"Searching...");
-  const btn=document.getElementById("c-snap");btn.disabled=false;
-  btn.style.background="var(--green)";btn.innerHTML="<span>🔍</span><span>Search →</span>";
-  btn.onclick=()=>{closeCam();document.getElementById("srch-inp").value=code;doSearch();};
-  setTimeout(()=>{closeCam();document.getElementById("srch-inp").value=code;doSearch();},600);
+  clearInterval(scanLoop);scanLoop=null;
+
+  // 1. Vibrate
+  if(navigator.vibrate)navigator.vibrate(200);
+
+  // 2. Beep
+  playBeep();
+
+  // 3. Lock frame green + lock animation
+  const frame=document.getElementById("vf-frame");
+  if(frame)frame.classList.add("locked");
+
+  // 4. Green flash overlay
+  const flash=document.getElementById("green-flash");
+  if(flash){
+    flash.classList.add("on");
+    setTimeout(()=>{flash.classList.remove("on");flash.classList.add("off");},120);
+    setTimeout(()=>flash.classList.remove("off"),620);
+  }
+
+  // 5. Stop camera stream
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+
+  // 6. Show result bar with code, then update with product name
+  document.getElementById("bc-res-code").textContent=code;
+  document.getElementById("bc-res-name").textContent="Searching...";
+  const bar=document.getElementById("bc-result-bar");
+  if(bar)setTimeout(()=>bar.classList.add("show"),60);
+
+  // 7. Auto-navigate to search after 1s
+  setTimeout(()=>{
+    closeCam();
+    document.getElementById("srch-inp").value=code;
+    doSearch();
+  },1000);
 }
 function captureFrame(){
   const v=document.getElementById("vf-video");const c=document.createElement("canvas");
