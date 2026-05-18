@@ -517,7 +517,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- RESULTS -->
   <div class="page" id="pg-results">
     <div class="res-head">
-      <button class="back-btn" onclick="navTo('home')">
+      <button class="back-btn" onclick="history.back()">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div style="min-width:0;">
@@ -739,13 +739,23 @@ async function buildPopular(){
   _renderPopular(POPULAR_FALLBACK);
 }
 
+function _relTime(ts){
+  if(!ts)return"";
+  const diff=Math.floor((Date.now()-ts)/1000);
+  if(diff<60)return"<1 min";
+  if(diff<3600)return Math.floor(diff/60)+" min";
+  if(diff<86400)return Math.floor(diff/3600)+"h";
+  return Math.floor(diff/86400)+"d";
+}
+function removeHist(i){hist.splice(i,1);localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();}
 function buildRecent(){
   const t=getLang();
   const g=document.getElementById("recent-list"); g.innerHTML="";
   if(!hist.length){g.innerHTML=`<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">${t.no_recent||"No recent searches yet"}</div>`;return;}
-  hist.slice(0,5).forEach(h=>{
+  hist.slice(0,8).forEach((h,i)=>{
+    const age=h.ts?_relTime(h.ts):(h.time||t.recently||"recently");
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${h.time||t.recently||"recently"}</div></div></div><div class="rec-price">${h.price||""}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=h.q;doSearch();};
     g.appendChild(el);
   });
@@ -776,10 +786,17 @@ function navTo(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
   document.getElementById("pg-"+id).classList.add("on");
-  const nb=document.getElementById("nav-"+id);
+  // results lives under the home tab — keep Home active
+  const navId=id==="results"?"home":id;
+  const nb=document.getElementById("nav-"+navId);
   if(nb)nb.classList.add("on");
   if(id==="saved")buildSaved();
 }
+window.addEventListener("popstate",()=>{
+  const p=new URLSearchParams(location.search).get("q");
+  if(p){document.getElementById("srch-inp").value=p;navTo("results");}
+  else navTo("home");
+});
 
 /* ── SEARCH ── */
 function _showSearchError(){
@@ -794,7 +811,7 @@ async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast(curLang==="lt"?"Įveskite produkto pavadinimą":"Enter a product name");return;}
   lastQ=q;
-  history.replaceState(null,"","/?q="+encodeURIComponent(q));
+  history.pushState({q},"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
   document.getElementById("res-meta").textContent=curLang==="lt"?"Ieškoma...":"Searching...";
@@ -878,10 +895,8 @@ function addToHist(q,d){
   hist=hist.filter(h=>h.q!==q);
   let ic=d&&d.category_icon?d.category_icon:null;
   if(!ic)ic=_getIcon(q)||"🔍";
-  const now=new Date();
-  const timeStr=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
-  hist.unshift({q,ic,shops:d.results?.length||0,time:timeStr,price:d.price_min?"€"+d.price_min.toFixed(2):""});
-  hist=hist.slice(0,10);
+  hist.unshift({q,ic,shops:d.results?.length||0,ts:Date.now(),price:d.price_min?"€"+d.price_min.toFixed(2):""});
+  hist=hist.slice(0,20);
   localStorage.setItem("gy_hist",JSON.stringify(hist));
   buildRecent();
 }
