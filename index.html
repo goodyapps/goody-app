@@ -855,8 +855,12 @@ async function doSearch(){
             clearInterval(loadTimer);gotResult=true;
             lastData=msg.payload;
             renderResults(msg.payload,q);
-            const n=msg.payload.results?.length||0;
-            document.getElementById("res-meta").textContent=n+" "+(getLang().shops||"shops")+" · "+(curLang==="lt"?"kraunama daugiau...":"loading more...");
+            const shopsDone=new Set((msg.payload.results||[]).map(r=>r.shop)).size;
+            const shopsLeft=Math.max(0,8-shopsDone);
+            const metaTxt=curLang==="lt"
+              ?`Radome ${shopsDone} parduotuvę, tikriname dar ${shopsLeft}...`
+              :`Found ${shopsDone} shop${shopsDone!==1?"s":""}, checking ${shopsLeft} more...`;
+            document.getElementById("res-meta").textContent=metaTxt;
             if(msg.payload._rate)updateRateUI(msg.payload._rate);
           }else if(msg.type==="complete"){
             clearInterval(loadTimer);gotResult=true;
