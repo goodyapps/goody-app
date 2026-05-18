@@ -496,18 +496,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
 
     <div class="sec-head">
-      <div class="sec-title">Categories</div>
+      <div class="sec-title" id="cats-title">Categories</div>
     </div>
     <div class="cats" id="cats-grid"></div>
 
     <div class="sec-head" id="popular-head">
-      <div class="sec-title">Popular</div>
+      <div class="sec-title" id="popular-title">Popular</div>
     </div>
     <div class="recent" id="popular-list"></div>
 
     <div class="sec-head">
-      <div class="sec-title">Paskutiniai skenai</div>
-      <div class="sec-action" onclick="clearHistory()">Išvalyti</div>
+      <div class="sec-title" id="recent-title">Recent scans</div>
+      <div class="sec-action" id="clear-hist-btn" onclick="clearHistory()">Clear</div>
     </div>
     <div class="recent" id="recent-list">
       <div style="padding:20px 0;text-align:center;color:var(--ink3);font-size:13px;">No recent searches</div>
@@ -554,7 +554,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="set-label">App</div>
       <div class="set-card">
         <div class="set-row"><div class="sr-n">App</div><div class="sr-v">Goody</div></div>
-        <div class="set-row"><div class="sr-n">Version</div><div class="sr-v">1.0</div></div>
+        <div class="set-row"><div class="sr-n">Version</div><div class="sr-v" id="app-version">—</div></div>
         <div class="set-row"><div class="sr-n">Backend</div><div class="sr-v" id="be-url" style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div></div>
       </div>
     </div>
@@ -677,6 +677,10 @@ window.addEventListener("DOMContentLoaded",()=>{
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
   fetchRate();
+  fetch(`${API_BASE}/api/health`,{signal:AbortSignal.timeout(5000)})
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{if(d&&d.version){const v=document.getElementById("app-version");if(v)v.textContent="v"+d.version;}})
+    .catch(()=>{});
   const qParam=new URLSearchParams(window.location.search).get("q");
   if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
 });
@@ -691,7 +695,7 @@ function buildCats(){
   });
 }
 
-const POPULAR = [
+const POPULAR_FALLBACK = [
   {ic:"📱", q:"iPhone 16 Pro", price:"from €1,199"},
   {ic:"💻", q:"MacBook Air M3", price:"from €1,299"},
   {ic:"🎧", q:"Sony WH-1000XM5", price:"from €279"},
@@ -700,15 +704,36 @@ const POPULAR = [
   {ic:"🤖", q:"Xiaomi Robot Vacuum", price:"from €199"},
 ];
 
-function buildPopular(){
+function _renderPopular(items){
   const g=document.getElementById("popular-list"); if(!g)return;
   g.innerHTML="";
-  POPULAR.forEach(p=>{
+  items.forEach(p=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 Trending</div></div></div><div class="rec-price">${p.price}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 Trending</div></div></div><div class="rec-price">${p.price||""}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
+}
+
+function _getIcon(q){
+  const ql=(q||"").toLowerCase();
+  const iconMap={"iphone":"📱","samsung":"📱","phone":"📱","pixel":"📱","macbook":"💻","laptop":"💻","notebook":"💻","tv":"📺","television":"📺","oled":"📺","qled":"📺","headphone":"🎧","earphone":"🎧","sony wh":"🎧","airpods":"🎧","dyson":"🌀","vacuum":"🌀","robot":"🤖","watch":"⌚","playstation":"🎮","xbox":"🎮","nintendo":"🎮","camera":"📷","ipad":"📱","tablet":"📱"};
+  for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
+  return"🔍";
+}
+
+async function buildPopular(){
+  try{
+    const r=await fetch(`${API_BASE}/api/popular-searches?limit=6`,{signal:AbortSignal.timeout(4000)});
+    if(r.ok){
+      const d=await r.json();
+      if(d.searches&&d.searches.length>=3){
+        _renderPopular(d.searches.map(s=>({ic:_getIcon(s.query),q:s.query,price:""})));
+        return;
+      }
+    }
+  }catch(e){}
+  _renderPopular(POPULAR_FALLBACK);
 }
 
 function buildRecent(){
@@ -772,17 +797,16 @@ async function doSearch(){
     renderResults(d,q);
     if(d._rate)updateRateUI(d._rate);
   }catch(e){
-    document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">Server unreachable</div><div class="error-msg">Check backend: ${API_BASE}<br><br>Run: <code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:12px;">python server.py</code></div><button class="retry-btn" onclick="doSearch()">Try again</button></div></div>`;
+    const errMsg=curLang==="lt"?"Nepavyko prisijungti prie serverio. Patikrink interneto ryšį ir bandyk dar kartą.":curLang==="de"?"Server nicht erreichbar. Bitte Internetverbindung prüfen und erneut versuchen.":curLang==="pl"?"Nie można połączyć się z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.":"Could not connect to the server. Please check your internet connection and try again.";
+    document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">${curLang==="lt"?"Nepavyko prisijungti":curLang==="de"?"Verbindungsfehler":curLang==="pl"?"Błąd połączenia":"Connection error"}</div><div class="error-msg">${errMsg}</div><button class="retry-btn" onclick="doSearch()">${curLang==="lt"?"Bandyti dar kartą":curLang==="de"?"Erneut versuchen":curLang==="pl"?"Spróbuj ponownie":"Try again"}</button></div></div>`;
     document.getElementById("res-meta").textContent="Error";
   }
 }
 
 function addToHist(q,d){
   hist=hist.filter(h=>h.q!==q);
-  const icons={"phone":"📱","iphone":"📱","samsung":"📱","tv":"📺","televisor":"📺","laptop":"💻","macbook":"💻","headphone":"🎧","sony":"🎧","dyson":"🌀","vacuum":"🌀"};
-  let ic="🔍";
-  const ql=q.toLowerCase();
-  for(const[k,v]of Object.entries(icons)){if(ql.includes(k)){ic=v;break;}}
+  let ic=d&&d.category_icon?d.category_icon:null;
+  if(!ic)ic=_getIcon(q)||"🔍";
   const now=new Date();
   const timeStr=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
   hist.unshift({q,ic,shops:d.results?.length||0,time:timeStr,price:d.price_min?"€"+d.price_min.toFixed(2):""});
@@ -1076,8 +1100,20 @@ function openCam(mode){
   document.getElementById("vf-wrap").style.display="none";
   resetSnap();
   document.getElementById("cam-sheet").classList.add("open");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
+  document.getElementById("nav-scan").classList.add("on");
 }
-function closeCam(){document.getElementById("cam-sheet").classList.remove("open");stopCam();}
+function closeCam(){
+  document.getElementById("cam-sheet").classList.remove("open");
+  stopCam();
+  const activePage=document.querySelector(".page.on");
+  if(activePage){
+    const pgId=activePage.id.replace("pg-","");
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
+    const nb=document.getElementById("nav-"+pgId);
+    if(nb)nb.classList.add("on");
+  }
+}
 function stopCam(){
   clearInterval(scanLoop);scanLoop=null;
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
@@ -1181,12 +1217,12 @@ function onBcFound(code){
   const bar=document.getElementById("bc-result-bar");
   if(bar)setTimeout(()=>bar.classList.add("show"),60);
 
-  // 7. Auto-navigate to search after 1s
+  // 7. Auto-navigate to search after 600ms
   setTimeout(()=>{
     closeCam();
     document.getElementById("srch-inp").value=code;
     doSearch();
-  },1000);
+  },600);
 }
 function captureFrame(){
   const v=document.getElementById("vf-video");const c=document.createElement("canvas");
@@ -1241,7 +1277,7 @@ async function runScan(){
   navTo("results");
   document.getElementById("res-title").textContent="Scanning photo...";
   document.getElementById("res-meta").textContent="AI identifying product";
-  const scanShops=["Amazon.DE","Elesen.lt"];
+  const scanShops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
   document.getElementById("res-body").innerHTML=`
@@ -1330,6 +1366,9 @@ const LANGS = {
     today:"Today",
     in_store:"In store",
     loading_msgs:["Hunting for prices...","Checking Amazon...","Almost there..."],
+    popular:"Popular",
+    recent_scans:"Recent scans",
+    clear:"Clear",
   },
   lt: {
     scan_hint:"Nukreipk kamerą į kainoraštį",
@@ -1355,6 +1394,9 @@ const LANGS = {
     today:"Šiandien",
     in_store:"Parduotuvėje",
     loading_msgs:["Ieškoma kainų...","Tikrinama Amazon...","Jau beveik..."],
+    popular:"Popularu",
+    recent_scans:"Paskutiniai skenai",
+    clear:"Išvalyti",
   },
   de: {
     scan_hint:"Kamera auf Preisschild richten",
@@ -1380,6 +1422,9 @@ const LANGS = {
     today:"Heute",
     in_store:"Im Laden",
     loading_msgs:["Preise werden gesucht...","Amazon wird geprüft...","Fast fertig..."],
+    popular:"Beliebt",
+    recent_scans:"Letzte Scans",
+    clear:"Löschen",
   },
   pl: {
     scan_hint:"Skieruj aparat na cenę",
@@ -1405,6 +1450,9 @@ const LANGS = {
     today:"Dziś",
     in_store:"W sklepie",
     loading_msgs:["Szukam cen...","Sprawdzam Amazon...","Prawie gotowe..."],
+    popular:"Popularne",
+    recent_scans:"Ostatnie skany",
+    clear:"Wyczyść",
   }
 };
 let curLang = localStorage.getItem("gy_lang")||"en";
@@ -1425,7 +1473,10 @@ function applyLang(){
     const lbls=[t.home,t.scan,t.saved,t.settings];
     if(lbls[i])el.textContent=lbls[i];
   });
-  const stl=document.querySelector(".sec-title");if(stl)stl.textContent=t.categories;
+  const ct=document.getElementById("cats-title");if(ct)ct.textContent=t.categories;
+  const pt=document.getElementById("popular-title");if(pt)pt.textContent=t.popular||"Popular";
+  const rt=document.getElementById("recent-title");if(rt)rt.textContent=t.recent_scans||"Recent scans";
+  const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear";
   buildRecent();
 }
 
@@ -1450,7 +1501,7 @@ function fireConfetti(savings){
 
 /* ── LOADING MESSAGES ── */
 function showLoading(){
-  const shops=["Amazon.DE","Elesen.lt"];
+  const shops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
   let si=0;
   const skeletons=[1,2,3].map(()=>`
     <div class="skel-card">
