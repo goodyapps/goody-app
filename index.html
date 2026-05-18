@@ -461,7 +461,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="home-head">
       <div>
         <div class="logo-mark">good<span>y</span></div>
-        <div class="logo-sub">Never overpay again.</div>
+        <div class="logo-sub" id="logo-sub">Never overpay again.</div>
       </div>
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a5 5 0 015 5v3l1.5 2.5H2.5L4 10V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5"/><path d="M7 14.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -546,7 +546,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="set-title">Settings</div>
     </div>
     <div class="rate-bar">
-      <div class="rate-label">Daily searches used</div>
+      <div class="rate-label" id="rate-label">Daily searches used</div>
       <div class="rate-track"><div class="rate-fill" id="rate-fill" style="width:0%"></div></div>
       <div class="rate-text"><span id="rate-used">0 used</span><span id="rate-left">-- left</span></div>
     </div>
@@ -704,12 +704,15 @@ const POPULAR_FALLBACK = [
   {ic:"🤖", q:"Xiaomi Robot Vacuum", price:"from €199"},
 ];
 
+let _popularItems = [];
 function _renderPopular(items){
+  _popularItems=items;
+  const t=getLang();
   const g=document.getElementById("popular-list"); if(!g)return;
   g.innerHTML="";
   items.forEach(p=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 Trending</div></div></div><div class="rec-price">${p.price||""}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${p.price||""}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
@@ -737,20 +740,23 @@ async function buildPopular(){
 }
 
 function buildRecent(){
+  const t=getLang();
   const g=document.getElementById("recent-list"); g.innerHTML="";
-  if(!hist.length){g.innerHTML='<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">Nėra paskutinių skenų</div>';return;}
+  if(!hist.length){g.innerHTML=`<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">${t.no_recent||"No recent searches yet"}</div>`;return;}
   hist.slice(0,5).forEach(h=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} shops · ${h.time||"recently"}</div></div></div><div class="rec-price">${h.price||""}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${h.time||t.recently||"recently"}</div></div></div><div class="rec-price">${h.price||""}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=h.q;doSearch();};
     g.appendChild(el);
   });
 }
 
 function buildSaved(){
+  const t=getLang();
   const g=document.getElementById("saved-list");
-  document.getElementById("saved-count").textContent=wl.length+" item"+(wl.length!==1?"s":"")+" saved";
-  if(!wl.length){g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">Nothing saved yet</div><div class="se-sub">Find a deal and tap ♥ to save it</div></div>`;return;}
+  const n=wl.length;
+  document.getElementById("saved-count").textContent=n===0?(t.no_recent||""):n+" "+(t.items_saved||"saved");
+  if(!n){g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">${t.saved_empty||"Nothing saved yet"}</div><div class="se-sub">${t.saved_empty_sub||"Find a great deal and tap ♥ to save it"}</div></div>`;return;}
   g.innerHTML="";
   wl.forEach((item,i)=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
@@ -1127,7 +1133,7 @@ function switchCM(mode){
   camMode=mode;
   document.getElementById("cm-bc").classList.toggle("on",mode==="barcode");
   document.getElementById("cm-pr").classList.toggle("on",mode==="price");
-  document.getElementById("cam-title").textContent=mode==="barcode"?"Scan barcode":"Scan price tag";
+  const lt2=getLang();document.getElementById("cam-title").textContent=mode==="barcode"?(lt2.scan_barcode||"Scan barcode"):(lt2.scan_price||"Scan price tag");
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   capturedB64=null;document.getElementById("cp-wrap").style.display="none";resetSnap();
@@ -1343,20 +1349,21 @@ async function runScan(){
 /* ── LANGUAGE ── */
 const LANGS = {
   en: {
-    scan_hint:"Point camera at any price tag",
-    search_placeholder:"Search any product...",
+    scan_hint:"Scan any price tag — find the best deal instantly",
+    search_placeholder:"Search for any product...",
     enable_camera:"Enable camera",
     take_photo:"Take photo",
     analyzing:"Analyzing...",
-    hunting:"Hunting for prices...",
-    saved_empty:"Nothing saved yet — go find a deal! 👀",
+    hunting:"Hunting for the best price...",
+    saved_empty:"Nothing saved yet",
+    saved_empty_sub:"Find a great deal and tap ♥ to save it for later",
     ai_verdict:"AI verdict",
-    you_save:"You save vs highest",
+    you_save:"Your savings vs. highest price",
     buy_now:"Buy now →",
     view:"View →",
     categories:"Categories",
     recent:"Recent",
-    no_recent:"No recent searches",
+    no_recent:"No recent searches yet",
     settings:"Settings",
     saved:"Saved",
     scan:"Scan",
@@ -1365,26 +1372,36 @@ const LANGS = {
     tomorrow:"Tomorrow",
     today:"Today",
     in_store:"In store",
-    loading_msgs:["Hunting for prices...","Checking Amazon...","Almost there..."],
-    popular:"Popular",
-    recent_scans:"Recent scans",
-    clear:"Clear",
+    loading_msgs:["Hunting for the best price...","Checking 8 shops...","Almost there — hold tight!"],
+    popular:"Trending now",
+    recent_scans:"Recent searches",
+    clear:"Clear all",
+    trending:"Trending",
+    shops:"shops",
+    recently:"recently",
+    items_saved:"saved",
+    tagline:"Never overpay again.",
+    daily_searches:"Daily searches used",
+    clear_data:"Clear all data",
+    scan_price:"Scan price tag",
+    scan_barcode:"Scan barcode",
   },
   lt: {
-    scan_hint:"Nukreipk kamerą į kainoraštį",
-    search_placeholder:"Ieškoti produkto...",
+    scan_hint:"Nufotografuok kainą ir rask pigiau internete",
+    search_placeholder:"Ieškok bet kokio produkto...",
     enable_camera:"Įjungti kamerą",
     take_photo:"Fotografuoti",
     analyzing:"Analizuojama...",
-    hunting:"Ieškoma kainų...",
-    saved_empty:"Nieko neišsaugota — eik rasti sandorį! 👀",
-    ai_verdict:"AI verdiktas",
-    you_save:"Sutaupi lyginant su brangiausia",
-    buy_now:"Pirkti →",
+    hunting:"Ieškome geriausių kainų...",
+    saved_empty:"Nieko neišsaugota",
+    saved_empty_sub:"Rask gerą pasiūlymą ir paspausk ♥, kad išsaugotum",
+    ai_verdict:"AI patarimas",
+    you_save:"Sutaupi lyginant su brangiausiąja kaina",
+    buy_now:"Pirkti dabar →",
     view:"Peržiūrėti →",
     categories:"Kategorijos",
     recent:"Neseniai",
-    no_recent:"Nėra naujausių paieškų",
+    no_recent:"Dar nėra paieškų istorijos",
     settings:"Nustatymai",
     saved:"Išsaugota",
     scan:"Skanuoti",
@@ -1393,26 +1410,36 @@ const LANGS = {
     tomorrow:"Rytoj",
     today:"Šiandien",
     in_store:"Parduotuvėje",
-    loading_msgs:["Ieškoma kainų...","Tikrinama Amazon...","Jau beveik..."],
-    popular:"Popularu",
-    recent_scans:"Paskutiniai skenai",
+    loading_msgs:["Ieškome geriausių kainų...","Tikrinama 8 parduotuvių...","Jau baigiam..."],
+    popular:"Populiariausi",
+    recent_scans:"Paskutinės paieškos",
     clear:"Išvalyti",
+    trending:"Populiaru",
+    shops:"parduotuvių",
+    recently:"neseniai",
+    items_saved:"išsaugota",
+    tagline:"Nemok per daug niekada.",
+    daily_searches:"Dienos paieškos panaudotos",
+    clear_data:"Ištrinti visus duomenis",
+    scan_price:"Nuskaityti kainų etiketę",
+    scan_barcode:"Nuskaityti barkodą",
   },
   de: {
-    scan_hint:"Kamera auf Preisschild richten",
+    scan_hint:"Kamera auf Preisschild richten — sofort den besten Preis finden",
     search_placeholder:"Produkt suchen...",
     enable_camera:"Kamera aktivieren",
     take_photo:"Foto aufnehmen",
     analyzing:"Analysiere...",
-    hunting:"Preise werden gesucht...",
-    saved_empty:"Noch nichts gespeichert — finde ein Angebot! 👀",
+    hunting:"Beste Preise werden gesucht...",
+    saved_empty:"Noch nichts gespeichert",
+    saved_empty_sub:"Finde einen guten Deal und tippe ♥ zum Speichern",
     ai_verdict:"KI-Urteil",
-    you_save:"Du sparst gegenüber dem höchsten",
+    you_save:"Du sparst gegenüber dem höchsten Preis",
     buy_now:"Jetzt kaufen →",
     view:"Ansehen →",
     categories:"Kategorien",
     recent:"Zuletzt",
-    no_recent:"Keine letzten Suchen",
+    no_recent:"Noch keine Suchen",
     settings:"Einstellungen",
     saved:"Gespeichert",
     scan:"Scannen",
@@ -1421,26 +1448,36 @@ const LANGS = {
     tomorrow:"Morgen",
     today:"Heute",
     in_store:"Im Laden",
-    loading_msgs:["Preise werden gesucht...","Amazon wird geprüft...","Fast fertig..."],
+    loading_msgs:["Beste Preise werden gesucht...","8 Shops werden geprüft...","Fast fertig..."],
     popular:"Beliebt",
-    recent_scans:"Letzte Scans",
+    recent_scans:"Letzte Suchen",
     clear:"Löschen",
+    trending:"Beliebt",
+    shops:"Shops",
+    recently:"kürzlich",
+    items_saved:"gespeichert",
+    tagline:"Zahle nie zu viel.",
+    daily_searches:"Tägliche Suchen genutzt",
+    clear_data:"Alle Daten löschen",
+    scan_price:"Preisschild scannen",
+    scan_barcode:"Barcode scannen",
   },
   pl: {
-    scan_hint:"Skieruj aparat na cenę",
-    search_placeholder:"Szukaj produktu...",
+    scan_hint:"Skieruj aparat na cenę — znajdź najlepszą ofertę od razu",
+    search_placeholder:"Szukaj dowolnego produktu...",
     enable_camera:"Włącz kamerę",
     take_photo:"Zrób zdjęcie",
-    analyzing:"Analizowanie...",
-    hunting:"Szukam cen...",
-    saved_empty:"Nic nie zapisano — znajdź okazję! 👀",
+    analyzing:"Analizuję...",
+    hunting:"Szukam najlepszych cen...",
+    saved_empty:"Nic jeszcze nie zapisano",
+    saved_empty_sub:"Znajdź świetną ofertę i dotknij ♥, aby zapisać",
     ai_verdict:"Werdykt AI",
-    you_save:"Oszczędzasz vs najdroższy",
+    you_save:"Oszczędzasz vs. najwyższa cena",
     buy_now:"Kup teraz →",
     view:"Zobacz →",
     categories:"Kategorie",
     recent:"Ostatnie",
-    no_recent:"Brak ostatnich wyszukiwań",
+    no_recent:"Brak historii wyszukiwań",
     settings:"Ustawienia",
     saved:"Zapisane",
     scan:"Skanuj",
@@ -1449,10 +1486,19 @@ const LANGS = {
     tomorrow:"Jutro",
     today:"Dziś",
     in_store:"W sklepie",
-    loading_msgs:["Szukam cen...","Sprawdzam Amazon...","Prawie gotowe..."],
+    loading_msgs:["Szukam najlepszych cen...","Sprawdzam 8 sklepów...","Prawie gotowe..."],
     popular:"Popularne",
-    recent_scans:"Ostatnie skany",
+    recent_scans:"Ostatnie wyszukiwania",
     clear:"Wyczyść",
+    trending:"Popularne",
+    shops:"sklepów",
+    recently:"niedawno",
+    items_saved:"zapisane",
+    tagline:"Nigdy nie przepłacaj.",
+    daily_searches:"Dzienne wyszukiwania użyte",
+    clear_data:"Wyczyść wszystkie dane",
+    scan_price:"Skanuj etykietę cenową",
+    scan_barcode:"Skanuj kod kreskowy",
   }
 };
 let curLang = localStorage.getItem("gy_lang")||"en";
@@ -1473,11 +1519,15 @@ function applyLang(){
     const lbls=[t.home,t.scan,t.saved,t.settings];
     if(lbls[i])el.textContent=lbls[i];
   });
+  const ls=document.getElementById("logo-sub");if(ls)ls.textContent=t.tagline||"Never overpay again.";
   const ct=document.getElementById("cats-title");if(ct)ct.textContent=t.categories;
   const pt=document.getElementById("popular-title");if(pt)pt.textContent=t.popular||"Popular";
-  const rt=document.getElementById("recent-title");if(rt)rt.textContent=t.recent_scans||"Recent scans";
-  const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear";
+  const rt=document.getElementById("recent-title");if(rt)rt.textContent=t.recent_scans||"Recent searches";
+  const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear all";
+  const rl=document.getElementById("rate-label");if(rl)rl.textContent=t.daily_searches||"Daily searches used";
+  if(_popularItems.length)_renderPopular(_popularItems);
   buildRecent();
+  buildSaved();
 }
 
 function getLang(){return LANGS[curLang]||LANGS.en;}
