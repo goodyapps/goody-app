@@ -851,15 +851,16 @@ async function doSearch(){
         if(!jsonStr)continue;
         try{
           const msg=JSON.parse(jsonStr);
-          if(msg.type==="partial"&&!gotResult){
-            clearInterval(loadTimer);gotResult=true;
+          if(msg.type==="partial"){
+            if(!gotResult){clearInterval(loadTimer);gotResult=true;}
             lastData=msg.payload;
             renderResults(msg.payload,q);
-            const shopsDone=new Set((msg.payload.results||[]).map(r=>r.shop)).size;
-            const shopsLeft=Math.max(0,8-shopsDone);
+            const done=msg.payload._shops_done||0;
+            const total=msg.payload._shops_total||8;
+            const left=Math.max(0,total-done);
             const metaTxt=curLang==="lt"
-              ?`Radome ${shopsDone} parduotuvę, tikriname dar ${shopsLeft}...`
-              :`Found ${shopsDone} shop${shopsDone!==1?"s":""}, checking ${shopsLeft} more...`;
+              ?(left>0?`Radome ${done} iš ${total} parduotuvių, tikriname dar ${left}...`:`Radome visas ${total} parduotuves`)
+              :(left>0?`Checked ${done}/${total} shops, ${left} more...`:`All ${total} shops checked`);
             document.getElementById("res-meta").textContent=metaTxt;
             if(msg.payload._rate)updateRateUI(msg.payload._rate);
           }else if(msg.type==="complete"){
@@ -1636,28 +1637,20 @@ function fireConfetti(savings){
 /* ── LOADING MESSAGES ── */
 function showLoading(){
   const shops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
-  let si=0;
-  const skeletons=[1,2,3].map(()=>`
-    <div class="skel-card">
-      <div class="skel-row">
-        <div class="skel-circle skeleton"></div>
-        <div class="skel-lines">
-          <div class="skel-line skeleton" style="width:60%"></div>
-          <div class="skel-line skeleton" style="width:40%"></div>
-        </div>
-        <div class="skel-price skeleton"></div>
-      </div>
-    </div>`).join("");
+  const total=shops.length;
+  let si=0, done=0;
+  const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
+  document.getElementById("res-meta").textContent=curLang==="lt"?`Tikriname ${total} parduotuvių...`:`Checking ${total} shops...`;
   document.getElementById("res-body").innerHTML=`
     <div style="padding:0 0 12px;">
-      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">🔍 Tikriname ${shops[0]}...</span></div>
+      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">🔍 ${shops[0]}...</span></div>
     </div>
-    ${skeletons}`;
+    ${[1,2,3,4].map(skel).join("")}`;
   return setInterval(()=>{
-    si=(si+1)%shops.length;
+    si=(si+1)%total;
     const el=document.getElementById("shop-status-txt");
-    if(el)el.textContent="🔍 Tikriname "+shops[si]+"...";
-  },1200);
+    if(el)el.textContent="🔍 "+shops[si]+"...";
+  },900);
 }
 
 
