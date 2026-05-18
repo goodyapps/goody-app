@@ -782,31 +782,96 @@ function navTo(id){
 }
 
 /* ── SEARCH ── */
+function _showSearchError(){
+  const errMsg=curLang==="lt"?"Nepavyko prisijungti prie serverio. Patikrink interneto ryšį ir bandyk dar kartą.":curLang==="de"?"Server nicht erreichbar. Bitte Internetverbindung prüfen.":curLang==="pl"?"Nie można połączyć się z serwerem. Sprawdź połączenie.":"Could not connect to the server. Check your internet connection and try again.";
+  const retryLbl=curLang==="lt"?"Bandyti dar kartą":curLang==="de"?"Erneut versuchen":curLang==="pl"?"Spróbuj ponownie":"Try again";
+  const title=curLang==="lt"?"Nepavyko prisijungti":curLang==="de"?"Verbindungsfehler":curLang==="pl"?"Błąd połączenia":"Connection error";
+  document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">${title}</div><div class="error-msg">${errMsg}</div><button class="retry-btn" onclick="doSearch()">${retryLbl}</button></div></div>`;
+  document.getElementById("res-meta").textContent="Error";
+}
+
 async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
-  if(!q){toast("Enter a product name");return;}
+  if(!q){toast(curLang==="lt"?"Įveskite produkto pavadinimą":"Enter a product name");return;}
   lastQ=q;
   history.replaceState(null,"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
-  document.getElementById("res-meta").textContent="Searching...";
-  const loadTimer = showLoading();
+  document.getElementById("res-meta").textContent=curLang==="lt"?"Ieškoma...":"Searching...";
+  const loadTimer=showLoading();
+  const _ctrl=new AbortController();
+  const _tid=setTimeout(()=>_ctrl.abort(),90000);
+
+  try{
+    const resp=await fetch(`${API_BASE}/api/search-stream`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query:q}),signal:_ctrl.signal
+    });
+    clearTimeout(_tid);
+
+    if(!resp.ok){
+      clearInterval(loadTimer);
+      const e=await resp.json().catch(()=>({}));
+      throw new Error(e.message||"HTTP "+resp.status);
+    }
+    if(!resp.body){throw new Error("no_stream");}
+
+    const reader=resp.body.getReader();
+    const dec=new TextDecoder();
+    let buf="",gotResult=false;
+
+    while(true){
+      const {done,value}=await reader.read();
+      if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const parts=buf.split("\n\n");
+      buf=parts.pop()||"";
+
+      for(const part of parts){
+        const line=part.trim();
+        if(!line.startsWith("data:"))continue;
+        const jsonStr=line.slice(5).trim();
+        if(!jsonStr)continue;
+        try{
+          const msg=JSON.parse(jsonStr);
+          if(msg.type==="partial"&&!gotResult){
+            clearInterval(loadTimer);gotResult=true;
+            lastData=msg.payload;
+            renderResults(msg.payload,q);
+            const n=msg.payload.results?.length||0;
+            document.getElementById("res-meta").textContent=n+" "+(getLang().shops||"shops")+" · "+(curLang==="lt"?"kraunama daugiau...":"loading more...");
+            if(msg.payload._rate)updateRateUI(msg.payload._rate);
+          }else if(msg.type==="complete"){
+            clearInterval(loadTimer);gotResult=true;
+            lastData=msg.payload;
+            addToHist(q,msg.payload);
+            renderResults(msg.payload,q);
+            if(msg.payload._rate)updateRateUI(msg.payload._rate);
+          }else if(msg.type==="error"&&!gotResult){
+            clearInterval(loadTimer);_showSearchError();
+          }
+        }catch(ex){}
+      }
+    }
+    if(!gotResult){clearInterval(loadTimer);_showSearchError();}
+
+  }catch(e){
+    clearInterval(loadTimer);clearTimeout(_tid);
+    if(e.message==="no_stream"){await _doSearchFallback(q);return;}
+    if(e.name!=="AbortError")_showSearchError();
+  }
+}
+
+async function _doSearchFallback(q){
+  const loadTimer=showLoading();
   try{
     const _ctrl=new AbortController();const _tid=setTimeout(()=>_ctrl.abort(),90000);
     const r=await fetch(`${API_BASE}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q}),signal:_ctrl.signal});
-    clearTimeout(_tid);
-    clearInterval(loadTimer);
+    clearTimeout(_tid);clearInterval(loadTimer);
     if(!r.ok){const e=await r.json();throw new Error(e.message||"Server error");}
-    const d=await r.json();
-    lastData=d;
-    addToHist(q,d);
-    renderResults(d,q);
+    const d=await r.json();lastData=d;addToHist(q,d);renderResults(d,q);
     if(d._rate)updateRateUI(d._rate);
-  }catch(e){
-    const errMsg=curLang==="lt"?"Nepavyko prisijungti prie serverio. Patikrink interneto ryšį ir bandyk dar kartą.":curLang==="de"?"Server nicht erreichbar. Bitte Internetverbindung prüfen und erneut versuchen.":curLang==="pl"?"Nie można połączyć się z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.":"Could not connect to the server. Please check your internet connection and try again.";
-    document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">${curLang==="lt"?"Nepavyko prisijungti":curLang==="de"?"Verbindungsfehler":curLang==="pl"?"Błąd połączenia":"Connection error"}</div><div class="error-msg">${errMsg}</div><button class="retry-btn" onclick="doSearch()">${curLang==="lt"?"Bandyti dar kartą":curLang==="de"?"Erneut versuchen":curLang==="pl"?"Spróbuj ponownie":"Try again"}</button></div></div>`;
-    document.getElementById("res-meta").textContent="Error";
-  }
+  }catch(e){clearInterval(loadTimer);_showSearchError();}
 }
 
 function addToHist(q,d){
