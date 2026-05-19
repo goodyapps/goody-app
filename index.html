@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*:focus-visible{outline:2px solid rgba(39,224,138,0.7);outline-offset:2px;border-radius:4px;}
 :root{
   --bg:#0D1117;
   --bg2:#111820;
@@ -57,15 +58,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 .scan-hero{padding:28px 22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;}
 .scan-hint{font-size:13px;color:var(--ink3);text-align:center;}
-.scan-wrap{position:relative;width:152px;height:152px;display:flex;align-items:center;justify-content:center;}
+.scan-wrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center;}
 .ring{position:absolute;border-radius:50%;border:1.5px solid var(--green);opacity:0;animation:pulse 2.4s ease-out infinite;}
 .ring:nth-child(1){width:152px;height:152px;animation-delay:0s;}
 .ring:nth-child(2){width:126px;height:126px;animation-delay:0.4s;}
 .ring:nth-child(3){width:100px;height:100px;animation-delay:0.8s;}
 @keyframes pulse{0%{opacity:0.6;transform:scale(0.85);}100%{opacity:0;transform:scale(1.08);}}
-.scan-btn{width:88px;height:88px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 28px rgba(39,224,138,0.55),0 0 56px rgba(39,224,138,0.22);}
-.scan-btn:active{transform:scale(0.91);}
-.scan-btn svg{width:34px;height:34px;}
+.scan-btn{width:100px;height:100px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 36px rgba(39,224,138,0.65),0 0 72px rgba(39,224,138,0.28),0 8px 24px rgba(0,0,0,0.28);}
+.scan-btn:hover{box-shadow:0 0 44px rgba(39,224,138,0.75),0 0 88px rgba(39,224,138,0.32),0 8px 28px rgba(0,0,0,0.3);}
+.scan-btn:active{transform:scale(0.88);}
+.scan-btn svg{width:40px;height:40px;}
 .scan-btn.scanning{animation:heartbeat 1.2s ease infinite;}
 @keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 
@@ -200,7 +202,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .rdot{width:6px;height:6px;border-radius:50%;background:var(--green);}
 .rdot.e{background:var(--border2);}
 .rc{font-size:11px;color:var(--ink3);margin-left:3px;}
-.buy-link{display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#121A24;border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;transition:transform var(--dur);}
+.buy-link{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#121A24;border:none;border-radius:12px;padding:10px 20px;font-family:var(--ff);font-size:14px;font-weight:900;cursor:pointer;text-decoration:none;transition:transform var(--dur),box-shadow var(--dur);box-shadow:0 4px 16px rgba(39,224,138,0.35);}
+.buy-link:hover{box-shadow:0 6px 20px rgba(39,224,138,0.45);}
 .buy-link:active{transform:scale(0.94);}
 .view-link{display:inline-flex;align-items:center;gap:5px;background:var(--card2);color:var(--ink2);border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform var(--dur);}
 .view-link:active{transform:scale(0.94);}
@@ -353,6 +356,24 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .coach-title{font-size:13px;font-weight:800;color:var(--green);}
 .coach-body{font-size:13px;color:var(--ink2);line-height:1.6;}
 
+/* ── ONBOARDING ── */
+.onboard-overlay{position:fixed;inset:0;background:rgba(13,17,23,0.92);z-index:500;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+.onboard-sheet{background:var(--bg2);border:1px solid var(--border2);border-radius:28px 28px 0 0;padding:28px 24px 40px;max-width:430px;width:100%;animation:slideUp 0.38s cubic-bezier(0.16,1,0.3,1);}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.ob-steps{display:flex;gap:6px;justify-content:center;margin-bottom:24px;}
+.ob-step{width:28px;height:4px;border-radius:2px;background:var(--border2);transition:background 0.2s;}
+.ob-step.done{background:var(--green);}
+.ob-icon{font-size:52px;text-align:center;margin-bottom:14px;}
+.ob-title{font-size:22px;font-weight:900;text-align:center;margin-bottom:8px;}
+.ob-sub{font-size:14px;color:var(--ink3);text-align:center;line-height:1.55;margin-bottom:28px;}
+.ob-btn{width:100%;height:54px;background:var(--green);border:none;border-radius:var(--r);color:#121A24;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;transition:transform var(--dur);}
+.ob-btn:active{transform:scale(0.97);}
+.ob-skip{display:block;text-align:center;margin-top:14px;font-size:13px;color:var(--ink3);cursor:pointer;padding:4px;}
+
+/* ── LOADING PROGRESS BAR ── */
+.load-progress{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 0 16px;}
+.load-progress-fill{height:100%;background:linear-gradient(90deg,var(--green),rgba(39,224,138,0.6));border-radius:2px;transition:width 0.8s ease;width:0%;}
+
 /* ── ERROR / TOAST ── */
 .error-card{background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;text-align:center;}
 .error-ico{font-size:36px;margin-bottom:10px;}
@@ -424,7 +445,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .deal-win-card.warn .deal-badge{background:rgba(255,184,48,.14);border-color:rgba(255,184,48,.28);color:var(--amber);}
 .deal-win-card.bad .deal-badge{background:rgba(255,136,136,.12);border-color:rgba(255,136,136,.24);color:var(--red);}
 .deal-title{font-size:25px;font-weight:950;letter-spacing:-.03em;line-height:1.08;margin-bottom:7px;}
-.deal-hero{font-size:40px;font-weight:950;letter-spacing:-.045em;line-height:.98;color:var(--green);margin:10px 0 12px;text-shadow:0 0 24px rgba(39,224,138,.17);}
+.deal-hero{font-size:48px;font-weight:950;letter-spacing:-.05em;line-height:.98;color:var(--green);margin:10px 0 12px;text-shadow:0 0 32px rgba(39,224,138,.25);}
 .deal-win-card.warn .deal-hero{color:var(--amber);text-shadow:0 0 20px rgba(255,184,48,.12);}
 .deal-win-card.bad .deal-hero{color:var(--red);text-shadow:0 0 20px rgba(255,136,136,.12);}
 .deal-sub{font-size:14px;color:var(--ink2);line-height:1.45;margin-bottom:14px;}
@@ -463,7 +484,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="logo-mark">good<span>y</span></div>
         <div class="logo-sub" id="logo-sub">Never overpay again.</div>
       </div>
-      <div class="notif-btn">
+      <div class="notif-btn" role="button" aria-label="Notifications" tabindex="0">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a5 5 0 015 5v3l1.5 2.5H2.5L4 10V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5"/><path d="M7 14.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.5"/></svg>
       </div>
     </div>
@@ -474,7 +495,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="ring"></div>
         <div class="ring"></div>
         <div class="ring"></div>
-        <button class="scan-btn" id="main-scan-btn" onclick="openCam('price')">
+        <button class="scan-btn" id="main-scan-btn" onclick="openCam('price')" aria-label="Scan price tag or barcode">
           <svg viewBox="0 0 36 36" fill="none">
             <path d="M5 11V8a3 3 0 013-3h3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
             <path d="M31 11V8a3 3 0 00-3-3h-3" stroke="#121A24" stroke-width="2.5" stroke-linecap="round"/>
@@ -489,10 +510,13 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
 
     <div class="search-bar">
-      <input type="text" id="srch-inp" placeholder="Search any product..." autocomplete="off" onkeydown="if(event.key==='Enter')doSearch()">
-      <div class="search-go" onclick="doSearch()">
+      <input type="text" id="srch-inp" placeholder="Search any product..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')doSearch()"
+        onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
+        aria-label="Search for a product">
+      <button class="search-go" onclick="doSearch()" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
+      </button>
     </div>
 
     <div class="sec-head">
@@ -517,14 +541,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- RESULTS -->
   <div class="page" id="pg-results">
     <div class="res-head">
-      <button class="back-btn" onclick="history.back()">
+      <button class="back-btn" onclick="history.back()" aria-label="Go back">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div style="min-width:0;">
         <div class="res-title" id="res-title">Results</div>
         <div class="res-meta" id="res-meta"></div>
       </div>
-      <button style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onclick="saveWishlist()">
+      <button style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onclick="saveWishlist()" aria-label="Save to wishlist">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 15.5L3 9.5a3.5 3.5 0 015-4.9l1 1 1-1a3.5 3.5 0 015 4.9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -611,37 +635,53 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   </div>
 
   <input type="file" id="fu" accept="image/*" onchange="handleUpload(event)" style="display:none">
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="save-toast" id="save-toast"></div>
   <div class="confetti-wrap" id="confetti-wrap"></div>
+
+  <!-- ONBOARDING (first visit only) -->
+  <div class="onboard-overlay" id="onboard-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="Welcome to Goody">
+    <div class="onboard-sheet">
+      <div class="ob-steps">
+        <div class="ob-step done" id="ob-s1"></div>
+        <div class="ob-step" id="ob-s2"></div>
+        <div class="ob-step" id="ob-s3"></div>
+      </div>
+      <div class="ob-icon" id="ob-icon">📷</div>
+      <div class="ob-title" id="ob-title">Scan any price tag</div>
+      <div class="ob-sub" id="ob-sub">Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.</div>
+      <button class="ob-btn" id="ob-btn" onclick="nextOnboard()">Next →</button>
+      <span class="ob-skip" onclick="closeOnboard()">Skip intro</span>
+    </div>
+  </div>
 
 
   <div class="translate-bar">
     <span class="translate-label">Language:</span>
-    <button class="lang-btn on" id="lang-en" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" id="lang-lt" onclick="setLang('lt')">LT</button>
+    <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
     <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
     <button class="lang-btn" id="lang-pl" onclick="setLang('pl')">PL</button>
   </div>
 
   <!-- NAV -->
-  <nav class="bottom-nav">
-    <button class="nav-btn on" id="nav-home" onclick="navTo('home')">
+  <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+    <button class="nav-btn on" id="nav-home" onclick="navTo('home')" aria-label="Home">
       <svg viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
       <span class="nav-lbl">Home</span>
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" id="nav-scan" onclick="openCam('price')">
+    <button class="nav-btn" id="nav-scan" onclick="openCam('price')" aria-label="Scan price tag">
       <svg viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 14h3M15 12v5M12 12h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span class="nav-lbl">Scan</span>
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" id="nav-saved" onclick="navTo('saved')">
+    <button class="nav-btn" id="nav-saved" onclick="navTo('saved')" aria-label="Saved items">
       <svg viewBox="0 0 22 22" fill="none"><path d="M11 18.5L4 11.5a4 4 0 015.66-5.66L11 7l1.34-1.34A4 4 0 0118 11l-7 7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
       <span class="nav-lbl">Saved</span>
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" id="nav-settings" onclick="navTo('settings')">
+    <button class="nav-btn" id="nav-settings" onclick="navTo('settings')" aria-label="Settings">
       <svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M4.22 17.78l1.42-1.42M16.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span class="nav-lbl">Settings</span>
       <div class="nav-dot"></div>
@@ -670,6 +710,36 @@ let hist = JSON.parse(localStorage.getItem("gy_hist")||"[]");
 let camMode="price", camStream=null, scanLoop=null, capturedB64=null;
 let lastData=null, lastQ="";
 
+/* ── ONBOARDING ── */
+const OB_STEPS=[
+  {ic:"📷",title:"Scan any price tag",sub:"Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.",btn:"Next →"},
+  {ic:"🌍",title:"We check 8 shops",sub:"Varle, Pigu, 1a, Senukai, Topo, Elesen, Amazon.DE & Amazon.PL — all at once, in seconds.",btn:"Next →"},
+  {ic:"🔥",title:"Get the best deal",sub:"See the lowest price, savings, and an AI verdict on whether to buy now or wait.",btn:"Let's go!"},
+];
+let _obStep=0;
+function showOnboard(){
+  if(localStorage.getItem("gy_ob_done"))return;
+  document.getElementById("onboard-overlay").style.display="flex";
+  setObStep(0);
+}
+function setObStep(i){
+  _obStep=i;
+  const s=OB_STEPS[i];
+  document.getElementById("ob-icon").textContent=s.ic;
+  document.getElementById("ob-title").textContent=s.title;
+  document.getElementById("ob-sub").textContent=s.sub;
+  document.getElementById("ob-btn").textContent=s.btn;
+  [0,1,2].forEach(j=>document.getElementById("ob-s"+(j+1)).classList.toggle("done",j<=i));
+}
+function nextOnboard(){
+  if(_obStep<OB_STEPS.length-1){setObStep(_obStep+1);}
+  else{closeOnboard();}
+}
+function closeOnboard(){
+  document.getElementById("onboard-overlay").style.display="none";
+  localStorage.setItem("gy_ob_done","1");
+}
+
 /* ── BOOT ── */
 window.addEventListener("DOMContentLoaded",()=>{
   setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved();
@@ -683,6 +753,7 @@ window.addEventListener("DOMContentLoaded",()=>{
     .catch(()=>{});
   const qParam=new URLSearchParams(window.location.search).get("q");
   if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
+  else{setTimeout(showOnboard,800);}
 });
 
 function buildCats(){
@@ -932,20 +1003,25 @@ function renderResults(d,q){
   const isLt=lang==="lt";
 
   document.getElementById("res-title").textContent=d.product_name||q;
-  document.getElementById("res-meta").textContent=results.length?results.length+" shops · checked "+timeStr:"No results";
+  const cachedStr=d._cached?(" · "+( isLt?"iš cache":"cached")):"";
+  document.getElementById("res-meta").textContent=results.length?(results.length+" "+(isLt?"parduotuvių":"shops")+" · "+timeStr+cachedStr):(isLt?"Nieko nerasta":"No results");
 
   let html="";
 
   if(!results.length){
+    const suggestions=["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Sony WH-1000XM5","Dyson V15"];
+    const sugHtml=suggestions.map(s=>`<button onclick="document.getElementById('srch-inp').value='${s}';doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${s}</button>`).join("");
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${isLt?"Nieko nerasta":"Nothing found"}</div>
-      <div class="nr-sub">${isLt?"Nepavyko rasti kainų šiam produktui":"Could not find prices for this product"}: <strong>${q}</strong>.</div>
+      <div class="nr-sub">${isLt?"Nepavyko rasti kainų šiam produktui":"Could not find prices for"}: <strong>${q}</strong>.</div>
       <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
-        <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Tips</div>
-        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${isLt?"Bandyk trumpesnį pavadinimą":"Try a shorter product name"}</span></div>
-        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🏷 <span>${isLt?"Naudok brandą + modelį":"Use brand + model"}</span></div>
+        <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${isLt?"Patarimai":"Tips"}</div>
+        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${isLt?"Bandyk trumpesnį pavadinimą":"Try a shorter product name (brand + model)"}</span></div>
+        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>${isLt?"Parduotuvės gali neturėti šio produkto":"Some shops may not carry this item"}</span></div>
       </div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${isLt?"Populiarūs produktai":"Popular searches"}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;">${sugHtml}</div>
       <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← ${isLt?"Ieškoti dar kartą":"Search again"}</button>
     </div>`;
     document.getElementById("res-body").innerHTML=html;
@@ -1142,6 +1218,11 @@ function renderResults(d,q){
 
   html += `<div id="price-history-wrap"></div>`;
   document.getElementById("res-body").innerHTML=html;
+  // Scroll the verdict card into view so it's immediately visible
+  setTimeout(()=>{
+    const vc=document.querySelector(".deal-win-card");
+    if(vc)vc.scrollIntoView({behavior:"smooth",block:"start"});
+  },80);
   setTimeout(()=>initWatchBtn(d.product_name||q),100);
   fetchPriceHistory(d.product_name||q);
 }
@@ -1586,13 +1667,14 @@ const LANGS = {
     scan_barcode:"Skanuj kod kreskowy",
   }
 };
-let curLang = localStorage.getItem("gy_lang")||"en";
+let curLang = localStorage.getItem("gy_lang")||"lt";
 
 function setLang(l){
   curLang=l;
   localStorage.setItem("gy_lang",l);
+  document.documentElement.lang=l;
   document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("on"));
-  document.getElementById("lang-"+l).classList.add("on");
+  const lb=document.getElementById("lang-"+l);if(lb)lb.classList.add("on");
   applyLang();
 }
 
@@ -1638,18 +1720,22 @@ function fireConfetti(savings){
 function showLoading(){
   const shops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
   const total=shops.length;
-  let si=0, done=0;
+  let si=0, pct=8;
   const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
   document.getElementById("res-meta").textContent=curLang==="lt"?`Tikriname ${total} parduotuvių...`:`Checking ${total} shops...`;
   document.getElementById("res-body").innerHTML=`
+    <div class="load-progress"><div class="load-progress-fill" id="load-pbar" style="width:8%"></div></div>
     <div style="padding:0 0 12px;">
       <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">🔍 ${shops[0]}...</span></div>
     </div>
     ${[1,2,3,4].map(skel).join("")}`;
   return setInterval(()=>{
     si=(si+1)%total;
+    pct=Math.min(88, pct + Math.random()*10+4);
     const el=document.getElementById("shop-status-txt");
     if(el)el.textContent="🔍 "+shops[si]+"...";
+    const pb=document.getElementById("load-pbar");
+    if(pb)pb.style.width=pct+"%";
   },900);
 }
 
