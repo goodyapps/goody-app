@@ -269,8 +269,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .save-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) scale(0.8);background:var(--green);color:#121A24;padding:12px 24px;border-radius:40px;font-size:15px;font-weight:800;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:150;}
 .save-toast.on{opacity:1;transform:translateX(-50%) scale(1);}
 .share-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green-l);border:1px solid var(--green-m);border-radius:var(--r-sm);padding:8px 16px;font-family:var(--ff);font-size:13px;font-weight:700;color:var(--green);cursor:pointer;margin-top:10px;}
-.translate-bar{display:flex;align-items:center;gap:8px;padding:10px 22px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
+.translate-bar{display:flex;align-items:center;gap:8px;padding:5px 16px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
 .translate-label{font-size:12px;color:var(--ink3);font-weight:600;}
+.lang-toggle{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:background var(--dur);white-space:nowrap;}
+.lang-toggle:hover,.lang-toggle:focus{background:var(--card2);outline:none;}
+.lang-options{display:none;align-items:center;gap:6px;}
+.translate-bar.open .lang-options{display:flex;}
 .lang-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--dur);}
 .lang-btn.on{background:var(--green-l);border-color:var(--green);color:var(--green);}
 .last-checked{font-size:11px;color:var(--ink3);text-align:center;padding:6px 0 2px;}
@@ -726,12 +730,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   </div>
 
 
-  <div class="translate-bar">
-    <span class="translate-label">Kalba:</span>
-    <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
-    <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
-    <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
-    <button class="lang-btn" id="lang-pl" onclick="setLang('pl')">PL</button>
+  <div class="translate-bar" id="translate-bar">
+    <button class="lang-toggle" id="lang-toggle" onclick="toggleLangBar()" aria-label="Keisti kalbą">🌐 <span id="lang-current">LT</span></button>
+    <div class="lang-options" id="lang-options">
+      <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
+      <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" id="lang-pl" onclick="setLang('pl')">PL</button>
+    </div>
     <span style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink3);" title="Backend status">
       <span id="api-status-dot" style="width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;transition:background .5s;"></span>
       <span id="api-status-txt" style="display:none"></span>
@@ -1967,7 +1973,14 @@ function setLang(l){
   document.documentElement.lang=l;
   document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("on"));
   const lb=document.getElementById("lang-"+l);if(lb)lb.classList.add("on");
+  const lc=document.getElementById("lang-current");if(lc)lc.textContent=l.toUpperCase();
+  const bar=document.getElementById("translate-bar");if(bar)bar.classList.remove("open");
   applyLang();
+}
+
+function toggleLangBar(){
+  const bar=document.getElementById("translate-bar");
+  if(bar)bar.classList.toggle("open");
 }
 
 function applyLang(){
