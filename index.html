@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.14 — clearer photo vs internet comparison ── */
+/* ── GOODY GOOD DEAL v5.16 — low coverage notice + Amazon price fix ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1686,6 +1686,11 @@ function renderResults(d,q,opts){opts=opts||{};
         ${dsPill}
       </div>
     </div>`;
+    // Low coverage note: only 1 shop found, deal score less reliable
+    if(shopCount===1&&!d._partial){
+      const coverageNote={"lt":"Rastas tik 1 pardavėjas — palyginti negalime","de":"Nur 1 Händler gefunden — kein Preisvergleich möglich","pl":"Znaleziono tylko 1 sprzedawcę — brak porównania cen"}[lang]||"Only 1 seller found — price comparison unavailable";
+      html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-sm);margin-bottom:10px;font-size:11px;color:var(--ink3);">ℹ️ ${coverageNote}</div>`;
+    }
   }
 
   if(d.scan_confidence){
