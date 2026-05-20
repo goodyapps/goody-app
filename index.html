@@ -2477,12 +2477,25 @@ let _priceChart = null;
 async function fetchPriceHistory(q) {
   const container = document.getElementById("price-history-wrap");
   if (!container) return;
-  // Don't show loading placeholder — just render when ready
   container.innerHTML = "";
   try {
     const r = await fetch(`${API_BASE}/api/price-history?q=${encodeURIComponent(q)}`, {signal: AbortSignal.timeout(8000)});
     if (!r.ok) return;
     const d = await r.json();
+    // Inject "historical low" badge into instant verdict bar if current best price ≤ 30d low + 5%
+    if(d.price_30d_min&&lastData&&lastData.price_min){
+      const isAtLow=lastData.price_min<=d.price_30d_min*1.05;
+      const ivBar=document.querySelector(".fade-up[style*='rgba(39,224,138,0.12']");
+      if(isAtLow&&ivBar&&!document.getElementById("hist-low-badge")){
+        const lowLbl={"lt":"📉 Istorinis minimumo","de":"📉 Historisches Tief","pl":"📉 Historyczne minimum"}[curLang]||"📉 Historical low";
+        const badge=document.createElement("span");
+        badge.id="hist-low-badge";
+        badge.style.cssText="font-size:10px;font-weight:800;background:rgba(39,224,138,0.2);color:var(--green);border-radius:20px;padding:3px 9px;margin-top:4px;display:inline-block;";
+        badge.textContent=lowLbl;
+        const priceDiv=ivBar.querySelector("[style*='26px']");
+        if(priceDiv)priceDiv.appendChild(badge);
+      }
+    }
     if (!d.labels || d.labels.length < 2 || !(d.datasets||[]).length) {
       const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
       const noDataMsg={"lt":"Dar nėra duomenų — patikrinkite po kelių paieškų","de":"Noch keine Daten — nach weiteren Suchen prüfen","pl":"Brak danych — sprawdź po kilku wyszukiwaniach"}[curLang]||"No history yet — search again later to build price trends";
