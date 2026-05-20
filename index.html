@@ -1377,7 +1377,9 @@ function renderResults(d,q,opts){opts=opts||{};
       title:{"lt":"Nieko nerasta","de":"Nichts gefunden","pl":"Nic nie znaleziono"}[lang]||"Nothing found",
       sub:{"lt":"Nepavyko rasti kainų šiam produktui","de":"Keine Preise gefunden für","pl":"Nie znaleziono cen dla"}[lang]||"Could not find prices for",
       tips:{"lt":"Patarimai","de":"Tipps","pl":"Wskazówki"}[lang]||"Tips",
-      tip1:{"lt":"Bandyk trumpesnį pavadinimą (pvz. Samsung S24)","de":"Kürzeren Namen versuchen (Marke + Modell)","pl":"Spróbuj krótszej nazwy (marka + model)"}[lang]||"Try a shorter product name (brand + model)",
+      tip1:(/^\d{8,14}$/.test((q||"").replace(/\s/g,"")))?
+        ({"lt":"Barkodas neatpažintas — įveskite produkto pavadinimą rankiniu būdu","de":"Barcode unbekannt — Produktname manuell eingeben","pl":"Kod kreskowy nieznany — wpisz nazwę ręcznie"}[lang]||"Barcode not found — type product name manually")
+        :({"lt":"Bandyk trumpesnį pavadinimą (pvz. Samsung S24)","de":"Kürzeren Namen versuchen (Marke + Modell)","pl":"Spróbuj krótszej nazwy (marka + model)"}[lang]||"Try a shorter product name (brand + model)"),
       tip2:{"lt":"Parduotuvės gali neturėti šio produkto","de":"Einige Shops führen diesen Artikel möglicherweise nicht","pl":"Niektóre sklepy mogą nie posiadać tego produktu"}[lang]||"Some shops may not carry this item",
       popular:{"lt":"Populiarūs produktai","de":"Beliebte Suchen","pl":"Popularne wyszukiwania"}[lang]||"Popular searches",
       again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
