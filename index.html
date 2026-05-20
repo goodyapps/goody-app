@@ -1077,12 +1077,12 @@ function buildCats(){
 }
 
 const POPULAR_FALLBACK = [
-  {ic:"📱", q:"iPhone 16 Pro", price:"from €1,199"},
-  {ic:"💻", q:"MacBook Air M3", price:"from €1,299"},
+  {ic:"📱", q:"iPhone 17 Pro", price:"from €1,199"},
+  {ic:"💻", q:"MacBook Air M4", price:"from €1,099"},
   {ic:"🎧", q:"Sony WH-1000XM5", price:"from €279"},
   {ic:"🌀", q:"Dyson V15 Detect", price:"from €549"},
   {ic:"📺", q:"Samsung QLED 65", price:"from €799"},
-  {ic:"🤖", q:"Xiaomi Robot Vacuum", price:"from €199"},
+  {ic:"🤖", q:"Roborock S8", price:"from €399"},
 ];
 
 let _popularItems = [];
@@ -1632,8 +1632,8 @@ function renderResults(d,q,opts){opts=opts||{};
       popular:{"lt":"Populiarūs produktai","de":"Beliebte Suchen","pl":"Popularne wyszukiwania"}[lang]||"Popular searches",
       again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
     };
-    const suggestions=["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Sony WH-1000XM5","Dyson V15"];
-    const sugHtml=suggestions.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
+    const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
+    const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
