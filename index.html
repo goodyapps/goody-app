@@ -64,7 +64,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .ring:nth-child(2){width:126px;height:126px;animation-delay:0.4s;}
 .ring:nth-child(3){width:100px;height:100px;animation-delay:0.8s;}
 @keyframes pulse{0%{opacity:0.6;transform:scale(0.85);}100%{opacity:0;transform:scale(1.08);}}
-.scan-btn{width:100px;height:100px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 36px rgba(39,224,138,0.65),0 0 72px rgba(39,224,138,0.28),0 8px 24px rgba(0,0,0,0.28);}
+.scan-btn{width:100px;height:100px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform var(--dur),box-shadow var(--dur);position:relative;z-index:2;box-shadow:0 0 36px rgba(39,224,138,0.65),0 0 72px rgba(39,224,138,0.28),0 8px 24px rgba(0,0,0,0.28);will-change:transform;}
 .scan-btn:hover{box-shadow:0 0 44px rgba(39,224,138,0.75),0 0 88px rgba(39,224,138,0.32),0 8px 28px rgba(0,0,0,0.3);}
 .scan-btn:active{transform:scale(0.88);}
 .scan-btn svg{width:40px;height:40px;}
@@ -115,8 +115,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .vfc.tr{top:0;right:0;border-width:2.5px 2.5px 0 0;border-radius:0 5px 0 0;}
 .vfc.bl{bottom:0;left:0;border-width:0 0 2.5px 2.5px;border-radius:0 0 0 5px;}
 .vfc.br{bottom:0;right:0;border-width:0 2.5px 2.5px 0;border-radius:0 0 5px 0;}
-.vf-scanline{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#ff3b3b 20%,#fff 50%,#ff3b3b 80%,transparent);box-shadow:0 0 8px rgba(255,59,59,0.9),0 0 18px rgba(255,59,59,0.4);animation:scanLine 1.6s ease-in-out infinite;display:none;}
-@keyframes scanLine{0%{top:2px;}50%{top:calc(100% - 2px);}100%{top:2px;}}
+.vf-scanline{position:absolute;top:2px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#ff3b3b 20%,#fff 50%,#ff3b3b 80%,transparent);box-shadow:0 0 8px rgba(255,59,59,0.9),0 0 18px rgba(255,59,59,0.4);animation:scanLine 1.6s ease-in-out infinite;display:none;will-change:transform;}
+@keyframes scanLine{0%{transform:translateY(0);}50%{transform:translateY(124px);}100%{transform:translateY(0);}}
 
 /* ── BARCODE UX ── */
 .vf-frame.locked{animation:bcLock 0.35s cubic-bezier(0.16,1,0.3,1) both;}
@@ -183,12 +183,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .p-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;transition:all var(--dur);cursor:pointer;position:relative;overflow:hidden;}
 .p-card:active{transform:scale(0.98);}
 .p-card.best{background:rgba(39,224,138,0.06);border-color:rgba(39,224,138,0.3);border-width:1.5px;}
-.p-card-shimmer{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(39,224,138,0.05),transparent);animation:sh 3.5s infinite;}
+.p-card-shimmer{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(39,224,138,0.06) 40%,rgba(39,224,138,0.09) 50%,rgba(39,224,138,0.06) 60%,transparent 100%);animation:sh 3.5s infinite;will-change:transform;}
 .save-ribbon{position:absolute;top:10px;right:-1px;background:var(--green);color:#121A24;font-size:10px;font-weight:900;padding:3px 10px 3px 8px;border-radius:6px 0 0 6px;letter-spacing:.04em;text-transform:uppercase;}
 .pct-delta{font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:2px;display:inline-block;}
 .pct-delta.expensive{background:rgba(255,90,90,0.12);color:var(--red);}
 .winner-crown{position:absolute;top:-1px;left:14px;font-size:11px;font-weight:900;color:var(--green);letter-spacing:.05em;text-transform:uppercase;background:var(--green-l);border:1px solid var(--green-m);padding:2px 8px;border-radius:0 0 8px 8px;}
-@keyframes sh{0%{left:-100%;}100%{left:200%;}}
+@keyframes sh{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .pc-shop{display:flex;align-items:center;gap:10px;}
 .pc-logo{width:34px;height:34px;border-radius:9px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
@@ -549,6 +549,24 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .ring:nth-child(3){width:clamp(76px,22vw,100px);height:clamp(76px,22vw,100px);}
 .cat-n{font-size:clamp(11px,2.5vw,12px);}
 
+/* ── DEAL SCORE PILL ── */
+.deal-score-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;}
+.dsp-high{background:var(--green-l);color:var(--green);}
+.dsp-mid{background:var(--amber-l);color:var(--amber);}
+.dsp-low{background:var(--red-l);color:var(--red);}
+
+/* ── CAT KEYBOARD NAV ── */
+.cat:focus-visible{outline:2px solid var(--green);outline-offset:2px;background:var(--green-l);}
+
+/* ── PREFERS REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;}
+  .ring{animation:none;opacity:0.15;}
+  .p-card-shimmer{animation:none;opacity:0;}
+  .vf-scanline{animation:none;}
+  .scan-btn.scanning{animation:none;}
+}
+
 </style>
 </head>
 <body>
@@ -730,16 +748,19 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <div class="confetti-wrap" id="confetti-wrap"></div>
 
   <!-- BACK BANNER: shown when user returns from a shop tab -->
-  <div class="back-banner" id="back-banner" role="alert" aria-live="polite">
+  <div class="back-banner" id="back-banner" role="alert" aria-live="assertive">
     <span>← Grįžote iš <strong id="back-shop-name"></strong> | Ar radote pigiau?</span>
     <button class="bb-btn yes" onclick="backBannerYes()">Taip ✓</button>
     <button class="bb-btn" onclick="backBannerNo()">Ne, ieškoti dar</button>
     <button class="bb-close" onclick="hideBackBanner()" aria-label="Uždaryti">×</button>
   </div>
 
+  <!-- BUY POPUP backdrop -->
+  <div id="buy-popup-backdrop" onclick="buyPopupLater()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:449;backdrop-filter:blur(4px);"></div>
+
   <!-- BUY POPUP: "Ar nusipirkai?" after 30s return -->
-  <div class="buy-popup" id="buy-popup" role="dialog" aria-modal="true">
-    <div class="bp-q">Ar nusipirkai <strong id="buy-popup-item"></strong>?</div>
+  <div class="buy-popup" id="buy-popup" role="dialog" aria-modal="true" aria-labelledby="buy-popup-heading">
+    <div class="bp-q" id="buy-popup-heading">Ar nusipirkai <strong id="buy-popup-item"></strong>?</div>
     <div class="bp-btns">
       <button class="bp-btn yes" onclick="buyPopupYes()">Taip 🎉</button>
       <button class="bp-btn" onclick="buyPopupNo()">Ne, ieškau dar</button>
@@ -926,8 +947,12 @@ function buildCats(){
     const label=c[curLang]||c.en||c.lt;
     const query=c["q"+curLang]||c.q;
     const el=document.createElement("div"); el.className="cat";
+    el.setAttribute("role","button"); el.setAttribute("tabindex","0");
+    el.setAttribute("aria-label",label);
     el.innerHTML=`<span class="cat-ic">${c.ic}</span><div class="cat-n">${label}</div>`;
-    el.onclick=()=>{document.getElementById("srch-inp").value=query;doSearch();};
+    const go=()=>{document.getElementById("srch-inp").value=query;doSearch();};
+    el.onclick=go;
+    el.onkeydown=(e)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};
     g.appendChild(el);
   });
 }
@@ -1159,13 +1184,16 @@ function showBuyPopup(q,immediate){
   if(!q)q=lastQ||'';
   const popup=document.getElementById('buy-popup');
   const itemEl=document.getElementById('buy-popup-item');
+  const backdrop=document.getElementById('buy-popup-backdrop');
   if(!popup)return;
   if(itemEl)itemEl.textContent=q;
   popup.classList.add('show');
+  if(backdrop)backdrop.style.display='block';
 }
 
 function hideBuyPopup(){
   const p=document.getElementById('buy-popup');if(p)p.classList.remove('show');
+  const b=document.getElementById('buy-popup-backdrop');if(b)b.style.display='none';
 }
 
 function buyPopupYes(){
@@ -1340,6 +1368,10 @@ function renderResults(d,q,opts){opts=opts||{};
 
   let html="";
 
+  // ── SCROLL RESET (Eglė) ──
+  const _rb=document.getElementById("res-body");
+  if(_rb)_rb.scrollTop=0;
+
   if(!results.length){
     const _nr={
       title:{"lt":"Nieko nerasta","de":"Nichts gefunden","pl":"Nic nie znaleziono"}[lang]||"Nothing found",
@@ -1367,6 +1399,35 @@ function renderResults(d,q,opts){opts=opts||{};
     </div>`;
     document.getElementById("res-body").innerHTML=html;
     return;
+  }
+
+  // ── INSTANT VERDICT BAR (Eglė — visible without scrolling) ──
+  if(onlineResults.length>=1 && !scannedPrice){
+    const maxOnline=Math.max(...onlineResults.map(r=>r.price));
+    const savings=maxOnline>bestOnline.price?maxOnline-bestOnline.price:0;
+    const saveTxt=savings>=1?` · <span style="color:var(--green);">${{"lt":"taupai","de":"sparen","pl":"oszczędzasz"}[lang]||"save"} ${money(savings)}</span>`:"";
+    const shopCount=onlineResults.length;
+    const shopWord={"lt":"parduotuvė","de":"Shop","pl":"sklep"}[lang]||"shop";
+    const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
+    const shopsLabel=shopCount===1?`1 ${shopWord}`:`${shopCount} ${shopsWord}`;
+    const bestLbl={"lt":"Pigiausia kaina","de":"Günstigster Preis","pl":"Najlepsza cena"}[lang]||"Best price";
+    // deal_score pill
+    const ds=Number(d.deal_score||0);
+    let dsPill="";
+    if(ds>=82)dsPill=`<span class="deal-score-pill dsp-high">🔥 ${ds}/100</span>`;
+    else if(ds>=60)dsPill=`<span class="deal-score-pill dsp-mid">⭐ ${ds}/100</span>`;
+    else if(ds>0)dsPill=`<span class="deal-score-pill dsp-low">⚠️ ${ds}/100</span>`;
+    html+=`<div style="background:linear-gradient(135deg,rgba(39,224,138,0.12),rgba(39,224,138,0.04));border:1.5px solid rgba(39,224,138,0.28);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;" class="fade-up">
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${bestLbl}</div>
+        <div style="font-size:26px;font-weight:900;color:var(--green);line-height:1;">${money(bestOnline.price)}</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:3px;">${escHtml(bestOnline.shop)}${saveTxt}</div>
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div style="font-size:11px;color:var(--ink3);">${shopsLabel}</div>
+        ${dsPill}
+      </div>
+    </div>`;
   }
 
   if(d.scan_confidence){
@@ -1634,11 +1695,11 @@ function renderResults(d,q,opts){opts=opts||{};
 
 function getShopLogo(shop){
   const s=(shop||"").toLowerCase();
-  if(s.includes("amazon.de"))return"🇩🇪";
-  if(s.includes("amazon.pl"))return"🇵🇱";
-  if(s.includes("amazon"))return"🌍";
-  if(s.includes("varle"))return"🏪";
-  if(s.includes("elesen"))return"⚡";
+  if(s.includes("amazon.de"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">a.de</span>`;
+  if(s.includes("amazon.pl"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">a.pl</span>`;
+  if(s.includes("amazon"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">amzn</span>`;
+  if(s.includes("varle"))return`<span style="background:#e31e24;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Vrl</span>`;
+  if(s.includes("elesen"))return`<span style="background:#1565c0;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Els</span>`;
   if(s.includes("scan")||s.includes("scanned"))return"📷";
   return"🛍";
 }
