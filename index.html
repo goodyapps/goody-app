@@ -990,9 +990,9 @@ function buildSaved(){
   });
 }
 
-function clearHistory(){hist=[];localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();toast("History cleared");}
-function clearData(){if(!confirm("Clear all data?"))return;localStorage.clear();location.reload();}
-function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}const ic=lastData.category_icon||_getIcon(lastQ)||"🔍";wl.push({q:lastQ,ic,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();_updateWlBadge();toast("💚 Saved!");}
+function clearHistory(){hist=[];localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();toast({"lt":"Istorija išvalyta","de":"Verlauf gelöscht","pl":"Historia wyczyszczona"}[curLang]||"History cleared");}
+function clearData(){const confirmMsg={"lt":"Išvalyti visus duomenis?","de":"Alle Daten löschen?","pl":"Wyczyścić wszystkie dane?"}[curLang]||"Clear all data?";if(!confirm(confirmMsg))return;localStorage.clear();location.reload();}
+function saveWishlist(){if(!lastData||!lastQ){toast({"lt":"Nieko išsaugoti","de":"Nichts zu speichern","pl":"Nic do zapisania"}[curLang]||"Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast({"lt":"Jau išsaugota!","de":"Bereits gespeichert!","pl":"Już zapisano!"}[curLang]||"Already saved!");return;}const ic=lastData.category_icon||_getIcon(lastQ)||"🔍";wl.push({q:lastQ,ic,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();_updateWlBadge();toast({"lt":"💚 Išsaugota!","de":"💚 Gespeichert!","pl":"💚 Zapisano!"}[curLang]||"💚 Saved!");}
 function removeWl(i){wl.splice(i,1);localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();_updateWlBadge();}
 
 /* ── NAV ── */
@@ -1027,7 +1027,7 @@ function clearSearch(){
 let _voiceActive=false;
 function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){toast("Voice search not supported in this browser");return;}
+  if(!SR){toast({"lt":"Balso paieška nepalaikoma šioje naršyklėje","de":"Sprachsuche in diesem Browser nicht unterstützt","pl":"Wyszukiwanie głosowe nie jest obsługiwane w tej przeglądarce"}[curLang]||"Voice search not supported in this browser");return;}
   if(_voiceActive)return;
   _voiceActive=true;
   const btn=document.getElementById("voice-btn");
@@ -1041,7 +1041,7 @@ function startVoice(){
     onSrchInput(document.getElementById("srch-inp"));
     doSearch();
   };
-  rec.onerror=()=>{toast("Voice not recognized — try again");};
+  rec.onerror=()=>{toast({"lt":"Balsas neatpažintas — bandykite dar kartą","de":"Sprache nicht erkannt — erneut versuchen","pl":"Nie rozpoznano głosu — spróbuj ponownie"}[curLang]||"Voice not recognized — try again");};
   rec.onend=()=>{_voiceActive=false;if(btn)btn.classList.remove("listening");};
   rec.start();
   const voiceLbl={"lt":"Klausomasi...","de":"Höre zu...","pl":"Słucham..."}[curLang]||"Listening...";
@@ -1050,7 +1050,7 @@ function startVoice(){
 
 function copyPrice(price){
   navigator.clipboard.writeText(price).then(()=>{
-    toast("💰 "+price+" copied!");
+    toast("💰 "+price+" "+({"lt":"nukopijuota!","de":"kopiert!","pl":"skopiowana!"}[curLang]||"copied!"));
   }).catch(()=>toast(price));
 }
 
@@ -1778,9 +1778,9 @@ async function runScan(){
       navTo("results");
     } else {
       const q=data.scanned_product||data.barcode||data.product_name||data.context||"";
-      if(!q){toast("Could not identify product — try another photo");return;}
+      if(!q){toast({"lt":"Produktas neatpažintas — pabandykite kitą nuotrauką","de":"Produkt nicht erkannt — anderes Foto versuchen","pl":"Nie rozpoznano produktu — spróbuj innego zdjęcia"}[curLang]||"Could not identify product — try another photo");return;}
       document.getElementById("srch-inp").value=q;
-      if(data.price_visible)toast(`Price tag: €${data.price_visible}`);
+      if(data.price_visible)toast(`${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[curLang]||"Price tag"}: €${data.price_visible}`);
       doSearch();
     }
   }catch(e){
@@ -2074,17 +2074,19 @@ function shareResults(name, price){
 function toggleWatch(name, price){
   const key="gy_watch";
   let watches=JSON.parse(localStorage.getItem(key)||"[]");
-  const id=name.replace(/\s/g,'_');
+  const id=name.replace(/\W/g,'_');
   const btn=document.getElementById("watch-btn-"+id);
   const exists=watches.find(w=>w.name===name);
+  const watchLbl={"lt":"🔔 Stebėti kainą","de":"🔔 Preis beobachten","pl":"🔔 Obserwuj cenę"}[curLang]||"🔔 Watch price";
+  const watchingLbl={"lt":"✅ Stebima","de":"✅ Beobachtet","pl":"✅ Obserwowane"}[curLang]||"✅ Watching";
   if(exists){
     watches=watches.filter(w=>w.name!==name);
-    if(btn){btn.classList.remove("active");btn.textContent="🔔 Watch price";}
-    toast("Removed from watchlist");
+    if(btn){btn.classList.remove("active");btn.textContent=watchLbl;}
+    toast({"lt":"Pašalinta iš stebimų","de":"Aus der Beobachtung entfernt","pl":"Usunięto z obserwowanych"}[curLang]||"Removed from watchlist");
   } else {
     watches.push({name,price,added:new Date().toISOString()});
-    if(btn){btn.classList.add("active");btn.innerHTML="✅ Watching";}
-    toast("💚 Added to watchlist!");
+    if(btn){btn.classList.add("active");btn.textContent=watchingLbl;}
+    toast({"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!");
   }
   localStorage.setItem(key,JSON.stringify(watches));
 }
@@ -2245,7 +2247,7 @@ document.addEventListener("keydown",e=>{
         if(pgId==="pg-results"&&lastQ){doSearch();}
         else if(pgId==="pg-saved"){buildSaved();}
         else{fetchRate();buildRecent();buildPopular();}
-        toast("🔄 Refreshed!");
+        toast("🔄 "+({"lt":"Atnaujinta!","de":"Aktualisiert!","pl":"Odświeżono!"}[curLang]||"Refreshed!"));
       },700);
     } else {
       i.classList.remove("visible");i.style.top="-50px";i.style.opacity=0;
