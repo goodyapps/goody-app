@@ -1156,7 +1156,7 @@ function _relTime(ts){
   return Math.floor(diff/86400)+"d";
 }
 function removeHist(i){hist.splice(i,1);localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();}
-const _HOME_HINTS = ["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Dyson V15","Sony WH-1000XM5"];
+const _HOME_HINTS = ["iPhone 17 Pro","MacBook Air M4","Samsung Galaxy S25","Dyson V15","Sony WH-1000XM5"];
 function buildRecent(){
   const t=getLang();
   const g=document.getElementById("recent-list"); g.innerHTML="";
