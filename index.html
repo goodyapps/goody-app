@@ -1532,12 +1532,14 @@ async function fetchRate(){
 function updateRateUI(d){
   const pct=d.limit>0?Math.min(100,Math.round(d.used/d.limit*100)):0;
   document.getElementById("rate-fill").style.width=pct+"%";
-  document.getElementById("rate-used").textContent=d.used+" used";
-  document.getElementById("rate-left").textContent=d.remaining+" left";
+  const _ul={"lt":"panaudota","de":"genutzt","pl":"użyte"}[curLang]||"used";
+  const _ll={"lt":"liko","de":"übrig","pl":"pozostało"}[curLang]||"left";
+  document.getElementById("rate-used").textContent=d.used+" "+_ul;
+  document.getElementById("rate-left").textContent=d.remaining+" "+_ll;
   const disp=document.getElementById("rate-disp");
   if(disp){
     if(d.remaining<=0){disp.textContent="⚠️ Limit";disp.style.color="var(--red)";}
-    else if(d.remaining<=10){disp.textContent=d.remaining+" left";disp.style.color="var(--amber)";}
+    else if(d.remaining<=10){disp.textContent=d.remaining+" "+_ll;disp.style.color="var(--amber)";}
     else{disp.textContent="";}
   }
 }
