@@ -1688,7 +1688,7 @@ function renderResults(d,q,opts){opts=opts||{};
     const _rawLink=r.affiliate_url||r.url||"";
     const link=_rawLink.startsWith("http")?addGoodyUtm(_rawLink):_rawLink;
     const hasLink=link.startsWith("http");
-    const logo=getShopLogo(r.shop);
+    const logo=getShopLogo(r.shop,r.image_url);
     let badges="";
 
     if(scan){
@@ -1826,7 +1826,8 @@ function renderResults(d,q,opts){opts=opts||{};
   if(opts.fetchHistory!==false)fetchPriceHistory(_productName);
 }
 
-function getShopLogo(shop){
+function getShopLogo(shop,imgUrl){
+  if(imgUrl&&imgUrl.startsWith("http"))return`<img src="${escHtml(imgUrl)}" style="width:34px;height:34px;object-fit:contain;border-radius:9px;background:#fff;" loading="lazy" onerror="this.style.display='none';this.parentNode.appendChild(document.createTextNode('🛍'))">`;
   const s=(shop||"").toLowerCase();
   if(s.includes("amazon.de"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">a.de</span>`;
   if(s.includes("amazon.pl"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">a.pl</span>`;
