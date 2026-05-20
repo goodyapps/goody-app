@@ -603,6 +603,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <span id="home-wl-badge" style="position:absolute;top:0;right:0;background:var(--green);color:#121A24;font-size:9px;font-weight:900;min-width:15px;height:15px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 2px;"></span>
       </button>
     </div>
+    <div id="home-stat" style="display:none;font-size:11px;color:var(--ink3);padding:2px 22px 0;font-weight:600;"></div>
 
     <div class="scan-hero">
       <div class="scan-hint">Nufotografuok kainą ir rask pigiau internete</div>
@@ -956,7 +957,46 @@ window.addEventListener("DOMContentLoaded",()=>{
   const qParam=new URLSearchParams(window.location.search).get("q");
   if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
   else{setTimeout(showOnboard,800);}
+  // Show savings stats and check watchlist drops with slight delay (non-blocking)
+  setTimeout(_showSavingsStat,1200);
+  setTimeout(_checkWatchlistDrops,2000);
 });
+
+function _showSavingsStat(){
+  // Compute total savings potential from history (best price saved each search)
+  if(!hist.length)return;
+  const wl2=JSON.parse(localStorage.getItem("gy_wl")||"[]");
+  const wlQ=new Set(wl2.map(w=>w.q));
+  let totalSaved=0;
+  hist.forEach(h=>{
+    // each hist item has "price" = best price found; we don't have the worst, so skip savings calc
+    // instead just show search count + items saved
+  });
+  const searches=hist.length;
+  const saved=wl2.length+JSON.parse(localStorage.getItem("gy_watch")||"[]").length;
+  if(searches<2)return; // too early to show stats
+  const statEl=document.getElementById("home-stat");if(!statEl)return;
+  const searchTxt={"lt":`${searches} paieškos atliktos`,"de":`${searches} Suchen durchgeführt`,"pl":`${searches} wyszukiwań`}[curLang]||`${searches} searches`;
+  const savedTxt=saved>0?(" · "+{"lt":`${saved} išsaugota`,"de":`${saved} gespeichert`,"pl":`${saved} zapisane`}[curLang]||`${saved} saved`):"";
+  statEl.textContent="✓ "+searchTxt+savedTxt;
+  statEl.style.display="block";
+}
+
+function _checkWatchlistDrops(){
+  const watches=JSON.parse(localStorage.getItem("gy_watch")||"[]");
+  if(!watches.length)return;
+  watches.forEach(item=>{
+    const h=hist.find(x=>x.q===item.name);
+    if(!h||!h.price)return;
+    const curP=parseFloat(h.price.replace('€','')||'0');
+    const savedP=parseFloat(String(item.price||0))||0;
+    if(curP>0&&savedP>0&&curP<savedP-1){
+      const drop=(savedP-curP).toFixed(2);
+      const msg={"lt":`🔔 ${item.name.slice(0,24)}: kaina krito €${drop}!`,"de":`🔔 ${item.name.slice(0,24)}: Preis sank um €${drop}!`,"pl":`🔔 ${item.name.slice(0,24)}: cena spadła o €${drop}!`}[curLang]||`🔔 ${item.name.slice(0,24)} dropped €${drop}!`;
+      setTimeout(()=>toast(msg),300);
+    }
+  });
+}
 
 function buildCats(){
   const g=document.getElementById("cats-grid"); g.innerHTML="";
