@@ -721,7 +721,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         </div>
       </div>
       <div class="bc-result-bar" id="bc-result-bar">
-        <div class="bc-res-label">Barkodas rastas</div>
+        <div class="bc-res-label" id="bc-res-label">Barkodas rastas</div>
         <div class="bc-res-name" id="bc-res-name">Ieškoma...</div>
         <div class="bc-res-code" id="bc-res-code"></div>
       </div>
@@ -1151,9 +1151,13 @@ document.addEventListener('visibilitychange',()=>{
 
 function showBackBanner(shop,q){
   const banner=document.getElementById('back-banner');
-  const shopEl=document.getElementById('back-shop-name');
   if(!banner)return;
-  if(shopEl)shopEl.textContent=shop;
+  const _bf={"lt":"Grįžote iš","de":"Zurück von","pl":"Wróciłeś z"}[curLang]||"Back from";
+  const _bd={"lt":"| Ar radote pigiau?","de":"| Günstiger gefunden?","pl":"| Znalazłeś taniej?"}[curLang]||"| Find it cheaper?";
+  const _by={"lt":"Taip ✓","de":"Ja ✓","pl":"Tak ✓"}[curLang]||"Yes ✓";
+  const _bn={"lt":"Ne, ieškoti dar","de":"Nein, weitersuchen","pl":"Nie, szukaj dalej"}[curLang]||"No, keep searching";
+  const _bc={"lt":"Uždaryti","de":"Schließen","pl":"Zamknij"}[curLang]||"Close";
+  banner.innerHTML=`<span>← ${_bf} <strong>${escHtml(shop)}</strong> ${_bd}</span><button class="bb-btn yes" onclick="backBannerYes()">${_by}</button><button class="bb-btn" onclick="backBannerNo()">${_bn}</button><button class="bb-close" onclick="hideBackBanner()" aria-label="${_bc}">×</button>`;
   banner.classList.add('show');
   setTimeout(hideBackBanner,5000);
   clearTimeout(_returnTimer);
@@ -1183,10 +1187,15 @@ function backBannerNo(){
 function showBuyPopup(q,immediate){
   if(!q)q=lastQ||'';
   const popup=document.getElementById('buy-popup');
-  const itemEl=document.getElementById('buy-popup-item');
   const backdrop=document.getElementById('buy-popup-backdrop');
   if(!popup)return;
-  if(itemEl)itemEl.textContent=q;
+  const _bq={"lt":"Ar nusipirkai","de":"Hast du gekauft","pl":"Czy kupiłeś"}[curLang]||"Did you buy";
+  const _byes={"lt":"Taip 🎉","de":"Ja 🎉","pl":"Tak 🎉"}[curLang]||"Yes 🎉";
+  const _bno={"lt":"Ne, ieškau dar","de":"Nein, ich suche noch","pl":"Nie, szukam dalej"}[curLang]||"No, still looking";
+  const _bl={"lt":"Vėliau","de":"Später","pl":"Później"}[curLang]||"Later";
+  const h=document.getElementById('buy-popup-heading');if(h)h.innerHTML=`${_bq} <strong>${escHtml(q)}</strong>?`;
+  const btns=popup.querySelector('.bp-btns');
+  if(btns)btns.innerHTML=`<button class="bp-btn yes" onclick="buyPopupYes()">${_byes}</button><button class="bp-btn" onclick="buyPopupNo()">${_bno}</button><button class="bp-btn later" onclick="buyPopupLater()">${_bl}</button>`;
   popup.classList.add('show');
   if(backdrop)backdrop.style.display='block';
 }
@@ -1827,7 +1836,7 @@ function startBcLoop(){
   if(typeof ZXing==="undefined"){setTimeout(startBcLoop,800);return;}
   // Show "point at barcode" hint
   const hint=document.getElementById("bc-hint");
-  if(hint)hint.style.display="block";
+  if(hint){hint.textContent={"lt":"Nukreipk į barkodą","de":"Barcode zeigen","pl":"Skieruj na kod"}[curLang]||"Point at barcode";hint.style.display="block";}
   const hints=new Map();
   hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.QR_CODE]);
   hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
@@ -1870,6 +1879,7 @@ function onBcFound(code){
   // 6. Show result bar with code, then update with product name
   document.getElementById("bc-res-code").textContent=code;
   document.getElementById("bc-res-name").textContent={"lt":"Ieškoma...","de":"Suche...","pl":"Szukam..."}[curLang]||"Searching...";
+  const _brl=document.getElementById("bc-res-label");if(_brl)_brl.textContent={"lt":"Barkodas rastas","de":"Barcode erkannt","pl":"Kod znaleziony"}[curLang]||"Barcode found";
   const bar=document.getElementById("bc-result-bar");
   if(bar)setTimeout(()=>bar.classList.add("show"),60);
 
