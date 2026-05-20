@@ -894,7 +894,7 @@ function buildRecent(){
   hist.slice(0,8).forEach((h,i)=>{
     const age=h.ts?_relTime(h.ts):(h.time||t.recently||"recently");
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" aria-label="Remove" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${escHtml(h.q)}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" aria-label="Remove" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=h.q;doSearch();};
     g.appendChild(el);
   });
@@ -1110,6 +1110,10 @@ function isScanResult(r){
   return r.source==="scan" || String(r.shop||"").toLowerCase().includes("scanned");
 }
 
+function escHtml(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
 function renderResults(d,q){
   const results=d.results||[];
   const onlineResults=results.filter(r=>!isScanResult(r)&&Number(r.price)>0);
@@ -1147,6 +1151,15 @@ function renderResults(d,q){
     </div>`;
     document.getElementById("res-body").innerHTML=html;
     return;
+  }
+
+  if(d.scan_confidence){
+    const conf=d.scan_confidence;
+    const confIcon=conf==="high"?"✅":conf==="medium"?"🟡":"🔴";
+    const confLabel={"high":{"lt":"Aukštas tikslumas","de":"Hohe Genauigkeit","pl":"Wysoka dokładność"},"medium":{"lt":"Vidutinis tikslumas","de":"Mittlere Genauigkeit","pl":"Średnia dokładność"},"low":{"lt":"Žemas tikslumas","de":"Geringe Genauigkeit","pl":"Niska dokładność"}}[conf]||{};
+    const confText=confLabel[lang]||("Confidence: "+conf);
+    const confScanned=d.scanned_product?`<span style="font-weight:700;">${escHtml(d.scanned_product)}</span> · `:"";
+    html+=`<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-sm);margin-bottom:12px;font-size:12px;color:var(--ink2);">${confIcon} 📷 ${confScanned}${confText}</div>`;
   }
 
   if(scannedPrice>1 && bestOnline){
@@ -1272,8 +1285,8 @@ function renderResults(d,q){
       const coachTitle={"lt":"AI patarimas","de":"KI-Ratschlag","pl":"Porada AI"}[lang]||"AI Shopping Coach";
       html+=`<div class="coach-card fade-up">
         <div class="coach-head"><div class="coach-ico">🧠</div><div class="coach-title">${coachTitle}</div></div>
-        <div class="coach-body">${coachText}</div>
-        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 ${{"lt":"Alternatyva","de":"Alternative","pl":"Alternatywa"}[lang]||"Alternative"}: <span style="color:var(--ink);font-weight:700;">${d.alternative}</span></div>`:""}
+        <div class="coach-body">${escHtml(coachText)}</div>
+        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 ${{"lt":"Alternatyva","de":"Alternative","pl":"Alternatywa"}[lang]||"Alternative"}: <span style="color:var(--ink);font-weight:700;">${escHtml(d.alternative)}</span></div>`:""}
       </div>`;
     }
   }
@@ -1343,7 +1356,7 @@ function renderResults(d,q){
       <div class="pc-top">
         <div class="pc-shop">
           <div class="pc-logo">${logo}</div>
-          <div><div class="pc-name">${r.shop||"Shop"}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
+          <div><div class="pc-name">${escHtml(r.shop||"Shop")}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
         </div>
         <div style="text-align:right;">
           <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
