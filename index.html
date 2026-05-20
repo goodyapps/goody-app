@@ -1427,7 +1427,11 @@ function renderResults(d,q,opts){opts=opts||{};
     const btnHtml=hasLink
       ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener">${btnLabel}</a>`
       :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${noLinkLbl}</span>`;
-    const origPriceHtml=r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_currency} ${Math.round(r.original_price)}</div>`:"";
+    const origPriceHtml=r.original_price?(()=>{
+      const sym=r.original_currency==="PLN"?"zł":r.original_currency;
+      const fmt=r.original_currency==="PLN"?`${Math.round(r.original_price)} ${sym}`:`${sym} ${r.original_price.toFixed(2)}`;
+      return `<div style="font-size:10px;color:var(--ink3);">≈ ${fmt}</div>`;
+    })():"";
     // % delta vs cheapest (only for non-cheapest, non-scan cards)
     let pctDeltaHtml="";
     if(!scan&&!best&&bestOnline&&r.price>0&&bestOnline.price>0){
