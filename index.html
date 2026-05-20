@@ -468,13 +468,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .chart-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .chart-empty{text-align:center;padding:30px 0;font-size:13px;color:var(--ink3);}
 
+/* ── PRICE CARD RATING ROW (shown below badges when both exist) ── */
+.pc-rating-extra{display:flex;align-items:center;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="status">
     <span id="clk">--:--</span>
-    <span id="rate-disp">●●● WiFi</span>
+    <span id="rate-disp"></span>
   </div>
 
   <!-- HOME -->
@@ -541,7 +544,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- RESULTS -->
   <div class="page" id="pg-results">
     <div class="res-head">
-      <button class="back-btn" onclick="history.back()" aria-label="Go back">
+      <button class="back-btn" onclick="navTo('home')" aria-label="Go back">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div style="min-width:0;">
@@ -713,7 +716,7 @@ let lastData=null, lastQ="";
 /* ── ONBOARDING ── */
 const OB_STEPS=[
   {ic:"📷",title:"Scan any price tag",sub:"Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.",btn:"Next →"},
-  {ic:"🌍",title:"We check 8 shops",sub:"Varle, Pigu, 1a, Senukai, Topo, Elesen, Amazon.DE & Amazon.PL — all at once, in seconds.",btn:"Next →"},
+  {ic:"🌍",title:"We check 4 shops",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — all compared at once, in seconds.",btn:"Next →"},
   {ic:"🔥",title:"Get the best deal",sub:"See the lowest price, savings, and an AI verdict on whether to buy now or wait.",btn:"Let's go!"},
 ];
 let _obStep=0;
@@ -841,7 +844,7 @@ function buildSaved(){
   g.innerHTML="";
   wl.forEach((item,i)=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">🛒</div><div><div class="rec-name">${item.q}</div><div class="rec-meta">Best: ${item.price||"—"}</div></div></div><button style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;" onclick="removeWl(${i})">Remove</button>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${item.ic||"🛒"}</div><div><div class="rec-name">${item.q}</div><div class="rec-meta">Best: ${item.price||"—"}</div></div></div><button style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;" onclick="removeWl(${i})">Remove</button>`;
     el.onclick=(e)=>{if(e.target.tagName!=="BUTTON"){document.getElementById("srch-inp").value=item.q;doSearch();}};
     g.appendChild(el);
   });
@@ -849,7 +852,7 @@ function buildSaved(){
 
 function clearHistory(){hist=[];localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();toast("History cleared");}
 function clearData(){if(!confirm("Clear all data?"))return;localStorage.clear();location.reload();}
-function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}wl.push({q:lastQ,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();toast("💚 Saved!");}
+function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}const ic=lastData.category_icon||_getIcon(lastQ)||"🔍";wl.push({q:lastQ,ic,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();toast("💚 Saved!");}
 function removeWl(i){wl.splice(i,1);localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();}
 
 /* ── NAV ── */
@@ -885,7 +888,7 @@ async function doSearch(){
   history.pushState({q},"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
-  document.getElementById("res-meta").textContent=curLang==="lt"?"Ieškoma...":"Searching...";
+  document.getElementById("res-meta").textContent={"lt":"Ieškoma...","de":"Wird gesucht...","pl":"Szukam..."}[curLang]||"Searching...";
   const loadTimer=showLoading();
   const _ctrl=new AbortController();
   const _tid=setTimeout(()=>_ctrl.abort(),90000);
@@ -1002,9 +1005,11 @@ function renderResults(d,q){
   const lang=curLang||"en";
   const isLt=lang==="lt";
 
-  document.getElementById("res-title").textContent=d.product_name||q;
-  const cachedStr=d._cached?(" · "+( isLt?"iš cache":"cached")):"";
-  document.getElementById("res-meta").textContent=results.length?(results.length+" "+(isLt?"parduotuvių":"shops")+" · "+timeStr+cachedStr):(isLt?"Nieko nerasta":"No results");
+  const _titleIcon=d.category_icon||_getIcon(d.product_name||q);
+  document.getElementById("res-title").textContent=(_titleIcon?_titleIcon+" ":"")+(d.product_name||q);
+  const cachedStr=d._cached?(" · "+( isLt?"iš cache":{"de":"gecacht","pl":"z cache"}[lang]||"cached")):"";
+  const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
+  document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr):(isLt?"Nieko nerasta":"No results");
 
   let html="";
 
@@ -1060,7 +1065,6 @@ function renderResults(d,q){
       proof=isLt
         ?`Skirtumas nėra didelis, bet tai vis tiek geras dealas, jei pristatymas nekainuoja daug.`
         :`The gap is not huge, but it is still a good deal if delivery is low.`;
-      setTimeout(()=>fireConfetti(diff.toFixed(2)),700);
     }else if(diff>=-5){
       cardCls="warn";
       badge="👌 FAIR DEAL";
@@ -1106,14 +1110,24 @@ function renderResults(d,q){
     </div>`;
   }else{
     const score=d.deal_score||50;
-    const label=score>=75?"🔥 GOOD DEAL":score>=50?"👌 FAIR DEAL":"⚠️ MAYBE WAIT";
-    const title=score>=75?(isLt?"Rasta gera kaina":"Good price found"):score>=50?(isLt?"Kaina atrodo normali":"Price looks fair"):(isLt?"Kaina neatrodo ypatinga":"Price is not exceptional");
-    const sub=d.verdict_reason||d.buy_recommendation||"";
-    html+=`<div class="deal-win-card ${score>=75?"":score>=50?"warn":"bad"} fade-up">
+    const hasAI=!!(d.verdict_reason||d.buy_recommendation);
+    const label=score>=75?"🔥 GOOD DEAL":score>=50?(hasAI?"👌 FAIR DEAL":"📊 MARKET PRICE"):"⚠️ MAYBE WAIT";
+    const title=score>=75
+      ?(isLt?"Rasta gera kaina":"Good price found")
+      :score>=50
+        ?(hasAI
+          ?(isLt?"Kaina atrodo normali":"Price looks fair")
+          :(isLt?"Rasta kaina":"Prices found"))
+      :(isLt?"Kaina neatrodo ypatinga":"Price is not exceptional");
+    const sub=d.verdict_reason||d.buy_recommendation||(isLt?"Palyginome kainas iš kelių parduotuvių.":"We compared prices across shops.");
+    const cardCls=score>=75?"":score>=50?"warn":"bad";
+    const nOffers=onlineResults.length||results.length;
+    const offersLbl={"lt":nOffers===1?"pasiūlymas":"pasiūlymai","de":nOffers===1?"Angebot":"Angebote","pl":nOffers===1?"oferta":"oferty"}[lang]||"offers";
+    html+=`<div class="deal-win-card ${cardCls} fade-up">
       <div class="deal-badge">${label}</div>
       <div class="deal-title">${title}</div>
       <div class="deal-sub">${sub}</div>
-      <div class="mini-score"><span class="mini-score-pill">Score ${score}/100</span><span>${onlineResults.length||results.length} ${isLt?"pasiūlymai":"offers"}</span></div>
+      <div class="mini-score"><span class="mini-score-pill">${nOffers} ${offersLbl}</span></div>
     </div>`;
   }
 
@@ -1166,11 +1180,15 @@ function renderResults(d,q){
     }
 
     const delivery=humanDelivery(r.delivery);
-    const btnLabel=best&&!scan?(isLt?"Pirkti →":"Buy now →"):(isLt?"Peržiūrėti →":"View →");
+    const buyLbl={"lt":"Pirkti →","de":"Kaufen →","pl":"Kup →"}[lang]||"Buy now →";
+    const viewLbl={"lt":"Peržiūrėti →","de":"Ansehen →","pl":"Zobacz →"}[lang]||"View →";
+    const btnLabel=best&&!scan?buyLbl:viewLbl;
     const btnClass=best&&!scan?"buy-link":"view-link";
+    const noLinkLbl={"lt":"Nėra nuorodos","de":"Kein Link","pl":"Brak linku"}[lang]||"No link";
     const btnHtml=hasLink
       ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener">${btnLabel}</a>`
-      :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${isLt?"Nėra nuorodos":"No link"}</span>`;
+      :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${noLinkLbl}</span>`;
+    const origPriceHtml=r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_currency} ${Math.round(r.original_price)}</div>`:"";
 
     html+=`<div class="p-card${best&&!scan?" best":""} fade-up" style="animation-delay:${i*0.06}s">
       ${best&&!scan?'<div class="p-card-shimmer"></div>':""}
@@ -1181,13 +1199,14 @@ function renderResults(d,q){
         </div>
         <div style="text-align:right;">
           <div class="pc-price">${r.price>0?money(r.price):"—"}</div>
-          ${r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_price.toFixed(0)} ${r.original_currency}</div>`:""}
+          ${origPriceHtml}
         </div>
       </div>
       <div class="pc-bot">
-        <div class="pc-badges">${badges||rating}</div>
+        <div class="pc-badges">${badges}${rating&&!badges?rating:""}</div>
         ${btnHtml}
       </div>
+      ${rating&&badges?`<div class="pc-rating-extra">${rating}</div>`:""}
     </div>`;
   });
   html+='</div>';
@@ -1261,7 +1280,12 @@ function updateRateUI(d){
   document.getElementById("rate-fill").style.width=pct+"%";
   document.getElementById("rate-used").textContent=d.used+" used";
   document.getElementById("rate-left").textContent=d.remaining+" left";
-  document.getElementById("rate-disp").textContent=d.remaining>0?d.remaining+" left":"Limit reached";
+  const disp=document.getElementById("rate-disp");
+  if(disp){
+    if(d.remaining<=0){disp.textContent="⚠️ Limit";disp.style.color="var(--red)";}
+    else if(d.remaining<=10){disp.textContent=d.remaining+" left";disp.style.color="var(--amber)";}
+    else{disp.textContent="";}
+  }
 }
 
 /* ── CAMERA ── */
@@ -1449,7 +1473,7 @@ async function runScan(){
   navTo("results");
   document.getElementById("res-title").textContent="Scanning photo...";
   document.getElementById("res-meta").textContent="AI identifying product";
-  const scanShops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
+  const scanShops=["Varle.lt","Elesen.lt","Amazon.DE","Amazon.PL"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
   document.getElementById("res-body").innerHTML=`
@@ -1711,18 +1735,20 @@ function fireConfetti(savings){
     wrap.appendChild(el);
   }
   const st=document.getElementById("save-toast");
-  st.textContent=`🎉 You save €${savings}!`;
+  const saveMsg={"lt":`🎉 Sutaupi €${savings}!`,"de":`🎉 Du sparst €${savings}!`,"pl":`🎉 Oszczędzasz €${savings}!`}[curLang]||`🎉 You save €${savings}!`;
+  st.textContent=saveMsg;
   st.classList.add("on");
   setTimeout(()=>{st.classList.remove("on");wrap.innerHTML="";},3000);
 }
 
 /* ── LOADING MESSAGES ── */
 function showLoading(){
-  const shops=["Varle.lt","Pigu.lt","1a.lt","Senukai.lt","Topo centras","Elesen.lt","Amazon.DE","Amazon.PL"];
+  const shops=["Varle.lt","Elesen.lt","Amazon.DE","Amazon.PL"];
   const total=shops.length;
   let si=0, pct=8;
   const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
-  document.getElementById("res-meta").textContent=curLang==="lt"?`Tikriname ${total} parduotuvių...`:`Checking ${total} shops...`;
+  const checkingMeta={"lt":`Tikriname ${total} parduotuvių...`,"de":`${total} Shops werden geprüft...`,"pl":`Sprawdzam ${total} sklepy...`}[curLang]||`Checking ${total} shops...`;
+  document.getElementById("res-meta").textContent=checkingMeta;
   document.getElementById("res-body").innerHTML=`
     <div class="load-progress"><div class="load-progress-fill" id="load-pbar" style="width:8%"></div></div>
     <div style="padding:0 0 12px;">
@@ -1867,6 +1893,20 @@ function toast(m){
   const el=document.getElementById("toast");el.textContent=m;el.classList.add("on");
   clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove("on"),2800);
 }
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    const cam=document.getElementById("cam-sheet");
+    if(cam&&cam.classList.contains("open")){closeCam();return;}
+  }
+  if(e.key==="/"&&document.activeElement.tagName!=="INPUT"&&document.activeElement.tagName!=="TEXTAREA"){
+    e.preventDefault();
+    navTo("home");
+    const inp=document.getElementById("srch-inp");
+    if(inp){inp.focus();inp.select();}
+  }
+});
 
 /* PULL TO REFRESH */
 (function(){
