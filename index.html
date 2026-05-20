@@ -1288,7 +1288,9 @@ function _showSuggestions(val){
   if(!val||val.length<2){if(box)box.remove();return;}
   const q=val.toLowerCase();
   const livePopular=_popularItems.length?_popularItems.map(p=>p.q):POPULAR_FALLBACK.map(p=>p.q);
-  const matches=[...hist.map(h=>h.q),...livePopular]
+  // Also include category default queries as suggestion candidates
+  const catQueries=CATS.flatMap(c=>[c.q,c.qlt,c.qde,c.qpl].filter(Boolean));
+  const matches=[...hist.map(h=>h.q),...livePopular,...catQueries]
     .filter((v,i,a)=>a.indexOf(v)===i)
     .filter(s=>s.toLowerCase().includes(q)&&s.toLowerCase()!==q)
     .slice(0,6);
