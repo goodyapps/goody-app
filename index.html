@@ -1088,7 +1088,7 @@ async function doSearch(){
   history.pushState({q},"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
-  document.getElementById("res-meta").textContent={"lt":"Ieškoma...","de":"Wird gesucht...","pl":"Szukam..."}[curLang]||"Searching...";
+  document.getElementById("res-meta").textContent={"lt":"Ieškoma...","de":"Wird gesucht...","pl":"Szukamy cen..."}[curLang]||"Searching...";
   const loadTimer=showLoading();
   const _ctrl=new AbortController();
   const _tid=setTimeout(()=>_ctrl.abort(),90000);
@@ -1214,7 +1214,9 @@ function renderResults(d,q,opts){opts=opts||{};
 
   const _titleIcon=d.category_icon||_getIcon(d.product_name||q);
   document.getElementById("res-title").textContent=(_titleIcon?_titleIcon+" ":"")+(d.product_name||q);
-  const cachedStr=d._cached?(" · "+({"lt":"iš cache","de":"gecacht","pl":"z cache"}[lang]||"cached")):"";
+  const _cacheMin=d._cache_age_s?Math.round(d._cache_age_s/60):0;
+  const _cacheLbl={"lt":"iš cache","de":"gecacht","pl":_cacheMin<1?"sprawdzono przed chwilą":`sprawdzono ${_cacheMin} min temu`}[lang]||"cached";
+  const cachedStr=d._cached?(" · "+_cacheLbl):"";
   const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
   const noResLbl={"lt":"Nieko nerasta","de":"Keine Ergebnisse","pl":"Brak wyników"}[lang]||"No results";
   const timeFoundStr=d.search_time_ms&&!d._cached?` · ${(d.search_time_ms/1000).toFixed(1)}s`:""
@@ -1330,7 +1332,7 @@ function renderResults(d,q,opts){opts=opts||{};
     const hasAI=!!(d.verdict_reason||d.buy_recommendation);
     const label=score>=75?"🔥 GOOD DEAL":score>=50?(hasAI?"👌 FAIR DEAL":"📊 MARKET PRICE"):"⚠️ MAYBE WAIT";
     const title=score>=75
-      ?({"lt":"Rasta gera kaina","de":"Guter Preis gefunden","pl":"Znaleziono dobry cenę"}[lang]||"Good price found")
+      ?({"lt":"Rasta gera kaina","de":"Guter Preis gefunden","pl":"Znaleziono dobrą cenę"}[lang]||"Good price found")
       :score>=50
         ?(hasAI
           ?({"lt":"Kaina atrodo normali","de":"Preis sieht fair aus","pl":"Cena wygląda normalnie"}[lang]||"Price looks fair")
@@ -1352,9 +1354,9 @@ function renderResults(d,q,opts){opts=opts||{};
     const spread=d.price_max-d.price_min;
     const pct=Math.round((spread/d.price_max)*100);
     const summaryTitle={"lt":"Ką radome","de":"Was wir gefunden haben","pl":"Co znaleźliśmy"}[lang]||"What we found";
-    const lowestLbl={"lt":"Pigiausia","de":"Günstigster","pl":"Najtaniej"}[lang]||"Lowest";
-    const highestLbl={"lt":"Brangiausia","de":"Teuerster","pl":"Najdrożej"}[lang]||"Highest";
-    const gapLbl={"lt":"Skirtumas","de":"Spanne","pl":"Różnica"}[lang]||"Gap";
+    const lowestLbl={"lt":"Pigiausia","de":"Günstigster","pl":"Najlepsza cena"}[lang]||"Lowest";
+    const highestLbl={"lt":"Brangiausia","de":"Teuerster","pl":"Najwyższa cena"}[lang]||"Highest";
+    const gapLbl={"lt":"Skirtumas","de":"Spanne","pl":"Różnica cen"}[lang]||"Gap";
     html+=`<div class="market-summary win fade-up">
       <div class="ms-title">${summaryTitle}</div>
       <div class="ms-row"><span>${lowestLbl}</span><strong>${money(d.price_min)}</strong></div>
@@ -1393,7 +1395,7 @@ function renderResults(d,q,opts){opts=opts||{};
     if(scan){
       badges+=`<span class="badge b-gray">${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[lang]||"Photo price"}</span>`;
     }else{
-      if(r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geriausia internete","de":"Bestes Online","pl":"Najlepiej online"}[lang]||"Best online"}</span>`;
+      if(r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geriausia internete","de":"Bestes Online","pl":"Najlepsza online"}[lang]||"Best online"}</span>`;
       if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geras pasiūlymas","de":"Gutes Angebot","pl":"Dobra oferta"}[lang]||"Good deal"}</span>`;
       if(r.is_top_rated)badges+=`<span class="badge b-amber">${{"lt":"Top reitingas","de":"Top bewertet","pl":"Najwyżej oceniony"}[lang]||"Top rated"}</span>`;
     }
@@ -1478,7 +1480,7 @@ function renderResults(d,q,opts){opts=opts||{};
   const _wlId=_productName.replace(/\W/g,'_');
   if(results.length>0){
     const shareLbl={"lt":"Dalintis","de":"Teilen","pl":"Udostępnij"}[lang]||"Share deal";
-    const watchLbl={"lt":"Stebėti kainą","de":"Preis beobachten","pl":"Obserwuj cenę"}[lang]||"Watch price";
+    const watchLbl={"lt":"Stebėti kainą","de":"Preis beobachten","pl":"Śledź cenę"}[lang]||"Watch price";
     html+=`<div class="share-row fade-up">
       <button class="share-btn-main" id="share-btn-main" data-name="${escHtml(_productName)}" data-price="${d.price_min||0}">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 000 8h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2000,7 +2002,7 @@ function applyLang(){
   // Settings page translations
   const settingsTitles={"lt":"Nustatymai","de":"Einstellungen","pl":"Ustawienia"};
   const st=document.getElementById("set-title")||document.querySelector(".set-title");if(st)st.textContent=settingsTitles[curLang]||"Settings";
-  const svt=document.getElementById("saved-title");if(svt)svt.textContent={"lt":"Išsaugota","de":"Gespeichert","pl":"Zapisane"}[curLang]||"Saved";
+  const svt=document.getElementById("saved-title");if(svt)svt.textContent={"lt":"Išsaugota","de":"Gespeichert","pl":"Zapisano"}[curLang]||"Saved";
   const svl=document.getElementById("set-version-lbl");if(svl)svl.textContent={"lt":"Versija","de":"Version","pl":"Wersja"}[curLang]||"Version";
   const cd=document.getElementById("clear-data-lbl");if(cd)cd.textContent=t.clear_data||"Clear all data";
   const sla=document.getElementById("set-lbl-app");if(sla)sla.textContent={"lt":"Programa","de":"App","pl":"Aplikacja"}[curLang]||"App";
@@ -2104,7 +2106,7 @@ function toggleWatch(name, price){
   const id=name.replace(/\W/g,'_');
   const btn=document.getElementById("watch-btn-"+id);
   const exists=watches.find(w=>w.name===name);
-  const watchLbl={"lt":"🔔 Stebėti kainą","de":"🔔 Preis beobachten","pl":"🔔 Obserwuj cenę"}[curLang]||"🔔 Watch price";
+  const watchLbl={"lt":"🔔 Stebėti kainą","de":"🔔 Preis beobachten","pl":"🔔 Śledź cenę"}[curLang]||"🔔 Watch price";
   const watchingLbl={"lt":"✅ Stebima","de":"✅ Beobachtet","pl":"✅ Obserwowane"}[curLang]||"✅ Watching";
   if(exists){
     watches=watches.filter(w=>w.name!==name);
