@@ -1066,6 +1066,10 @@ function copyPrice(price){
   }).catch(()=>toast(price));
 }
 
+function trackClick(shop, q){
+  try{fetch(`${API_BASE}/api/track`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({shop,q}),keepalive:true});}catch(e){}
+}
+
 /* ── SEARCH ── */
 function _showSearchError(){
   const errMsg={"lt":"Nepavyko prisijungti prie serverio. Patikrink interneto ryšį ir bandyk dar kartą.","de":"Server nicht erreichbar. Bitte Internetverbindung prüfen.","pl":"Nie można połączyć się z serwerem. Sprawdź połączenie."}[curLang]||"Could not connect to the server. Check your internet connection and try again.";
@@ -1425,7 +1429,7 @@ function renderResults(d,q,opts){opts=opts||{};
     const btnClass=best&&!scan?"buy-link":"view-link";
     const noLinkLbl={"lt":"Nėra nuorodos","de":"Kein Link","pl":"Brak linku"}[lang]||"No link";
     const btnHtml=hasLink
-      ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener">${btnLabel}</a>`
+      ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener" onclick="trackClick('${escHtml(r.shop)}','${escHtml(lastQ||q||'')}')">${btnLabel}</a>`
       :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${noLinkLbl}</span>`;
     const origPriceHtml=r.original_price?(()=>{
       const sym=r.original_currency==="PLN"?"zł":r.original_currency;
