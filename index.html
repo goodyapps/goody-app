@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.22 — watchlist-check uses API_BASE ── */
+/* ── GOODY GOOD DEAL v5.23 — scan shops 6, shops_total fallback 6, LT grammar fix ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1509,7 +1509,7 @@ async function doSearch(){
             lastData=msg.payload;
             renderResults(msg.payload,q,{fetchHistory:false});
             const done=msg.payload._shops_done||0;
-            const total=msg.payload._shops_total||4;
+            const total=msg.payload._shops_total||6;
             const left=Math.max(0,total-done);
             const metaTxt={
               lt:left>0?`Radome ${done} iš ${total} parduotuvių, tikriname dar ${left}...`:`Radome visas ${total} parduotuves`,
@@ -2230,7 +2230,7 @@ async function runScan(){
   navTo("results");
   document.getElementById("res-title").textContent={"lt":"Nuskenuojama nuotrauka...","de":"Foto wird gescannt...","pl":"Skanowanie zdjęcia..."}[curLang]||"Scanning photo...";
   document.getElementById("res-meta").textContent={"lt":"AI atpažįsta produktą...","de":"KI erkennt Produkt...","pl":"AI rozpoznaje produkt..."}[curLang]||"AI identifying product";
-  const scanShops=["Varle.lt","Elesen.lt","Amazon.DE","Amazon.PL"];
+  const scanShops=["Varle.lt","Elesen.lt","Pigu.lt","Topo centras","Amazon.DE","Amazon.PL"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
   const _analyzeTitle={"lt":"Analizuojama nuotrauka","de":"Foto wird analysiert","pl":"Analizowanie zdjęcia"}[curLang]||"Analyzing photo";
@@ -2685,7 +2685,7 @@ async function fetchPriceHistory(q) {
       const isAtLow=lastData.price_min<=d.price_30d_min*1.05;
       const ivBar=document.getElementById("verdict-bar");
       if(isAtLow&&ivBar&&!document.getElementById("hist-low-badge")){
-        const lowLbl={"lt":"📉 Istorinis minimumo","de":"📉 Historisches Tief","pl":"📉 Historyczne minimum"}[curLang]||"📉 Historical low";
+        const lowLbl={"lt":"📉 Istorinis minimumas","de":"📉 Historisches Tief","pl":"📉 Historyczne minimum"}[curLang]||"📉 Historical low";
         const badge=document.createElement("span");
         badge.id="hist-low-badge";
         badge.style.cssText="font-size:10px;font-weight:800;background:rgba(39,224,138,0.2);color:var(--green);border-radius:20px;padding:3px 9px;margin-top:4px;display:inline-block;";
