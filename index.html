@@ -1694,11 +1694,9 @@ function renderResults(d,q,opts){opts=opts||{};
   const _watchBtn=document.getElementById(_watchId);
   if(_watchBtn)_watchBtn.onclick=()=>toggleWatch(_watchBtn.dataset.name, _watchBtn.dataset.price||0);
 
-  // Scroll the verdict card into view so it's immediately visible
-  setTimeout(()=>{
-    const vc=document.querySelector(".deal-win-card");
-    if(vc)vc.scrollIntoView({behavior:"smooth",block:"start"});
-  },80);
+  // Keep scroll at top — instant verdict bar is already visible at top of res-body
+  const _rb2=document.getElementById("res-body");
+  if(_rb2)_rb2.scrollTop=0;
   setTimeout(()=>initWatchBtn(_productName),100);
   if(opts.fetchHistory!==false)fetchPriceHistory(_productName);
 }
