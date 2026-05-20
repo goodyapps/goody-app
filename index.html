@@ -400,6 +400,22 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .fade-up{animation:fadeUp 0.3s ease both;}
 
+/* BACK BANNER */
+.back-banner{position:fixed;top:0;left:0;right:0;background:#22c55e;color:#052e16;padding:9px 14px;display:flex;align-items:center;gap:8px;z-index:450;font-size:13px;font-weight:600;transform:translateY(-100%);transition:transform 0.3s ease;flex-wrap:wrap;}
+.back-banner.show{transform:translateY(0);}
+.bb-btn{padding:4px 12px;border-radius:20px;border:2px solid #052e16;background:none;color:#052e16;font-weight:700;font-size:12px;cursor:pointer;font-family:var(--ff);flex-shrink:0;}
+.bb-btn.yes{background:#052e16;color:#22c55e;}
+.bb-close{background:none;border:none;font-size:18px;line-height:1;cursor:pointer;color:#052e16;font-weight:900;padding:0 2px;margin-left:auto;}
+
+/* BUY POPUP */
+.buy-popup{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(110%);width:100%;max-width:480px;background:var(--bg2);border-top:2px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 20px 28px;z-index:450;transition:transform 0.35s ease;text-align:center;}
+.buy-popup.show{transform:translateX(-50%) translateY(0);}
+.bp-q{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:14px;line-height:1.4;}
+.bp-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.bp-btn{padding:10px 18px;border-radius:24px;border:1.5px solid var(--border2);background:var(--card2);color:var(--ink2);font-weight:600;font-size:14px;cursor:pointer;font-family:var(--ff);}
+.bp-btn.yes{background:var(--green);color:#052e16;border-color:var(--green);}
+.bp-btn.later{font-size:12px;color:var(--ink3);}
+
 /* PULL TO REFRESH */
 .ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(39,224,138,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
 .ptr-indicator.visible{opacity:1;}
@@ -712,6 +728,24 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="save-toast" id="save-toast"></div>
   <div class="confetti-wrap" id="confetti-wrap"></div>
+
+  <!-- BACK BANNER: shown when user returns from a shop tab -->
+  <div class="back-banner" id="back-banner" role="alert" aria-live="polite">
+    <span>← Grįžote iš <strong id="back-shop-name"></strong> | Ar radote pigiau?</span>
+    <button class="bb-btn yes" onclick="backBannerYes()">Taip ✓</button>
+    <button class="bb-btn" onclick="backBannerNo()">Ne, ieškoti dar</button>
+    <button class="bb-close" onclick="hideBackBanner()" aria-label="Uždaryti">×</button>
+  </div>
+
+  <!-- BUY POPUP: "Ar nusipirkai?" after 30s return -->
+  <div class="buy-popup" id="buy-popup" role="dialog" aria-modal="true">
+    <div class="bp-q">Ar nusipirkai <strong id="buy-popup-item"></strong>?</div>
+    <div class="bp-btns">
+      <button class="bp-btn yes" onclick="buyPopupYes()">Taip 🎉</button>
+      <button class="bp-btn" onclick="buyPopupNo()">Ne, ieškau dar</button>
+      <button class="bp-btn later" onclick="buyPopupLater()">Vėliau</button>
+    </div>
+  </div>
 
   <!-- ONBOARDING (first visit only) -->
   <div class="onboard-overlay" id="onboard-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="Welcome to Goody">
@@ -1060,6 +1094,10 @@ function startVoice(){
   toast(voiceLbl);
 }
 
+function addGoodyUtm(url){
+  try{const u=new URL(url);u.searchParams.set('utm_source','goody');u.searchParams.set('utm_medium','price_comparison');return u.href;}catch(e){return url;}
+}
+
 function copyPrice(price){
   navigator.clipboard.writeText(price).then(()=>{
     toast("💰 "+price+" "+({"lt":"nukopijuota!","de":"kopiert!","pl":"skopiowana!"}[curLang]||"copied!"));
@@ -1067,8 +1105,82 @@ function copyPrice(price){
 }
 
 function trackClick(shop, q){
+  sessionStorage.setItem('gy_lastClick', JSON.stringify({shop, q, ts: Date.now()}));
   try{fetch(`${API_BASE}/api/track`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({shop,q}),keepalive:true});}catch(e){}
 }
+
+// ── RETURN FROM SHOP ──────────────────────────────────────
+let _returnTimer=null;
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  try{
+    const raw=sessionStorage.getItem('gy_lastClick');
+    if(!raw)return;
+    const click=JSON.parse(raw);
+    const age=Date.now()-click.ts;
+    if(age<800||age>30*60*1000)return; // too soon or stale
+    showBackBanner(click.shop,click.q);
+  }catch(e){}
+});
+
+function showBackBanner(shop,q){
+  const banner=document.getElementById('back-banner');
+  const shopEl=document.getElementById('back-shop-name');
+  if(!banner)return;
+  if(shopEl)shopEl.textContent=shop;
+  banner.classList.add('show');
+  setTimeout(hideBackBanner,5000);
+  clearTimeout(_returnTimer);
+  _returnTimer=setTimeout(()=>showBuyPopup(q),30000);
+}
+
+function hideBackBanner(){
+  const b=document.getElementById('back-banner');
+  if(b)b.classList.remove('show');
+}
+
+function backBannerYes(){
+  clearTimeout(_returnTimer);
+  hideBackBanner();
+  const q=(JSON.parse(sessionStorage.getItem('gy_lastClick')||'{}').q)||lastQ||'';
+  sessionStorage.removeItem('gy_lastClick');
+  showBuyPopup(q,true);
+}
+
+function backBannerNo(){
+  clearTimeout(_returnTimer);
+  sessionStorage.removeItem('gy_lastClick');
+  hideBackBanner();
+  const inp=document.getElementById('srch-inp');if(inp)inp.focus();
+}
+
+function showBuyPopup(q,immediate){
+  if(!q)q=lastQ||'';
+  const popup=document.getElementById('buy-popup');
+  const itemEl=document.getElementById('buy-popup-item');
+  if(!popup)return;
+  if(itemEl)itemEl.textContent=q;
+  popup.classList.add('show');
+}
+
+function hideBuyPopup(){
+  const p=document.getElementById('buy-popup');if(p)p.classList.remove('show');
+}
+
+function buyPopupYes(){
+  hideBuyPopup();hideBackBanner();
+  sessionStorage.removeItem('gy_lastClick');
+  toast('🎉 '+({"lt":"Sveikiname su pirkiniu!","de":"Viel Freude damit!","pl":"Gratulacje z zakupu!"}[curLang]||"Congrats on your purchase!"));
+}
+
+function buyPopupNo(){
+  hideBuyPopup();hideBackBanner();
+  sessionStorage.removeItem('gy_lastClick');
+  const inp=document.getElementById('srch-inp');if(inp)inp.focus();
+}
+
+function buyPopupLater(){hideBuyPopup();}
 
 /* ── SEARCH ── */
 function _showSearchError(){
@@ -1391,7 +1503,8 @@ function renderResults(d,q,opts){opts=opts||{};
   results.forEach((r,i)=>{
     const best=r.is_cheapest||r.is_best_value;
     const scan=isScanResult(r);
-    const link=r.affiliate_url||r.url||"";
+    const _rawLink=r.affiliate_url||r.url||"";
+    const link=_rawLink.startsWith("http")?addGoodyUtm(_rawLink):_rawLink;
     const hasLink=link.startsWith("http");
     const logo=getShopLogo(r.shop);
     let badges="";
