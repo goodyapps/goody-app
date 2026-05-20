@@ -560,6 +560,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 /* ── SUGGESTIONS ── */
 #srch-suggestions .sug-item:last-child{border-bottom:none!important;}
 
+/* ── SORT BAR ── */
+.sort-bar{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.sort-bar::-webkit-scrollbar{display:none;}
+.sort-pill{flex-shrink:0;padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);font-family:var(--ff);font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;white-space:nowrap;transition:all var(--dur);}
+.sort-pill.on{background:var(--green-l);border-color:var(--green);color:var(--green);}
+
 /* ── PREFERS REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;}
@@ -853,6 +859,7 @@ let wl = JSON.parse(localStorage.getItem("gy_wl")||"[]");
 let hist = JSON.parse(localStorage.getItem("gy_hist")||"[]");
 let camMode="price", camStream=null, scanLoop=null, capturedB64=null;
 let lastData=null, lastQ="";
+let _curSort='cheapest';
 
 /* ── ONBOARDING ── */
 const OB_STEPS={
@@ -1026,7 +1033,8 @@ function buildRecent(){
   hist.slice(0,8).forEach((h,i)=>{
     const age=h.ts?_relTime(h.ts):(h.time||t.recently||"recently");
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${escHtml(h.q)}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" aria-label="Remove" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
+    const _trend=h.priceDir==='down'?`<span style="color:var(--green);font-size:11px;font-weight:900;"> ↓</span>`:h.priceDir==='up'?`<span style="color:var(--red);font-size:11px;font-weight:900;"> ↑</span>`:'';
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${escHtml(h.q)}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}${_trend}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" aria-label="Remove" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=h.q;doSearch();};
     g.appendChild(el);
   });
@@ -1376,10 +1384,15 @@ async function _doSearchFallback(q){
 }
 
 function addToHist(q,d){
+  const _prevH=hist.find(h=>h.q===q);
+  const _prevP=_prevH&&_prevH.price?parseFloat(_prevH.price.replace('€',''))||0:0;
   hist=hist.filter(h=>h.q!==q);
   let ic=d&&d.category_icon?d.category_icon:null;
   if(!ic)ic=_getIcon(q)||"🔍";
-  hist.unshift({q,ic,shops:d.results?.length||0,ts:Date.now(),price:d.price_min?"€"+d.price_min.toFixed(2):""});
+  const _curP=d.price_min||0;
+  let priceDir='';
+  if(_prevP>0&&_curP>0){if(_curP<_prevP-0.5)priceDir='down';else if(_curP>_prevP+0.5)priceDir='up';}
+  hist.unshift({q,ic,shops:d.results?.length||0,ts:Date.now(),price:d.price_min?"€"+d.price_min.toFixed(2):"",priceDir});
   hist=hist.slice(0,20);
   localStorage.setItem("gy_hist",JSON.stringify(hist));
   buildRecent();
@@ -1405,7 +1418,16 @@ function escHtml(s){
 }
 
 function renderResults(d,q,opts){opts=opts||{};
-  const results=d.results||[];
+  let results=d.results||[];
+  // Apply sort
+  const _sm=opts.sort||_curSort||'cheapest';
+  _curSort=_sm;
+  const _scanR=results.filter(r=>isScanResult(r));
+  let _onlineR=results.filter(r=>!isScanResult(r));
+  if(_sm==='rating')_onlineR.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(_sm==='expensive')_onlineR.sort((a,b)=>(b.price||0)-(a.price||0));
+  else _onlineR.sort((a,b)=>(a.price||0)-(b.price||0));
+  results=[..._scanR,..._onlineR];
   const onlineResults=results.filter(r=>!isScanResult(r)&&Number(r.price)>0);
   const scannedPrice=findScannedPrice(d,results);
   const bestOnline=onlineResults.length?[...onlineResults].sort((a,b)=>a.price-b.price)[0]:null;
@@ -1628,6 +1650,16 @@ function renderResults(d,q,opts){opts=opts||{};
   }
 
   const offersLbl2={"lt":"Pasiūlymai","de":"Angebote","pl":"Oferty"}[lang]||"Offers";
+  if(onlineResults.length>=3){
+    const _sc={"lt":"Pigiausia","de":"Günstigste","pl":"Najtańszy"}[lang]||"Cheapest";
+    const _sr={"lt":"Reitingas","de":"Bewertung","pl":"Ocena"}[lang]||"Rating";
+    const _se={"lt":"Brangiausia","de":"Teuerste","pl":"Najdroższy"}[lang]||"Expensive";
+    html+=`<div class="sort-bar">
+      <button class="sort-pill${_curSort==='cheapest'?' on':''}" onclick="renderResults(lastData,lastQ,{sort:'cheapest',fetchHistory:false})">↑ ${_sc}</button>
+      <button class="sort-pill${_curSort==='rating'?' on':''}" onclick="renderResults(lastData,lastQ,{sort:'rating',fetchHistory:false})">⭐ ${_sr}</button>
+      <button class="sort-pill${_curSort==='expensive'?' on':''}" onclick="renderResults(lastData,lastQ,{sort:'expensive',fetchHistory:false})">↓ ${_se}</button>
+    </div>`;
+  }
   html+=`<div class="price-list-label">${offersLbl2}</div>`;
   html+='<div class="price-list">';
 
@@ -2382,6 +2414,9 @@ function toggleWatch(name, price){
     watches.push({name,price,added:new Date().toISOString()});
     if(btn){btn.classList.add("active");btn.textContent=watchingLbl;}
     toast({"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!");
+    if("Notification" in window&&Notification.permission==="default"){
+      setTimeout(()=>Notification.requestPermission(),600);
+    }
   }
   localStorage.setItem(key,JSON.stringify(watches));
   // Update nav badge with combined wishlist + watchlist count
