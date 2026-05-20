@@ -182,8 +182,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .price-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
 .p-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;transition:all var(--dur);cursor:pointer;position:relative;overflow:hidden;}
 .p-card:active{transform:scale(0.98);}
-.p-card.best{background:rgba(39,224,138,0.06);border-color:rgba(39,224,138,0.25);}
+.p-card.best{background:rgba(39,224,138,0.06);border-color:rgba(39,224,138,0.3);border-width:1.5px;}
 .p-card-shimmer{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(39,224,138,0.05),transparent);animation:sh 3.5s infinite;}
+.save-ribbon{position:absolute;top:10px;right:-1px;background:var(--green);color:#121A24;font-size:10px;font-weight:900;padding:3px 10px 3px 8px;border-radius:6px 0 0 6px;letter-spacing:.04em;text-transform:uppercase;}
+.pct-delta{font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:2px;display:inline-block;}
+.pct-delta.expensive{background:rgba(255,90,90,0.12);color:var(--red);}
+.winner-crown{position:absolute;top:-1px;left:14px;font-size:11px;font-weight:900;color:var(--green);letter-spacing:.05em;text-transform:uppercase;background:var(--green-l);border:1px solid var(--green-m);padding:2px 8px;border-radius:0 0 8px 8px;}
 @keyframes sh{0%{left:-100%;}100%{left:200%;}}
 .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .pc-shop{display:flex;align-items:center;gap:10px;}
@@ -311,6 +315,13 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .shop-status{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px;margin-top:4px;}
 .shop-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.shop-load-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.shop-load-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;transition:opacity .4s;}
+.shop-load-flag{font-size:14px;flex-shrink:0;}
+.shop-load-name{font-size:12px;font-weight:700;flex:1;color:var(--ink2);}
+.shop-load-dots span{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--green);animation:blink .9s infinite;margin-left:2px;}
+.shop-load-dots span:nth-child(2){animation-delay:.3s;}
+.shop-load-dots span:nth-child(3){animation-delay:.6s;}
 .price-trend{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;}
 .trend-up{background:var(--red-l);color:var(--red);}
 .trend-down{background:var(--green-l);color:var(--green);}
@@ -632,17 +643,19 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="rate-text"><span id="rate-used">0 used</span><span id="rate-left">-- left</span></div>
     </div>
     <div class="set-section">
-      <div class="set-label">App</div>
+      <div class="set-label" id="set-lbl-app">App</div>
       <div class="set-card">
         <div class="set-row"><div class="sr-n">App</div><div class="sr-v">Goody</div></div>
-        <div class="set-row"><div class="sr-n">Version</div><div class="sr-v" id="app-version">—</div></div>
+        <div class="set-row"><div class="sr-n" id="set-version-lbl">Version</div><div class="sr-v" id="app-version">—</div></div>
         <div class="set-row"><div class="sr-n">Backend</div><div class="sr-v" id="be-url" style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div></div>
+        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Shops</div><div class="sr-v">Varle · Elesen · Amazon.DE · Amazon.PL</div></div>
+        <div class="set-row"><div class="sr-n" id="set-status-lbl">Status</div><div class="sr-v" style="display:flex;align-items:center;gap:6px;"><span id="api-status-dot2" style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span><span id="api-status-txt2">—</span></div></div>
       </div>
     </div>
     <div class="set-section">
-      <div class="set-label">Data</div>
+      <div class="set-label" id="set-lbl-data">Data</div>
       <div class="set-card">
-        <div class="set-row" onclick="clearData()" style="cursor:pointer;"><div class="sr-n" style="color:var(--red);">Clear all data</div><div class="sr-a">›</div></div>
+        <div class="set-row" id="clear-data-row" onclick="clearData()" style="cursor:pointer;"><div class="sr-n" style="color:var(--red);" id="clear-data-lbl">Clear all data</div><div class="sr-a">›</div></div>
       </div>
     </div>
   </div>
@@ -719,6 +732,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
     <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
     <button class="lang-btn" id="lang-pl" onclick="setLang('pl')">PL</button>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink3);" title="Backend status">
+      <span id="api-status-dot" style="width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;transition:background .5s;"></span>
+      <span id="api-status-txt" style="display:none"></span>
+    </span>
   </div>
 
   <!-- NAV -->
@@ -807,10 +824,31 @@ window.addEventListener("DOMContentLoaded",()=>{
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
   fetchRate();
-  fetch(`${API_BASE}/api/health`,{signal:AbortSignal.timeout(5000)})
-    .then(r=>r.ok?r.json():null)
-    .then(d=>{if(d&&d.version){const v=document.getElementById("app-version");if(v)v.textContent="v"+d.version;}})
-    .catch(()=>{});
+  (async()=>{
+    const dot=document.getElementById("api-status-dot");
+    const dot2=document.getElementById("api-status-dot2");
+    const txt2=document.getElementById("api-status-txt2");
+    const setDots=(color,label)=>{
+      [dot,dot2].forEach(d=>{if(d)d.style.background=color;});
+      if(txt2)txt2.textContent=label;
+    };
+    try{
+      const r=await fetch(`${API_BASE}/api/health`,{signal:AbortSignal.timeout(6000)});
+      const d=r.ok?await r.json():null;
+      if(d&&d.status==="ok"){
+        setDots("var(--green)","Online");
+        const v=document.getElementById("app-version");
+        if(v&&d.version)v.textContent="v"+d.version;
+        if(d.cache&&txt2){
+          txt2.textContent=`Online · ${d.cache.hit_rate_pct}% cache hits`;
+        }
+      } else {
+        setDots("var(--amber)","Degraded");
+      }
+    }catch(e){
+      setDots("var(--red)","Offline");
+    }
+  })();
   const qParam=new URLSearchParams(window.location.search).get("q");
   if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
   else{setTimeout(showOnboard,800);}
@@ -913,12 +951,20 @@ function buildSaved(){
   const g=document.getElementById("saved-list");
   const n=wl.length;
   document.getElementById("saved-count").textContent=n===0?(t.no_recent||""):n+" "+(t.items_saved||"saved");
-  if(!n){g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">${t.saved_empty||"Nothing saved yet"}</div><div class="se-sub">${t.saved_empty_sub||"Find a great deal and tap ♥ to save it"}</div></div>`;return;}
+  if(!n){
+    const quickSearches=["iPhone 16","MacBook Air","Sony WH-1000XM5","Dyson V15"];
+    const quickBtns=quickSearches.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
+    g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">${t.saved_empty||"Nothing saved yet"}</div><div class="se-sub">${t.saved_empty_sub||"Find a great deal and tap ♥ to save it"}</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;">${quickBtns}</div></div>`;
+    return;
+  }
   g.innerHTML="";
+  const bestLbl={"lt":"Geriausia","de":"Beste","pl":"Najlepsza"}[curLang]||"Best";
+  const removeLbl={"lt":"Šalinti","de":"Löschen","pl":"Usuń"}[curLang]||"Remove";
   wl.forEach((item,i)=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${item.ic||"🛒"}</div><div><div class="rec-name">${item.q}</div><div class="rec-meta">Best: ${item.price||"—"}</div></div></div><button style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;" onclick="removeWl(${i})">Remove</button>`;
-    el.onclick=(e)=>{if(e.target.tagName!=="BUTTON"){document.getElementById("srch-inp").value=item.q;doSearch();}};
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${item.ic||"🛒"}</div><div><div class="rec-name">${escHtml(item.q)}</div><div class="rec-meta">${bestLbl}: ${escHtml(item.price||"—")}</div></div></div><button data-idx="${i}" style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;">${removeLbl}</button>`;
+    el.querySelector("button").onclick=(e)=>{e.stopPropagation();removeWl(parseInt(e.currentTarget.dataset.idx));};
+    el.onclick=()=>{document.getElementById("srch-inp").value=item.q;doSearch();};
     g.appendChild(el);
   });
 }
@@ -1045,7 +1091,7 @@ async function doSearch(){
             lastData=msg.payload;
             renderResults(msg.payload,q);
             const done=msg.payload._shops_done||0;
-            const total=msg.payload._shops_total||8;
+            const total=msg.payload._shops_total||4;
             const left=Math.max(0,total-done);
             const metaTxt=curLang==="lt"
               ?(left>0?`Radome ${done} iš ${total} parduotuvių, tikriname dar ${left}...`:`Radome visas ${total} parduotuves`)
@@ -1351,9 +1397,21 @@ function renderResults(d,q){
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 10H2a1 1 0 01-1-1V2a1 1 0 011-1h7a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.3"/></svg>
     </button>`:"";
 
+    // Savings ribbon: show €X saved vs most expensive online (only on cheapest, non-scan card)
+    let saveRibbon="";
+    if(r.is_cheapest&&!scan&&bestOnline&&onlineResults.length>=2){
+      const savings=d.price_max-r.price;
+      if(savings>=1){
+        const saveLbl={"lt":`Taupai ${money(savings)}`,"de":`${money(savings)} gespart`,"pl":`Oszczędzasz ${money(savings)}`}[lang]||`Save ${money(savings)}`;
+        saveRibbon=`<div class="save-ribbon">${saveLbl}</div>`;
+      }
+    }
+    const winnerCrown=r.is_cheapest&&!scan&&onlineResults.length>=2?`<div class="winner-crown">${{"lt":"🏆 Geriausias","de":"🏆 Bestes","pl":"🏆 Najlepsze"}[lang]||"🏆 Best deal"}</div>`:"";
+
     html+=`<div class="p-card${best&&!scan?" best":""} fade-up" style="animation-delay:${i*0.06}s">
       ${best&&!scan?'<div class="p-card-shimmer"></div>':""}
-      <div class="pc-top">
+      ${winnerCrown}${saveRibbon}
+      <div class="pc-top" style="${winnerCrown?"margin-top:14px;":""}">
         <div class="pc-shop">
           <div class="pc-logo">${logo}</div>
           <div><div class="pc-name">${escHtml(r.shop||"Shop")}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
@@ -1375,39 +1433,49 @@ function renderResults(d,q){
   });
   html+='</div>';
 
+  const _productName=d.product_name||q;
+  const _wlId=_productName.replace(/\W/g,'_');
   if(results.length>0){
-    const safeName=(d.product_name||q).replace(/'/g,"\\'");
+    const shareLbl={"lt":"Dalintis","de":"Teilen","pl":"Udostępnij"}[lang]||"Share deal";
+    const watchLbl={"lt":"Stebėti kainą","de":"Preis beobachten","pl":"Obserwuj cenę"}[lang]||"Watch price";
     html+=`<div class="share-row fade-up">
-      <button class="share-btn-main" onclick="shareResults('${safeName}','${d.price_min?money(d.price_min):''}')">
+      <button class="share-btn-main" id="share-btn-main" data-name="${escHtml(_productName)}" data-price="${d.price_min||0}">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 000 8h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        ${isLt?"Dalintis":"Share deal"}
+        ${escHtml(shareLbl)}
       </button>
-      <button class="watch-btn" id="watch-btn-${(d.product_name||q).replace(/\s/g,'_')}" onclick="toggleWatch('${safeName}','${d.price_min||0}')" style="margin-left:8px;">
-        🔔 ${isLt?"Stebėti kainą":"Watch price"}
+      <button class="watch-btn" id="watch-btn-${_wlId}" data-name="${escHtml(_productName)}" data-price="${d.price_min||0}" style="margin-left:8px;">
+        🔔 ${escHtml(watchLbl)}
       </button>
     </div>`;
   }
 
   html += `<div id="price-history-wrap"></div>`;
   document.getElementById("res-body").innerHTML=html;
+
+  // Wire up share/watch buttons via event listeners (safe — no inline eval)
+  const _shareBtn=document.getElementById("share-btn-main");
+  if(_shareBtn)_shareBtn.onclick=()=>shareResults(_shareBtn.dataset.name, _shareBtn.dataset.price?money(Number(_shareBtn.dataset.price)):"");
+  const _watchId="watch-btn-"+_wlId;
+  const _watchBtn=document.getElementById(_watchId);
+  if(_watchBtn)_watchBtn.onclick=()=>toggleWatch(_watchBtn.dataset.name, _watchBtn.dataset.price||0);
+
   // Scroll the verdict card into view so it's immediately visible
   setTimeout(()=>{
     const vc=document.querySelector(".deal-win-card");
     if(vc)vc.scrollIntoView({behavior:"smooth",block:"start"});
   },80);
-  setTimeout(()=>initWatchBtn(d.product_name||q),100);
-  fetchPriceHistory(d.product_name||q);
+  setTimeout(()=>initWatchBtn(_productName),100);
+  fetchPriceHistory(_productName);
 }
 
 function getShopLogo(shop){
   const s=(shop||"").toLowerCase();
+  if(s.includes("amazon.de"))return"🇩🇪";
+  if(s.includes("amazon.pl"))return"🇵🇱";
   if(s.includes("amazon"))return"🌍";
-  if(s.includes("pigu"))return"🛒";
   if(s.includes("varle"))return"🏪";
-  if(s.includes("senukai"))return"🏬";
-  if(s.includes("topo"))return"🏢";
   if(s.includes("elesen"))return"⚡";
-  if(s.includes("scan"))return"📷";
+  if(s.includes("scan")||s.includes("scanned"))return"📷";
   return"🛍";
 }
 
@@ -1718,7 +1786,7 @@ const LANGS = {
     tomorrow:"Tomorrow",
     today:"Today",
     in_store:"In store",
-    loading_msgs:["Hunting for the best price...","Checking 8 shops...","Almost there — hold tight!"],
+    loading_msgs:["Hunting for the best price...","Checking 4 shops...","Almost there — hold tight!"],
     popular:"Trending now",
     recent_scans:"Recent searches",
     clear:"Clear all",
@@ -1756,7 +1824,7 @@ const LANGS = {
     tomorrow:"Rytoj",
     today:"Šiandien",
     in_store:"Parduotuvėje",
-    loading_msgs:["Ieškome geriausių kainų...","Tikrinama 8 parduotuvių...","Jau baigiam..."],
+    loading_msgs:["Ieškome geriausių kainų...","Tikrinama 4 parduotuves...","Jau baigiam..."],
     popular:"Populiariausi",
     recent_scans:"Paskutinės paieškos",
     clear:"Išvalyti",
@@ -1794,7 +1862,7 @@ const LANGS = {
     tomorrow:"Morgen",
     today:"Heute",
     in_store:"Im Laden",
-    loading_msgs:["Beste Preise werden gesucht...","8 Shops werden geprüft...","Fast fertig..."],
+    loading_msgs:["Beste Preise werden gesucht...","4 Shops werden geprüft...","Fast fertig..."],
     popular:"Beliebt",
     recent_scans:"Letzte Suchen",
     clear:"Löschen",
@@ -1832,7 +1900,7 @@ const LANGS = {
     tomorrow:"Jutro",
     today:"Dziś",
     in_store:"W sklepie",
-    loading_msgs:["Szukam najlepszych cen...","Sprawdzam 8 sklepów...","Prawie gotowe..."],
+    loading_msgs:["Szukam najlepszych cen...","Sprawdzam 4 sklepy...","Prawie gotowe..."],
     popular:"Popularne",
     recent_scans:"Ostatnie wyszukiwania",
     clear:"Wyczyść",
@@ -1872,6 +1940,14 @@ function applyLang(){
   const rt=document.getElementById("recent-title");if(rt)rt.textContent=t.recent_scans||"Recent searches";
   const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear all";
   const rl=document.getElementById("rate-label");if(rl)rl.textContent=t.daily_searches||"Daily searches used";
+  // Settings page translations
+  const settingsTitles={"lt":"Nustatymai","de":"Einstellungen","pl":"Ustawienia"};
+  const st=document.querySelector(".set-title");if(st)st.textContent=settingsTitles[curLang]||"Settings";
+  const cd=document.getElementById("clear-data-lbl");if(cd)cd.textContent=t.clear_data||"Clear all data";
+  const sla=document.getElementById("set-lbl-app");if(sla)sla.textContent={"lt":"Programa","de":"App","pl":"Aplikacja"}[curLang]||"App";
+  const sld=document.getElementById("set-lbl-data");if(sld)sld.textContent={"lt":"Duomenys","de":"Daten","pl":"Dane"}[curLang]||"Data";
+  const slsh=document.getElementById("set-shops-lbl");if(slsh)slsh.textContent={"lt":"Parduotuvės","de":"Shops","pl":"Sklepy"}[curLang]||"Shops";
+  const slst=document.getElementById("set-status-lbl");if(slst)slst.textContent={"lt":"Būklė","de":"Status","pl":"Status"}[curLang]||"Status";
   if(_popularItems.length)_renderPopular(_popularItems);
   buildCats();
   buildRecent();
@@ -1899,26 +1975,43 @@ function fireConfetti(savings){
 }
 
 /* ── LOADING MESSAGES ── */
+const _LOADING_SHOPS=[
+  {name:"Varle.lt",flag:"🇱🇹"},
+  {name:"Elesen.lt",flag:"🇱🇹"},
+  {name:"Amazon.DE",flag:"🇩🇪"},
+  {name:"Amazon.PL",flag:"🇵🇱"},
+];
+function _shopLoadBars(){
+  return _LOADING_SHOPS.map((s,i)=>`
+    <div class="shop-load-row" id="slr-${i}">
+      <div class="shop-load-flag">${s.flag}</div>
+      <div class="shop-load-name">${s.name}</div>
+      <div class="shop-load-dots"><span></span><span></span><span></span></div>
+    </div>`).join("");
+}
+function _markShopDone(idx){
+  const el=document.getElementById("slr-"+idx);
+  if(!el)return;
+  el.querySelector(".shop-load-dots").innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="rgba(39,224,138,0.15)" stroke="var(--green)" stroke-width="1.2"/><polyline points="4,7 6.3,9.3 10,5.2" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  el.style.opacity="0.65";
+}
 function showLoading(){
-  const shops=["Varle.lt","Elesen.lt","Amazon.DE","Amazon.PL"];
-  const total=shops.length;
-  let si=0, pct=8;
-  const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
-  const checkingMeta={"lt":`Tikriname ${total} parduotuvių...`,"de":`${total} Shops werden geprüft...`,"pl":`Sprawdzam ${total} sklepy...`}[curLang]||`Checking ${total} shops...`;
+  const total=_LOADING_SHOPS.length;
+  let pct=5;
+  const checkingMeta={"lt":`Tikriname ${total} parduotuves...`,"de":`${total} Shops werden geprüft...`,"pl":`Sprawdzam ${total} sklepy...`}[curLang]||`Checking ${total} shops...`;
   document.getElementById("res-meta").textContent=checkingMeta;
+  const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
   document.getElementById("res-body").innerHTML=`
-    <div class="load-progress"><div class="load-progress-fill" id="load-pbar" style="width:8%"></div></div>
-    <div style="padding:0 0 12px;">
-      <div class="shop-status"><div class="shop-dot"></div><span id="shop-status-txt">🔍 ${shops[0]}...</span></div>
-    </div>
-    ${[1,2,3,4].map(skel).join("")}`;
+    <div class="load-progress"><div class="load-progress-fill" id="load-pbar" style="width:5%"></div></div>
+    <div class="shop-load-grid">${_shopLoadBars()}</div>
+    ${[1,2,3].map(skel).join("")}`;
+  let doneIdx=0;
   return setInterval(()=>{
-    si=(si+1)%total;
-    pct=Math.min(88, pct + Math.random()*10+4);
-    const el=document.getElementById("shop-status-txt");
-    if(el)el.textContent="🔍 "+shops[si]+"...";
+    pct=Math.min(88, pct + Math.random()*8+3);
     const pb=document.getElementById("load-pbar");
     if(pb)pb.style.width=pct+"%";
+    // Gradually mark shops as "done" for visual progress even before real data
+    if(pct>40&&doneIdx<total){_markShopDone(doneIdx);doneIdx++;}
   },900);
 }
 
@@ -1955,10 +2048,11 @@ function toggleWatch(name, price){
 function initWatchBtn(name){
   const key="gy_watch";
   const watches=JSON.parse(localStorage.getItem(key)||"[]");
-  const id=name.replace(/\s/g,'_');
+  const id=name.replace(/\W/g,'_');
   const btn=document.getElementById("watch-btn-"+id);
   if(btn&&watches.find(w=>w.name===name)){
-    btn.classList.add("active");btn.innerHTML="✅ Watching";
+    const watchingLbl={"lt":"✅ Stebima","de":"✅ Beobachtet","pl":"✅ Obserwowane"}[curLang]||"✅ Watching";
+    btn.classList.add("active");btn.textContent=watchingLbl;
   }
 }
 
