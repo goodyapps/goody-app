@@ -1258,50 +1258,40 @@ function renderResults(d,q){
     let proof="";
     let bestColor="var(--green)";
 
+    const _sc={
+      save:{"lt":"Sutaupoma ","de":"Gespart: ","pl":"Oszczędzasz "}[lang]||"Save ",
+      online_plus:{"lt":"Internete +","de":"Online +","pl":"Online +"}[lang]||"Online +",
+      photo_lbl:{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[lang]||"Photo price",
+      online_lbl:{"lt":"Kaina internete","de":"Online-Preis","pl":"Cena online"}[lang]||"Online price",
+    };
     if(diff>20){
       badge="🔥 GOOD DEAL";
-      title=isLt?"Internete rasta geresnė kaina":"Better price found online";
-      hero=(isLt?"Sutaupoma ":"Save ")+money(diff);
-      sub=isLt
-        ?`${bestOnline.shop}: ${Math.abs(pct).toFixed(1)} % pigiau nei kaina nuotraukoje.`
-        :`${bestOnline.shop}: ${Math.abs(pct).toFixed(1)}% cheaper than the photo price.`;
-      proof=isLt
-        ?`Kaina nuotraukoje: ${money(scannedPrice)}. Kaina internete: ${money(bestOnline.price)}. Prieš perkant dar patikrink pristatymą ir pardavėjo sąlygas.`
-        :`Photo price: ${money(scannedPrice)}. Online price: ${money(bestOnline.price)}. Check delivery and seller terms before buying.`;
+      title={"lt":"Internete rasta geresnė kaina","de":"Besserer Preis online gefunden","pl":"Znaleziono lepszą cenę online"}[lang]||"Better price found online";
+      hero=_sc.save+money(diff);
+      sub=`${bestOnline.shop}: ${Math.abs(pct).toFixed(1)}% `+({"lt":"pigiau nei kaina nuotraukoje","de":"günstiger als der Foto-Preis","pl":"taniej niż cena ze zdjęcia"}[lang]||"cheaper than the photo price")+".";
+      proof=`${_sc.photo_lbl}: ${money(scannedPrice)}. ${_sc.online_lbl}: ${money(bestOnline.price)}. `+({"lt":"Prieš perkant dar patikrink pristatymą ir pardavėjo sąlygas.","de":"Lieferung und Verkäuferbedingungen vor dem Kauf prüfen.","pl":"Sprawdź dostawę i warunki sprzedawcy przed zakupem."}[lang]||"Check delivery and seller terms before buying.");
       setTimeout(()=>fireConfetti(diff.toFixed(2)),550);
     }else if(diff>5){
       badge="🟢 GOOD DEAL";
-      title=isLt?"Internete šiek tiek pigiau":"Slightly cheaper online";
-      hero=(isLt?"Sutaupoma ":"Save ")+money(diff);
-      sub=isLt
-        ?`${bestOnline.shop} yra pigiau nei kaina nuotraukoje.`
-        :`${bestOnline.shop} is cheaper than the photo price.`;
-      proof=isLt
-        ?`Skirtumas nėra didelis, bet tai vis tiek geras dealas, jei pristatymas nekainuoja daug.`
-        :`The gap is not huge, but it is still a good deal if delivery is low.`;
+      title={"lt":"Internete šiek tiek pigiau","de":"Online etwas günstiger","pl":"Online nieco taniej"}[lang]||"Slightly cheaper online";
+      hero=_sc.save+money(diff);
+      sub=`${bestOnline.shop} `+({"lt":"yra pigiau nei kaina nuotraukoje","de":"ist günstiger als der Foto-Preis","pl":"jest tańszy niż cena ze zdjęcia"}[lang]||"is cheaper than the photo price")+".";
+      proof={"lt":"Skirtumas nėra didelis, bet tai vis tiek geras dealas, jei pristatymas nekainuoja daug.","de":"Der Unterschied ist nicht riesig, aber immer noch ein guter Deal bei günstiger Lieferung.","pl":"Różnica nie jest duża, ale to nadal dobra okazja przy niskich kosztach dostawy."}[lang]||"The gap is not huge, but it is still a good deal if delivery is low.";
     }else if(diff>=-5){
       cardCls="warn";
       badge="👌 FAIR DEAL";
-      title=isLt?"Kainos beveik vienodos":"Almost the same price";
-      hero=isLt?"Skirtumas mažas":"Small difference";
-      sub=isLt
-        ?"Kaina nuotraukoje ir geriausia internete rasta kaina beveik nesiskiria."
-        :"The photo price and the best online price are almost the same.";
-      proof=isLt
-        ?"Sprendimą verta priimti pagal patogumą: pristatymą, garantiją, grąžinimą ir pirkimo greitį."
-        :"Decide by convenience: delivery, warranty, returns and speed.";
+      title={"lt":"Kainos beveik vienodos","de":"Preise fast gleich","pl":"Ceny prawie takie same"}[lang]||"Almost the same price";
+      hero={"lt":"Skirtumas mažas","de":"Kleiner Unterschied","pl":"Mała różnica"}[lang]||"Small difference";
+      sub={"lt":"Kaina nuotraukoje ir geriausia internete rasta kaina beveik nesiskiria.","de":"Foto-Preis und bester Online-Preis sind fast gleich.","pl":"Cena ze zdjęcia i najlepsza cena online są prawie takie same."}[lang]||"The photo price and the best online price are almost the same.";
+      proof={"lt":"Sprendimą verta priimti pagal patogumą: pristatymą, garantiją, grąžinimą ir pirkimo greitį.","de":"Entscheide nach Bequemlichkeit: Lieferung, Garantie, Rückgabe und Kaufgeschwindigkeit.","pl":"Zdecyduj na podstawie wygody: dostawa, gwarancja, zwroty i szybkość zakupu."}[lang]||"Decide by convenience: delivery, warranty, returns and speed.";
       bestColor="var(--amber)";
     }else{
       cardCls="bad";
-      badge=isLt?"🏪 PIRK PARDUOTUVĖJE":{"de":"🏪 IM LADEN KAUFEN","pl":"🏪 KUP W SKLEPIE"}[lang]||"🏪 STAY IN STORE";
-      title=isLt?"Kaina nuotraukoje geresnė":"Photo price is better";
-      hero=(isLt?"Internete +":"Online +")+money(Math.abs(diff));
-      sub=isLt
-        ?`Geriausias internetinis pasiūlymas yra brangesnis nei kaina nuotraukoje.`
-        :`The best online offer is more expensive than the photo price.`;
-      proof=isLt
-        ?`Kaina nuotraukoje: ${money(scannedPrice)}. Kaina internete: ${money(bestOnline.price)}. Jei sąlygos geros, vietoje rasta kaina atrodo geresnė.`
-        :`Photo price: ${money(scannedPrice)}. Online price: ${money(bestOnline.price)}. If store terms are good, the photo price looks better.`;
+      badge={"lt":"🏪 PIRK PARDUOTUVĖJE","de":"🏪 IM LADEN KAUFEN","pl":"🏪 KUP W SKLEPIE"}[lang]||"🏪 STAY IN STORE";
+      title={"lt":"Kaina nuotraukoje geresnė","de":"Foto-Preis ist besser","pl":"Cena ze zdjęcia jest lepsza"}[lang]||"Photo price is better";
+      hero=_sc.online_plus+money(Math.abs(diff));
+      sub={"lt":"Geriausias internetinis pasiūlymas yra brangesnis nei kaina nuotraukoje.","de":"Das beste Online-Angebot ist teurer als der Foto-Preis.","pl":"Najlepsza oferta online jest droższa niż cena ze zdjęcia."}[lang]||"The best online offer is more expensive than the photo price.";
+      proof=`${_sc.photo_lbl}: ${money(scannedPrice)}. ${_sc.online_lbl}: ${money(bestOnline.price)}. `+({"lt":"Jei sąlygos geros, vietoje rasta kaina atrodo geresnė.","de":"Wenn die Bedingungen gut sind, erscheint der Foto-Preis besser.","pl":"Jeśli warunki są dobre, cena ze zdjęcia wydaje się lepsza."}[lang]||"If store terms are good, the photo price looks better.");
       bestColor="var(--red)";
     }
 
@@ -1312,11 +1302,11 @@ function renderResults(d,q){
       <div class="deal-sub">${sub}</div>
       <div class="deal-metric-grid">
         <div class="deal-metric">
-          <div class="deal-metric-label">${isLt?"Kaina nuotraukoje":"Photo price"}</div>
+          <div class="deal-metric-label">${_sc.photo_lbl}</div>
           <div class="deal-metric-value">${money(scannedPrice)}</div>
         </div>
         <div class="deal-metric">
-          <div class="deal-metric-label">${isLt?"Kaina internete":"Online price"}</div>
+          <div class="deal-metric-label">${_sc.online_lbl}</div>
           <div class="deal-metric-value" style="color:${bestColor}">${money(bestOnline.price)}</div>
         </div>
       </div>
@@ -1327,13 +1317,13 @@ function renderResults(d,q){
     const hasAI=!!(d.verdict_reason||d.buy_recommendation);
     const label=score>=75?"🔥 GOOD DEAL":score>=50?(hasAI?"👌 FAIR DEAL":"📊 MARKET PRICE"):"⚠️ MAYBE WAIT";
     const title=score>=75
-      ?(isLt?"Rasta gera kaina":"Good price found")
+      ?({"lt":"Rasta gera kaina","de":"Guter Preis gefunden","pl":"Znaleziono dobry cenę"}[lang]||"Good price found")
       :score>=50
         ?(hasAI
-          ?(isLt?"Kaina atrodo normali":"Price looks fair")
-          :(isLt?"Rasta kaina":"Prices found"))
-      :(isLt?"Kaina neatrodo ypatinga":"Price is not exceptional");
-    const sub=d.verdict_reason||d.buy_recommendation||(isLt?"Palyginome kainas iš kelių parduotuvių.":"We compared prices across shops.");
+          ?({"lt":"Kaina atrodo normali","de":"Preis sieht fair aus","pl":"Cena wygląda normalnie"}[lang]||"Price looks fair")
+          :({"lt":"Rasta kaina","de":"Preise gefunden","pl":"Znaleziono ceny"}[lang]||"Prices found"))
+      :({"lt":"Kaina neatrodo ypatinga","de":"Preis ist nicht außergewöhnlich","pl":"Cena nie jest wyjątkowa"}[lang]||"Price is not exceptional");
+    const sub=d.verdict_reason||d.buy_recommendation||({"lt":"Palyginome kainas iš kelių parduotuvių.","de":"Wir haben Preise aus mehreren Shops verglichen.","pl":"Porównaliśmy ceny z kilku sklepów."}[lang]||"We compared prices across shops.");
     const cardCls=score>=75?"":score>=50?"warn":"bad";
     const nOffers=onlineResults.length||results.length;
     const offersLbl={"lt":nOffers===1?"pasiūlymas":"pasiūlymai","de":nOffers===1?"Angebot":"Angebote","pl":nOffers===1?"oferta":"oferty"}[lang]||"offers";
@@ -1399,12 +1389,12 @@ function renderResults(d,q){
     let deltaHtml="";
     if(scannedPrice>1 && Number(r.price)>0){
       if(scan){
-        deltaHtml=`<div class="photo-delta neutral">${isLt?"Kaina nuotraukoje":"Photo price"}</div>`;
+        deltaHtml=`<div class="photo-delta neutral">${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[lang]||"Photo price"}</div>`;
       }else{
         const diff=scannedPrice-r.price;
-        if(diff>1)deltaHtml=`<div class="photo-delta good">${money(diff)} ${isLt?"pigiau nei kaina nuotraukoje":"cheaper than photo price"}</div>`;
-        else if(diff<-1)deltaHtml=`<div class="photo-delta bad">${money(Math.abs(diff))} ${isLt?"brangiau nei kaina nuotraukoje":"more than photo price"}</div>`;
-        else deltaHtml=`<div class="photo-delta neutral">${isLt?"beveik kaip kaina nuotraukoje":"almost same as photo price"}</div>`;
+        if(diff>1)deltaHtml=`<div class="photo-delta good">${money(diff)} ${{"lt":"pigiau nei kaina nuotraukoje","de":"günstiger als Foto-Preis","pl":"taniej niż cena ze zdjęcia"}[lang]||"cheaper than photo price"}</div>`;
+        else if(diff<-1)deltaHtml=`<div class="photo-delta bad">${money(Math.abs(diff))} ${{"lt":"brangiau nei kaina nuotraukoje","de":"mehr als Foto-Preis","pl":"drożej niż cena ze zdjęcia"}[lang]||"more than photo price"}</div>`;
+        else deltaHtml=`<div class="photo-delta neutral">${{"lt":"beveik kaip kaina nuotraukoje","de":"fast gleich wie Foto-Preis","pl":"prawie jak cena ze zdjęcia"}[lang]||"almost same as photo price"}</div>`;
       }
     }
 
