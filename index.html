@@ -561,10 +561,17 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 #srch-suggestions .sug-item:last-child{border-bottom:none!important;}
 
 /* ── SORT BAR ── */
-.sort-bar{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.sort-bar{display:flex;gap:6px;margin:0 0 8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .sort-bar::-webkit-scrollbar{display:none;}
 .sort-pill{flex-shrink:0;padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);font-family:var(--ff);font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;white-space:nowrap;transition:all var(--dur);}
 .sort-pill.on{background:var(--green-l);border-color:var(--green);color:var(--green);}
+/* ── BUDGET FILTER ── */
+.budget-bar{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:center;}
+.budget-bar::-webkit-scrollbar{display:none;}
+.budget-lbl{font-size:10px;font-weight:700;color:var(--ink4);white-space:nowrap;flex-shrink:0;}
+.budget-pill{flex-shrink:0;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:none;font-family:var(--ff);font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;white-space:nowrap;transition:all var(--dur);}
+.budget-pill.on{background:var(--amber-l);border-color:var(--amber);color:var(--amber);}
+.p-card.over-budget{opacity:0.3;pointer-events:none;}
 
 /* ── PREFERS REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
@@ -860,6 +867,7 @@ let hist = JSON.parse(localStorage.getItem("gy_hist")||"[]");
 let camMode="price", camStream=null, scanLoop=null, capturedB64=null;
 let lastData=null, lastQ="";
 let _curSort='cheapest';
+let _budgetMax=0; // 0 = no filter
 
 /* ── ONBOARDING ── */
 const OB_STEPS={
@@ -1295,7 +1303,7 @@ function _showRateLimitError(e){
 async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast({"lt":"Įveskite produkto pavadinimą","de":"Produktname eingeben","pl":"Wpisz nazwę produktu"}[curLang]||"Enter a product name");return;}
-  lastQ=q;
+  lastQ=q;_budgetMax=0;_curSort='cheapest';
   history.pushState({q},"","/?q="+encodeURIComponent(q));
   navTo("results");
   document.getElementById("res-title").textContent=q;
@@ -1660,6 +1668,16 @@ function renderResults(d,q,opts){opts=opts||{};
       <button class="sort-pill${_curSort==='rating'?' on':''}" onclick="renderResults(lastData,lastQ,{sort:'rating',fetchHistory:false})">⭐ ${_sr}</button>
       <button class="sort-pill${_curSort==='expensive'?' on':''}" onclick="renderResults(lastData,lastQ,{sort:'expensive',fetchHistory:false})">↓ ${_se}</button>
     </div>`;
+    // Budget filter presets based on price range
+    const _prices=onlineResults.map(r=>r.price).filter(p=>p>0);
+    const _pMax=Math.max(..._prices);
+    const _budgetLbl={"lt":"Biudžetas:","de":"Budget:","pl":"Budżet:"}[lang]||"Budget:";
+    const _allLbl={"lt":"Visi","de":"Alle","pl":"Wszystkie"}[lang]||"All";
+    const presets=[50,100,200,500,1000].filter(p=>p<_pMax*1.5&&p>_prices.reduce((a,b)=>Math.min(a,b),9999));
+    if(presets.length>0){
+      const pBtns=presets.map(p=>`<button class="budget-pill${_budgetMax===p?' on':''}" onclick="_setBudget(${p})">&lt;€${p}</button>`).join("");
+      html+=`<div class="budget-bar"><span class="budget-lbl">${_budgetLbl}</span><button class="budget-pill${_budgetMax===0?' on':''}" onclick="_setBudget(0)">${_allLbl}</button>${pBtns}</div>`;
+    }
   }
   html+=`<div class="price-list-label">${offersLbl2}</div>`;
   html+='<div class="price-list">';
@@ -1744,7 +1762,8 @@ function renderResults(d,q,opts){opts=opts||{};
     }
     const winnerCrown=r.is_cheapest&&!scan&&onlineResults.length>=2?`<div class="winner-crown">${{"lt":"🏆 Geriausias","de":"🏆 Bestes","pl":"🏆 Najlepsze"}[lang]||"🏆 Best deal"}</div>`:"";
 
-    html+=`<div class="p-card${best&&!scan?" best":""} fade-up" style="animation-delay:${i*0.06}s">
+    const overBudget=_budgetMax>0&&r.price>_budgetMax&&!scan;
+    html+=`<div class="p-card${best&&!scan?" best":""}${overBudget?" over-budget":""} fade-up" style="animation-delay:${i*0.06}s">
       ${best&&!scan?'<div class="p-card-shimmer"></div>':""}
       ${winnerCrown}${saveRibbon}
       <div class="pc-top" style="${winnerCrown?"margin-top:14px;":""}">
@@ -2429,6 +2448,11 @@ function toggleWatch(name, price){
   const _wlTotal=wl.length+watches.length;
   const _nb=document.getElementById("nav-wl-badge");if(_nb){_nb.textContent=_wlTotal||"";_nb.classList.toggle("vis",_wlTotal>0);}
   const _hb=document.getElementById("home-wl-badge");if(_hb){_hb.textContent=_wlTotal||"";_hb.style.display=_wlTotal>0?"flex":"none";}
+}
+
+function _setBudget(max){
+  _budgetMax=max;
+  renderResults(lastData,lastQ,{sort:_curSort,fetchHistory:false});
 }
 
 function initWatchBtn(name){
