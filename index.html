@@ -54,7 +54,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .logo-mark{font-size:26px;font-weight:900;letter-spacing:-0.5px;}
 .logo-mark span{color:var(--green);}
 .logo-sub{font-size:13px;color:var(--ink3);font-weight:500;margin-top:1px;}
-.notif-btn{width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.notif-btn{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
 
 .scan-hero{padding:28px 22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;}
 .scan-hint{font-size:14px;color:var(--ink3);text-align:center;}
@@ -1576,6 +1576,14 @@ function renderResults(d,q,opts){opts=opts||{};
       if(r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geriausia internete","de":"Bestes Online","pl":"Najlepsza online"}[lang]||"Best online"}</span>`;
       if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geras pasiūlymas","de":"Gutes Angebot","pl":"Dobra oferta"}[lang]||"Good deal"}</span>`;
       if(r.is_top_rated)badges+=`<span class="badge b-amber">${{"lt":"Top reitingas","de":"Top bewertet","pl":"Najwyżej oceniony"}[lang]||"Top rated"}</span>`;
+      // Fake discount detector: claimed discount > 40% is suspicious
+      if(r.original_price>0&&r.price>0){
+        const claimedDisc=(r.original_price-r.price)/r.original_price;
+        if(claimedDisc>0.4){
+          const fakeDiscLbl={"lt":"⚠️ Patikrink nuolaidą","de":"⚠️ Rabatt prüfen","pl":"⚠️ Sprawdź rabat"}[lang]||"⚠️ Check discount";
+          badges+=`<span class="badge b-amber" title="${{"lt":"Nurodyta nuolaida viršija 40% — verta patikrinti originalią kainą","de":"Angegebener Rabatt über 40% — Originalpreis überprüfen","pl":"Podany rabat przekracza 40% — warto sprawdzić oryginalną cenę"}[lang]||"Claimed discount over 40% — verify original price"}">${fakeDiscLbl}</span>`;
+        }
+      }
     }
 
     let deltaHtml="";
@@ -1679,7 +1687,7 @@ function renderResults(d,q,opts){opts=opts||{};
 
   // Wire up share/watch buttons via event listeners (safe — no inline eval)
   const _shareBtn=document.getElementById("share-btn-main");
-  if(_shareBtn)_shareBtn.onclick=()=>shareResults(_shareBtn.dataset.name, _shareBtn.dataset.price?money(Number(_shareBtn.dataset.price)):"");
+  if(_shareBtn)_shareBtn.onclick=()=>shareResults(_shareBtn.dataset.name, Number(_shareBtn.dataset.price)>0?money(Number(_shareBtn.dataset.price)):"");
   const _watchId="watch-btn-"+_wlId;
   const _watchBtn=document.getElementById(_watchId);
   if(_watchBtn)_watchBtn.onclick=()=>toggleWatch(_watchBtn.dataset.name, _watchBtn.dataset.price||0);
