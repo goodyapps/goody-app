@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
     <div class="search-bar">
       <input type="text" id="srch-inp" placeholder="Ieškok bet kokio produkto..." autocomplete="off"
-        onkeydown="if(event.key==='Enter')doSearch()"
+        onkeydown="_srchKeyDown(event)"
         oninput="onSrchInput(this)"
         onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
         aria-label="Search for a product"
@@ -666,8 +666,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <button class="back-btn" onclick="navTo('home')" aria-label="Go back">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div style="min-width:0;">
-        <div class="res-title" id="res-title">Rezultatai</div>
+      <div style="min-width:0;flex:1;cursor:pointer;" onclick="_editSearch()" title="Edit search">
+        <div class="res-title" id="res-title" style="display:flex;align-items:center;gap:6px;">Rezultatai
+          <svg width="12" height="12" viewBox="0 0 18 18" fill="none" style="opacity:.4;flex-shrink:0;"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
         <div class="res-meta" id="res-meta"></div>
       </div>
       <button style="width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onclick="saveWishlist()" aria-label="Save to wishlist">
@@ -1039,7 +1041,34 @@ function _renderPopular(items){
 
 function _getIcon(q){
   const ql=(q||"").toLowerCase();
-  const iconMap={"iphone":"📱","samsung":"📱","phone":"📱","pixel":"📱","macbook":"💻","laptop":"💻","notebook":"💻","tv":"📺","television":"📺","oled":"📺","qled":"📺","headphone":"🎧","earphone":"🎧","sony wh":"🎧","airpods":"🎧","dyson":"🌀","vacuum":"🌀","robot":"🤖","watch":"⌚","playstation":"🎮","xbox":"🎮","nintendo":"🎮","camera":"📷","ipad":"📱","tablet":"📱"};
+  const iconMap={
+    "iphone":"📱","samsung galaxy":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱",
+    "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas":"💻","nešiojamas":"💻","chromebook":"💻","thinkpad":"💻",
+    "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺",
+    "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
+    "sony wh":"🎧","bose qc":"🎧",
+    "dyson":"🌀","vacuum":"🌀","staubsauger":"🌀","odkurzacz":"🌀","siurblys":"🌀",
+    "robot":"🤖","saugroboter":"🤖","roomba":"🤖",
+    "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚",
+    "playstation":"🎮","xbox":"🎮","nintendo":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮",
+    "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷",
+    "ipad":"📱","tablet":"📱","planšetė":"📱",
+    "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧",
+    "fridge":"❄️","šaldytuvas":"❄️","šaldiklis":"❄️","kühlschrank":"❄️","gefrierschrank":"❄️","lodówka":"❄️",
+    "air condition":"🌬️","kondicionierius":"🌬️","klimaanlage":"🌬️","klimatyzator":"🌬️",
+    "kettle":"☕","virdulys":"☕","wasserkocher":"☕","czajnik":"☕",
+    "coffee":"☕","kavos":"☕","kaffeemaschine":"☕","ekspres":"☕",
+    "vacuum cleaner":"🌀","hoover":"🌀",
+    "drill":"🔧","screwdriver":"🔧","electric tool":"🔧",
+    "bike":"🚲","dviratis":"🚲","fahrrad":"🚲","rower":"🚲",
+    "scooter":"🛴","paspirtukas":"🛴","e-roller":"🛴",
+    "treadmill":"🏃","laufband":"🏃","bieżnia":"🏃",
+    "juicer":"🥤","sulčiaspaudė":"🥤","entsafter":"🥤","wyciskarka":"🥤",
+    "projector":"📽️","projektorius":"📽️","projektor":"📽️",
+    "printer":"🖨️","spausdintuvas":"🖨️","drukarka":"🖨️","drucker":"🖨️",
+    "monitor":"🖥️","display":"🖥️",
+    "keyboard":"⌨️","klaviatūra":"⌨️","klawiatura":"⌨️","tastatur":"⌨️",
+  };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
 }
@@ -1169,16 +1198,38 @@ function onSrchInput(el){
   if(clr)clr.classList.toggle("vis",el.value.length>0);
   _showSuggestions(el.value);
 }
-let _sugTimeout=null;
+let _sugTimeout=null, _sugIdx=-1;
+function _srchKeyDown(e){
+  const box=document.getElementById("srch-suggestions");
+  if(box){
+    const items=box.querySelectorAll(".sug-item");
+    if(e.key==="ArrowDown"){e.preventDefault();_sugIdx=Math.min(_sugIdx+1,items.length-1);_highlightSug(items);}
+    else if(e.key==="ArrowUp"){e.preventDefault();_sugIdx=Math.max(_sugIdx-1,-1);_highlightSug(items);}
+    else if(e.key==="Enter"){
+      if(_sugIdx>=0&&items[_sugIdx]){e.preventDefault();items[_sugIdx].click();return;}
+      _hideSuggestions();doSearch();
+    }
+    else if(e.key==="Escape"){_hideSuggestions();}
+    else doSearch.apply(this,[]);
+  } else if(e.key==="Enter")doSearch();
+}
+function _highlightSug(items){
+  items.forEach((el,i)=>{
+    el.style.background=i===_sugIdx?"var(--green-l)":"";
+    el.style.color=i===_sugIdx?"var(--green)":"";
+  });
+}
 function _showSuggestions(val){
   clearTimeout(_sugTimeout);
+  _sugIdx=-1;
   let box=document.getElementById("srch-suggestions");
   if(!val||val.length<2){if(box)box.remove();return;}
   const q=val.toLowerCase();
-  const matches=[...hist.map(h=>h.q),...POPULAR_FALLBACK.map(p=>p.q)]
+  const livePopular=_popularItems.length?_popularItems.map(p=>p.q):POPULAR_FALLBACK.map(p=>p.q);
+  const matches=[...hist.map(h=>h.q),...livePopular]
     .filter((v,i,a)=>a.indexOf(v)===i)
     .filter(s=>s.toLowerCase().includes(q)&&s.toLowerCase()!==q)
-    .slice(0,5);
+    .slice(0,6);
   if(!matches.length){if(box)box.remove();return;}
   if(!box){
     box=document.createElement("div");box.id="srch-suggestions";
@@ -1186,19 +1237,23 @@ function _showSuggestions(val){
     document.querySelector(".search-bar").style.position="relative";
     document.querySelector(".search-bar").appendChild(box);
   }
-  box.innerHTML=matches.map(s=>`<div class="sug-item" style="padding:12px 16px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};_hideSuggestions();doSearch()"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5" opacity=".5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>${escHtml(s)}</div>`).join("");
+  box.innerHTML=matches.map(s=>`<div class="sug-item" style="padding:12px 16px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .1s;" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};_hideSuggestions();doSearch()"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5" opacity=".5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>${escHtml(s)}</div>`).join("");
   box.querySelectorAll(".sug-item").forEach(el=>{
-    el.addEventListener("mouseover",()=>el.style.background="var(--card2)");
-    el.addEventListener("mouseout",()=>el.style.background="");
+    el.addEventListener("mouseover",()=>{_sugIdx=-1;el.style.background="var(--card2)";el.style.color="";});
+    el.addEventListener("mouseout",()=>{el.style.background="";el.style.color="";});
   });
 }
-function _hideSuggestions(){const b=document.getElementById("srch-suggestions");if(b)b.remove();}
+function _hideSuggestions(){const b=document.getElementById("srch-suggestions");if(b)b.remove();_sugIdx=-1;}
 document.addEventListener("click",e=>{if(!e.target.closest(".search-bar"))_hideSuggestions();});
 function clearSearch(){
   const inp=document.getElementById("srch-inp");
   inp.value="";inp.focus();
   const clr=document.getElementById("srch-clear");
   if(clr)clr.classList.remove("vis");
+}
+function _editSearch(){
+  navTo("home");
+  setTimeout(()=>{const inp=document.getElementById("srch-inp");if(inp){inp.focus();inp.select();}},200);
 }
 
 let _voiceActive=false;
