@@ -1675,10 +1675,10 @@ function renderResults(d,q,opts){opts=opts||{};
     if(ds>=82)dsPill=`<span class="deal-score-pill dsp-high">🔥 ${ds}/100</span>`;
     else if(ds>=60)dsPill=`<span class="deal-score-pill dsp-mid">⭐ ${ds}/100</span>`;
     else if(ds>0)dsPill=`<span class="deal-score-pill dsp-low">⚠️ ${ds}/100</span>`;
-    html+=`<div style="background:linear-gradient(135deg,rgba(39,224,138,0.12),rgba(39,224,138,0.04));border:1.5px solid rgba(39,224,138,0.28);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;" class="fade-up">
+    html+=`<div id="verdict-bar" style="background:linear-gradient(135deg,rgba(39,224,138,0.12),rgba(39,224,138,0.04));border:1.5px solid rgba(39,224,138,0.28);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;" class="fade-up">
       <div>
         <div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${bestLbl}</div>
-        <div style="font-size:26px;font-weight:900;color:var(--green);line-height:1;">${money(bestOnline.price)}</div>
+        <div id="verdict-price" style="font-size:26px;font-weight:900;color:var(--green);line-height:1;">${money(bestOnline.price)}</div>
         <div style="font-size:12px;color:var(--ink2);margin-top:3px;">${escHtml(bestOnline.shop)}${saveTxt}</div>
       </div>
       <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
@@ -2683,14 +2683,14 @@ async function fetchPriceHistory(q) {
     // Inject "historical low" badge into instant verdict bar if current best price ≤ 30d low + 5%
     if(d.price_30d_min&&lastData&&lastData.price_min){
       const isAtLow=lastData.price_min<=d.price_30d_min*1.05;
-      const ivBar=document.querySelector(".fade-up[style*='rgba(39,224,138,0.12']");
+      const ivBar=document.getElementById("verdict-bar");
       if(isAtLow&&ivBar&&!document.getElementById("hist-low-badge")){
         const lowLbl={"lt":"📉 Istorinis minimumo","de":"📉 Historisches Tief","pl":"📉 Historyczne minimum"}[curLang]||"📉 Historical low";
         const badge=document.createElement("span");
         badge.id="hist-low-badge";
         badge.style.cssText="font-size:10px;font-weight:800;background:rgba(39,224,138,0.2);color:var(--green);border-radius:20px;padding:3px 9px;margin-top:4px;display:inline-block;";
         badge.textContent=lowLbl;
-        const priceDiv=ivBar.querySelector("[style*='26px']");
+        const priceDiv=document.getElementById("verdict-price");
         if(priceDiv)priceDiv.appendChild(badge);
       }
     }
