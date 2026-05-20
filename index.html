@@ -1107,6 +1107,7 @@ function navTo(id){
   const nb=document.getElementById("nav-"+navId);
   if(nb)nb.classList.add("on");
   if(id==="saved")buildSaved();
+  if(id==="home")document.title="Goody — Never overpay again";
 }
 window.addEventListener("popstate",()=>{
   const p=new URLSearchParams(location.search).get("q");
@@ -1786,6 +1787,11 @@ function renderResults(d,q,opts){opts=opts||{};
 
   html += `<div id="price-history-wrap"></div>`;
   document.getElementById("res-body").innerHTML=html;
+
+  // Update browser tab title with best price for quick tab-switching UX
+  if(bestOnline&&bestOnline.price){
+    document.title=`${money(bestOnline.price)} — ${(d.product_name||q).slice(0,30)} — Goody`;
+  }
 
   // Wire up share/watch buttons via event listeners (safe — no inline eval)
   const _shareBtn=document.getElementById("share-btn-main");
@@ -2625,6 +2631,30 @@ document.addEventListener("keydown",e=>{
     } else {
       i.classList.remove("visible");i.style.top="-50px";i.style.opacity=0;
     }
+  },{passive:true});
+})();
+
+/* ── SWIPE DOWN TO CLOSE CAMERA SHEET ── */
+(function(){
+  let _cy0=0,_cSwipe=false;
+  const cam=()=>document.getElementById("cam-sheet");
+  document.addEventListener("touchstart",e=>{
+    const c=cam();
+    if(!c||!c.classList.contains("open"))return;
+    _cy0=e.touches[0].clientY;_cSwipe=true;
+  },{passive:true});
+  document.addEventListener("touchmove",e=>{
+    if(!_cSwipe)return;
+    const dy=e.touches[0].clientY-_cy0;
+    if(dy>0){const c=cam();if(c)c.style.transform=`translateY(${dy*0.5}px)`;}
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!_cSwipe)return;_cSwipe=false;
+    const dy=e.changedTouches[0].clientY-_cy0;
+    const c=cam();
+    if(!c)return;
+    c.style.transform="";c.style.transition="";
+    if(dy>80)closeCam();
   },{passive:true});
 })();
 </script>
