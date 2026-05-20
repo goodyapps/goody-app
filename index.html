@@ -903,7 +903,7 @@ function _renderPopular(items){
   g.innerHTML="";
   items.forEach(p=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${p.q}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${p.price||""}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${p.ic}</div><div><div class="rec-name">${escHtml(p.q)}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${escHtml(p.price||"")}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
@@ -945,7 +945,7 @@ function buildRecent(){
   const g=document.getElementById("recent-list"); g.innerHTML="";
   if(!hist.length){
     // Show inviting empty state with quick-search chips
-    const chips=_HOME_HINTS.map(s=>`<button class="heh-chip" onclick="document.getElementById('srch-inp').value='${s}';doSearch()">${s}</button>`).join("");
+    const chips=_HOME_HINTS.map(s=>`<button class="heh-chip" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()">${escHtml(s)}</button>`).join("");
     const hintTitle={"lt":"Bandyk ieškoti:","de":"Suche zum Beispiel:","pl":"Spróbuj wyszukać:"}[curLang]||"Try searching for:";
     g.innerHTML=`<div class="home-empty-hint"><div class="heh-title">${hintTitle}</div><div class="heh-chips">${chips}</div></div>`;
     return;
