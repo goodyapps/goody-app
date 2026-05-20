@@ -1023,9 +1023,13 @@ function _checkWatchlistDrops(){
     if(!h||!h.price)return;
     const curP=parseFloat(h.price.replace('€','')||'0');
     const savedP=parseFloat(String(item.price||0))||0;
-    if(curP>0&&savedP>0&&curP<savedP-1){
-      const drop=(savedP-curP).toFixed(2);
-      const msg={"lt":`🔔 ${item.name.slice(0,24)}: kaina krito €${drop}!`,"de":`🔔 ${item.name.slice(0,24)}: Preis sank um €${drop}!`,"pl":`🔔 ${item.name.slice(0,24)}: cena spadła o €${drop}!`}[curLang]||`🔔 ${item.name.slice(0,24)} dropped €${drop}!`;
+    const targetP=item.target?parseFloat(String(item.target))||0:0;
+    const threshold=targetP>0?targetP:savedP-1;
+    if(curP>0&&curP<=threshold){
+      const diff=targetP>0?(targetP-curP).toFixed(2):(savedP-curP).toFixed(2);
+      const msg=targetP>0
+        ?{"lt":`🎯 ${item.name.slice(0,24)}: pasiekta tikslinė kaina €${curP.toFixed(2)}!`,"de":`🎯 ${item.name.slice(0,24)}: Zielpreis €${curP.toFixed(2)} erreicht!`,"pl":`🎯 ${item.name.slice(0,24)}: osiągnięto cenę docelową €${curP.toFixed(2)}!`}[curLang]||`🎯 ${item.name.slice(0,24)}: target price €${curP.toFixed(2)} reached!`
+        :{"lt":`🔔 ${item.name.slice(0,24)}: kaina krito €${diff}!`,"de":`🔔 ${item.name.slice(0,24)}: Preis sank um €${diff}!`,"pl":`🔔 ${item.name.slice(0,24)}: cena spadła o €${diff}!`}[curLang]||`🔔 ${item.name.slice(0,24)} dropped €${diff}!`;
       setTimeout(()=>toast(msg),300);
     }
   });
@@ -2528,6 +2532,29 @@ function showLoading(){
 
 
 /* ── SHARE & WATCH ── */
+function _showWatchTargetPrompt(name, currentPrice, cb){
+  // Show a non-blocking mini prompt for target price
+  const existing=document.getElementById("watch-target-modal");if(existing)existing.remove();
+  const modal=document.createElement("div");
+  modal.id="watch-target-modal";
+  modal.style.cssText="position:fixed;bottom:80px;left:12px;right:12px;z-index:998;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r-lg);padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:var(--ff);";
+  const sugPrice=currentPrice?Math.floor(currentPrice*0.9):0;
+  const titleTxt={"lt":"Nustatyti tikslinę kainą (neprivaloma)","de":"Zielpreis festlegen (optional)","pl":"Ustaw cenę docelową (opcjonalnie)"}[curLang]||"Set target price (optional)";
+  const skipTxt={"lt":"Stebėti be tikslo","de":"Ohne Ziel beobachten","pl":"Obserwuj bez celu"}[curLang]||"Watch without target";
+  const alertTxt={"lt":"Pranešti kai kaina","de":"Benachrichtige mich bei","pl":"Powiadom gdy cena"}[curLang]||"Alert me when price";
+  const confirmTxt={"lt":"Stebėti","de":"Beobachten","pl":"Obserwuj"}[curLang]||"Watch";
+  modal.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--ink1);margin-bottom:10px;">🔔 ${titleTxt}</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:13px;color:var(--ink2);">${alertTxt} ≤ €</span><input id="watch-target-inp" type="number" min="1" max="99999" step="1" value="${sugPrice||''}" placeholder="${sugPrice||'...'}" style="flex:1;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--ink1);font-family:var(--ff);font-size:15px;font-weight:700;width:80px;"></div><div style="display:flex;gap:8px;"><button id="watch-skip-btn" style="flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:8px;padding:10px;font-family:var(--ff);font-size:13px;font-weight:600;color:var(--ink3);cursor:pointer;">${skipTxt}</button><button id="watch-confirm-btn" style="flex:1;background:var(--green);color:#121A24;border:none;border-radius:8px;padding:10px;font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;">${confirmTxt}</button></div>`;
+  document.body.appendChild(modal);
+  const inp=document.getElementById("watch-target-inp");
+  const close=(target)=>{modal.remove();cb(target);};
+  document.getElementById("watch-skip-btn").onclick=()=>close(null);
+  document.getElementById("watch-confirm-btn").onclick=()=>{
+    const v=parseFloat(inp.value);close(v>0?v:null);
+  };
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("watch-confirm-btn").click();if(e.key==="Escape")document.getElementById("watch-skip-btn").click();});
+  setTimeout(()=>inp.focus(),50);
+}
+
 function shareResults(name, price){
   const params=new URLSearchParams({q:name});
   if(curLang&&curLang!=="en")params.set("lang",curLang);
@@ -2563,12 +2590,19 @@ function toggleWatch(name, price){
     if(btn){btn.classList.remove("active");btn.textContent=watchLbl;}
     toast({"lt":"Pašalinta iš stebimų","de":"Aus der Beobachtung entfernt","pl":"Usunięto z obserwowanych"}[curLang]||"Removed from watchlist");
   } else {
-    watches.push({name,price,added:new Date().toISOString()});
-    if(btn){btn.classList.add("active");btn.textContent=watchingLbl;}
-    toast({"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!");
-    if("Notification" in window&&Notification.permission==="default"){
-      setTimeout(()=>Notification.requestPermission(),600);
-    }
+    // Show target price prompt
+    _showWatchTargetPrompt(name, price, (targetPrice)=>{
+      let watches2=JSON.parse(localStorage.getItem(key)||"[]");
+      watches2.push({name,price,target:targetPrice||null,added:new Date().toISOString()});
+      localStorage.setItem(key,JSON.stringify(watches2));
+      if(btn){btn.classList.add("active");btn.textContent=watchingLbl;}
+      const _wlTotal2=wl.length+watches2.length;
+      const _nb2=document.getElementById("nav-wl-badge");if(_nb2){_nb2.textContent=_wlTotal2||"";_nb2.classList.toggle("vis",_wlTotal2>0);}
+      const tMsg=targetPrice?{"lt":`💚 Pranešime kai kaina ≤ €${targetPrice}`,"de":`💚 Benachrichtigung bei ≤ €${targetPrice}`,"pl":`💚 Powiadomimy gdy ≤ €${targetPrice}`}[curLang]||`💚 Alert when ≤ €${targetPrice}`:{"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!";
+      toast(tMsg);
+      if("Notification" in window&&Notification.permission==="default"){setTimeout(()=>Notification.requestPermission(),600);}
+    });
+    return; // don't fall through to save — the callback handles it
   }
   localStorage.setItem(key,JSON.stringify(watches));
   // Update nav badge with combined wishlist + watchlist count
