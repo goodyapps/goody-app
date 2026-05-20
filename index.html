@@ -788,20 +788,38 @@ let camMode="price", camStream=null, scanLoop=null, capturedB64=null;
 let lastData=null, lastQ="";
 
 /* ── ONBOARDING ── */
-const OB_STEPS=[
-  {ic:"📷",title:"Scan any price tag",sub:"Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.",btn:"Next →"},
-  {ic:"🌍",title:"We check 4 shops",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — all compared at once, in seconds.",btn:"Next →"},
-  {ic:"🔥",title:"Get the best deal",sub:"See the lowest price, savings, and an AI verdict on whether to buy now or wait.",btn:"Let's go!"},
-];
+const OB_STEPS={
+  en:[
+    {ic:"📷",title:"Scan any price tag",sub:"Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.",btn:"Next →"},
+    {ic:"🌍",title:"We check 4 shops",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — all compared at once, in seconds.",btn:"Next →"},
+    {ic:"🔥",title:"Get the best deal",sub:"See the lowest price, savings, and an AI verdict on whether to buy now or wait.",btn:"Let's go!"},
+  ],
+  lt:[
+    {ic:"📷",title:"Nuskenuok kainų etiketę",sub:"Nukreipk kamerą į kainą bet kurioje parduotuvėje. Goody akimirksniu randa pigesnę alternatyvą internete.",btn:"Toliau →"},
+    {ic:"🌍",title:"Tikriname 4 parduotuves",sub:"Varle.lt, Elesen.lt, Amazon.DE ir Amazon.PL — visos palyginamos iš karto, per kelias sekundes.",btn:"Toliau →"},
+    {ic:"🔥",title:"Rask geriausią kainą",sub:"Matyk pigiausią kainą, sutaupymą ir AI patarimą — pirkti dabar ar palaukti.",btn:"Pradėti!"},
+  ],
+  de:[
+    {ic:"📷",title:"Preisschild scannen",sub:"Richte die Kamera auf ein Preisschild in jedem Laden. Goody findet sofort bessere Online-Preise.",btn:"Weiter →"},
+    {ic:"🌍",title:"4 Shops im Vergleich",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — alle gleichzeitig verglichen, in Sekunden.",btn:"Weiter →"},
+    {ic:"🔥",title:"Besten Deal sichern",sub:"Sieh den günstigsten Preis, deine Ersparnis und ein KI-Urteil — jetzt kaufen oder warten?",btn:"Los geht's!"},
+  ],
+  pl:[
+    {ic:"📷",title:"Zeskanuj etykietę cenową",sub:"Skieruj aparat na cenę w dowolnym sklepie. Goody natychmiast znajdzie lepszą ofertę online.",btn:"Dalej →"},
+    {ic:"🌍",title:"Sprawdzamy 4 sklepy",sub:"Varle.lt, Elesen.lt, Amazon.DE i Amazon.PL — wszystkie porównane od razu, w kilka sekund.",btn:"Dalej →"},
+    {ic:"🔥",title:"Znajdź najlepszą ofertę",sub:"Zobacz najniższą cenę, oszczędność i rekomendację AI — kupować teraz czy czekać?",btn:"Zaczynamy!"},
+  ],
+};
 let _obStep=0;
 function showOnboard(){
   if(localStorage.getItem("gy_ob_done"))return;
   document.getElementById("onboard-overlay").style.display="flex";
   setObStep(0);
 }
+function _obSteps(){return OB_STEPS[curLang]||OB_STEPS.en;}
 function setObStep(i){
   _obStep=i;
-  const s=OB_STEPS[i];
+  const s=_obSteps()[i];
   document.getElementById("ob-icon").textContent=s.ic;
   document.getElementById("ob-title").textContent=s.title;
   document.getElementById("ob-sub").textContent=s.sub;
@@ -809,7 +827,7 @@ function setObStep(i){
   [0,1,2].forEach(j=>document.getElementById("ob-s"+(j+1)).classList.toggle("done",j<=i));
 }
 function nextOnboard(){
-  if(_obStep<OB_STEPS.length-1){setObStep(_obStep+1);}
+  if(_obStep<_obSteps().length-1){setObStep(_obStep+1);}
   else{closeOnboard();}
 }
 function closeOnboard(){
@@ -2018,12 +2036,21 @@ function showLoading(){
 
 /* ── SHARE & WATCH ── */
 function shareResults(name, price){
-  const url="https://goodyapp.eu/?q="+encodeURIComponent(name);
-  const text=`Found ${name} for ${price} on Goody!`;
+  const params=new URLSearchParams({q:name});
+  if(curLang&&curLang!=="en")params.set("lang",curLang);
+  const url="https://goodyapp.eu/?"+params.toString();
+  const priceStr=price?` — ${price}`:"";
+  const shareTexts={
+    lt:`Rasta ${name}${priceStr} Goody!`,
+    de:`Gefunden: ${name}${priceStr} bei Goody!`,
+    pl:`Znaleziono ${name}${priceStr} na Goody!`,
+  };
+  const text=shareTexts[curLang]||`Found ${name}${priceStr} on Goody!`;
+  const copyLbl={"lt":"🔗 Nuoroda nukopijuota!","de":"🔗 Link kopiert!","pl":"🔗 Link skopiowany!"}[curLang]||"🔗 Link copied!";
   if(navigator.share){
     navigator.share({title:"Goody — "+name,text,url}).catch(()=>{});
   } else {
-    navigator.clipboard.writeText(url).then(()=>toast("🔗 Link copied!"));
+    navigator.clipboard.writeText(url).then(()=>toast(copyLbl));
   }
 }
 
@@ -2066,28 +2093,33 @@ let _priceChart = null;
 async function fetchPriceHistory(q) {
   const container = document.getElementById("price-history-wrap");
   if (!container) return;
-  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span><span class="chart-badge">Loading...</span></div><div class="chart-empty">Loading chart...</div></div>`;
+  // Don't show loading placeholder — just render when ready
+  container.innerHTML = "";
   try {
     const r = await fetch(`${API_BASE}/api/price-history?q=${encodeURIComponent(q)}`, {signal: AbortSignal.timeout(8000)});
-    if (!r.ok) { container.innerHTML = ""; return; }
+    if (!r.ok) return;
     const d = await r.json();
-    if (!d.labels || d.labels.length < 2) {
-      container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span></div><div class="chart-empty">Not enough data yet — check back after a few searches</div></div>`;
+    if (!d.labels || d.labels.length < 2 || !(d.datasets||[]).length) {
+      const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
+      const noDataMsg={"lt":"Dar nėra duomenų — patikrinkite po kelių paieškų","de":"Noch keine Daten — nach weiteren Suchen prüfen","pl":"Brak danych — sprawdź po kilku wyszukiwaniach"}[curLang]||"No history yet — search again later to build price trends";
+      container.innerHTML=`<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge" style="background:var(--card2);color:var(--ink3);">New</span></div><div class="chart-empty" style="padding:20px;text-align:center;font-size:12px;color:var(--ink3);">📊 ${noDataMsg}</div></div>`;
       return;
     }
-    renderPriceChart(container, d);
-  } catch(e) { container.innerHTML = ""; }
+    renderPriceChart(container, d, q);
+  } catch(e) { /* silently skip chart on error */ }
 }
 
-function renderPriceChart(container, d) {
+function renderPriceChart(container, d, q) {
   const shopColors = {};
   (d.datasets || []).forEach((ds, i) => { shopColors[ds.shop] = SHOP_COLORS[i % SHOP_COLORS.length]; });
 
   const legendHtml = (d.datasets || []).map(ds =>
-    `<div class="chart-leg-item"><div class="chart-leg-dot" style="background:${shopColors[ds.shop]}"></div>${ds.shop}</div>`
+    `<div class="chart-leg-item"><div class="chart-leg-dot" style="background:${shopColors[ds.shop]}"></div>${escHtml(ds.shop)}</div>`
   ).join("");
 
-  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">Price History</span><span class="chart-badge">${d.labels.length} days</span></div><div class="chart-wrap"><canvas id="ph-canvas"></canvas></div><div class="chart-legend">${legendHtml}</div></div>`;
+  const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
+  const daysLbl={"lt":"dienos","de":"Tage","pl":"dni"}[curLang]||"days";
+  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge">${d.labels.length} ${daysLbl}</span></div><div class="chart-wrap"><canvas id="ph-canvas"></canvas></div><div class="chart-legend">${legendHtml}</div></div>`;
 
   if (_priceChart) { _priceChart.destroy(); _priceChart = null; }
 
