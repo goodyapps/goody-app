@@ -1193,8 +1193,8 @@ function buildSaved(){
   const n=wl.length+watches.length;
   document.getElementById("saved-count").textContent=n===0?"":n+" "+(t.items_saved||"saved");
   if(!n){
-    const quickSearches=["iPhone 16","MacBook Air","Sony WH-1000XM5","Dyson V15"];
-    const quickBtns=quickSearches.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
+    const _saveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,4).map(p=>p.q);
+    const quickBtns=_saveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
     g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">${t.saved_empty||"Nothing saved yet"}</div><div class="se-sub">${t.saved_empty_sub||"Find a great deal and tap ♥ to save it"}</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;">${quickBtns}</div></div>`;
     return;
   }
