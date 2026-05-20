@@ -394,7 +394,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .error-ico{font-size:36px;margin-bottom:10px;}
 .error-title{font-size:16px;font-weight:800;color:var(--red);margin-bottom:6px;}
 .error-msg{font-size:13px;color:var(--ink3);line-height:1.5;}
-.retry-btn{margin-top:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 24px;font-family:var(--ff);font-size:14px;font-weight:700;cursor:pointer;}
+.retry-btn{margin-top:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r-sm);padding:13px 24px;font-family:var(--ff);font-size:14px;font-weight:700;cursor:pointer;min-height:44px;}
 .toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:10px 20px;border-radius:40px;font-size:13px;font-weight:600;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;z-index:100;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
@@ -2358,7 +2358,23 @@ function renderPriceChart(container, d, q) {
 
   const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
   const daysLbl={"lt":"dienos","de":"Tage","pl":"dni"}[curLang]||"days";
-  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge">${d.labels.length} ${daysLbl}</span></div><div class="chart-wrap"><canvas id="ph-canvas"></canvas></div><div class="chart-legend">${legendHtml}</div></div>`;
+  // Compute price trend across all datasets
+  let trendHtml="";
+  const allPrices=(d.datasets||[]).flatMap(ds=>ds.prices.filter(p=>p!=null));
+  if(allPrices.length>=4){
+    const half=Math.floor(allPrices.length/2);
+    const early=allPrices.slice(0,half).reduce((a,b)=>a+b,0)/half;
+    const recent=allPrices.slice(-half).reduce((a,b)=>a+b,0)/half;
+    const pctChg=(recent-early)/early*100;
+    if(pctChg<=-3){
+      const tLbl={"lt":`↓ ${Math.abs(pctChg).toFixed(1)}% žemiau nei prieš ${d.labels.length}d.`,"de":`↓ ${Math.abs(pctChg).toFixed(1)}% günstiger als vor ${d.labels.length}T.`,"pl":`↓ ${Math.abs(pctChg).toFixed(1)}% taniej niż ${d.labels.length}d. temu`}[curLang]||`↓ ${Math.abs(pctChg).toFixed(1)}% lower than ${d.labels.length}d ago`;
+      trendHtml=`<span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-l);padding:2px 8px;border-radius:20px;">${tLbl}</span>`;
+    }else if(pctChg>=3){
+      const tLbl={"lt":`↑ ${pctChg.toFixed(1)}% aukščiau nei prieš ${d.labels.length}d.`,"de":`↑ ${pctChg.toFixed(1)}% teurer als vor ${d.labels.length}T.`,"pl":`↑ ${pctChg.toFixed(1)}% drożej niż ${d.labels.length}d. temu`}[curLang]||`↑ ${pctChg.toFixed(1)}% higher than ${d.labels.length}d ago`;
+      trendHtml=`<span style="font-size:11px;font-weight:700;color:var(--red);background:var(--red-l);padding:2px 8px;border-radius:20px;">${tLbl}</span>`;
+    }
+  }
+  container.innerHTML = `<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><div style="display:flex;align-items:center;gap:6px;"><span class="chart-badge">${d.labels.length} ${daysLbl}</span>${trendHtml}</div></div><div class="chart-wrap"><canvas id="ph-canvas"></canvas></div><div class="chart-legend">${legendHtml}</div></div>`;
 
   if (_priceChart) { _priceChart.destroy(); _priceChart = null; }
 
