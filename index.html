@@ -837,6 +837,9 @@ function closeOnboard(){
 
 /* ── BOOT ── */
 window.addEventListener("DOMContentLoaded",()=>{
+  // Honour ?lang= from shared URLs (overrides stored lang for this session)
+  const _lp=new URLSearchParams(location.search).get("lang");
+  if(_lp&&["lt","de","pl","en"].includes(_lp))curLang=_lp;
   setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved(); _updateWlBadge();
   document.getElementById("be-url").textContent=API_BASE;
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
@@ -1198,20 +1201,29 @@ function renderResults(d,q){
   let html="";
 
   if(!results.length){
+    const _nr={
+      title:{"lt":"Nieko nerasta","de":"Nichts gefunden","pl":"Nic nie znaleziono"}[lang]||"Nothing found",
+      sub:{"lt":"Nepavyko rasti kainų šiam produktui","de":"Keine Preise gefunden für","pl":"Nie znaleziono cen dla"}[lang]||"Could not find prices for",
+      tips:{"lt":"Patarimai","de":"Tipps","pl":"Wskazówki"}[lang]||"Tips",
+      tip1:{"lt":"Bandyk trumpesnį pavadinimą (pvz. Samsung S24)","de":"Kürzeren Namen versuchen (Marke + Modell)","pl":"Spróbuj krótszej nazwy (marka + model)"}[lang]||"Try a shorter product name (brand + model)",
+      tip2:{"lt":"Parduotuvės gali neturėti šio produkto","de":"Einige Shops führen diesen Artikel möglicherweise nicht","pl":"Niektóre sklepy mogą nie posiadać tego produktu"}[lang]||"Some shops may not carry this item",
+      popular:{"lt":"Populiarūs produktai","de":"Beliebte Suchen","pl":"Popularne wyszukiwania"}[lang]||"Popular searches",
+      again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
+    };
     const suggestions=["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Sony WH-1000XM5","Dyson V15"];
     const sugHtml=suggestions.map(s=>`<button onclick="document.getElementById('srch-inp').value='${s}';doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${s}</button>`).join("");
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
-      <div class="nr-title">${isLt?"Nieko nerasta":"Nothing found"}</div>
-      <div class="nr-sub">${isLt?"Nepavyko rasti kainų šiam produktui":"Could not find prices for"}: <strong>${q}</strong>.</div>
+      <div class="nr-title">${_nr.title}</div>
+      <div class="nr-sub">${_nr.sub}: <strong>${escHtml(q)}</strong>.</div>
       <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
-        <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${isLt?"Patarimai":"Tips"}</div>
-        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${isLt?"Bandyk trumpesnį pavadinimą":"Try a shorter product name (brand + model)"}</span></div>
-        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>${isLt?"Parduotuvės gali neturėti šio produkto":"Some shops may not carry this item"}</span></div>
+        <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.tips}</div>
+        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${_nr.tip1}</span></div>
+        <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>${_nr.tip2}</span></div>
       </div>
-      <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${isLt?"Populiarūs produktai":"Popular searches"}</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.popular}</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;">${sugHtml}</div>
-      <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← ${isLt?"Ieškoti dar kartą":"Search again"}</button>
+      <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← ${_nr.again}</button>
     </div>`;
     document.getElementById("res-body").innerHTML=html;
     return;
@@ -1933,7 +1945,10 @@ const LANGS = {
     scan_barcode:"Skanuj kod kreskowy",
   }
 };
-let curLang = localStorage.getItem("gy_lang")||"lt";
+let curLang = localStorage.getItem("gy_lang") || (()=>{
+  const l=(navigator.language||navigator.userLanguage||"").slice(0,2).toLowerCase();
+  return ["lt","de","pl","en"].includes(l)?l:"lt";
+})();
 
 function setLang(l){
   curLang=l;
