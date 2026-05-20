@@ -443,7 +443,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.9 — clearer photo vs internet comparison ── */
+/* ── GOODY GOOD DEAL v5.14 — clearer photo vs internet comparison ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -543,7 +543,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="home-head">
       <div>
         <div class="logo-mark">good<span>y</span></div>
-        <div class="logo-sub" id="logo-sub">Never overpay again.</div>
+        <div class="logo-sub" id="logo-sub">Nemok per daug niekada.</div>
       </div>
       <button class="notif-btn" id="wl-shortcut-btn" onclick="navTo('saved')" aria-label="Saved items" style="position:relative;">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 15.5L3 9.5a3.5 3.5 0 015-4.9l1 1 1-1a3.5 3.5 0 015 4.9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -552,7 +552,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
 
     <div class="scan-hero">
-      <div class="scan-hint">Point camera at any price tag</div>
+      <div class="scan-hint">Nufotografuok kainą ir rask pigiau internete</div>
       <div class="scan-wrap">
         <div class="ring"></div>
         <div class="ring"></div>
@@ -572,7 +572,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
 
     <div class="search-bar">
-      <input type="text" id="srch-inp" placeholder="Search any product..." autocomplete="off"
+      <input type="text" id="srch-inp" placeholder="Ieškok bet kokio produkto..." autocomplete="off"
         onkeydown="if(event.key==='Enter')doSearch()"
         oninput="onSrchInput(this)"
         onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
@@ -588,21 +588,21 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     </div>
 
     <div class="sec-head">
-      <div class="sec-title" id="cats-title">Categories</div>
+      <div class="sec-title" id="cats-title">Kategorijos</div>
     </div>
     <div class="cats" id="cats-grid"></div>
 
     <div class="sec-head" id="popular-head">
-      <div class="sec-title" id="popular-title">Popular</div>
+      <div class="sec-title" id="popular-title">Populiariausi</div>
     </div>
     <div class="recent" id="popular-list"></div>
 
     <div class="sec-head">
-      <div class="sec-title" id="recent-title">Recent scans</div>
-      <div class="sec-action" id="clear-hist-btn" onclick="clearHistory()">Clear</div>
+      <div class="sec-title" id="recent-title">Paskutinės paieškos</div>
+      <div class="sec-action" id="clear-hist-btn" onclick="clearHistory()">Išvalyti</div>
     </div>
     <div class="recent" id="recent-list">
-      <div style="padding:20px 0;text-align:center;color:var(--ink3);font-size:13px;">No recent searches</div>
+      <div style="padding:20px 0;text-align:center;color:var(--ink3);font-size:13px;">Dar nėra paieškų istorijos</div>
     </div>
   </div>
 
@@ -613,7 +613,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div style="min-width:0;">
-        <div class="res-title" id="res-title">Results</div>
+        <div class="res-title" id="res-title">Rezultatai</div>
         <div class="res-meta" id="res-meta"></div>
       </div>
       <button style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onclick="saveWishlist()" aria-label="Save to wishlist">
@@ -626,8 +626,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- SAVED -->
   <div class="page" id="pg-saved">
     <div class="saved-head">
-      <div class="saved-title">Saved</div>
-      <div class="saved-sub" id="saved-count">0 items saved</div>
+      <div class="saved-title" id="saved-title">Išsaugota</div>
+      <div class="saved-sub" id="saved-count">0 išsaugota</div>
     </div>
     <div class="saved-list" id="saved-list"></div>
   </div>
@@ -635,27 +635,27 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- SETTINGS -->
   <div class="page" id="pg-settings">
     <div class="set-head">
-      <div class="set-title">Settings</div>
+      <div class="set-title" id="set-title">Nustatymai</div>
     </div>
     <div class="rate-bar">
-      <div class="rate-label" id="rate-label">Daily searches used</div>
+      <div class="rate-label" id="rate-label">Dienos paieškos panaudotos</div>
       <div class="rate-track"><div class="rate-fill" id="rate-fill" style="width:0%"></div></div>
-      <div class="rate-text"><span id="rate-used">0 used</span><span id="rate-left">-- left</span></div>
+      <div class="rate-text"><span id="rate-used">0 panaudota</span><span id="rate-left">-- liko</span></div>
     </div>
     <div class="set-section">
-      <div class="set-label" id="set-lbl-app">App</div>
+      <div class="set-label" id="set-lbl-app">Programa</div>
       <div class="set-card">
         <div class="set-row"><div class="sr-n">App</div><div class="sr-v">Goody</div></div>
-        <div class="set-row"><div class="sr-n" id="set-version-lbl">Version</div><div class="sr-v" id="app-version">—</div></div>
+        <div class="set-row"><div class="sr-n" id="set-version-lbl">Versija</div><div class="sr-v" id="app-version">—</div></div>
         <div class="set-row"><div class="sr-n">Backend</div><div class="sr-v" id="be-url" style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div></div>
-        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Shops</div><div class="sr-v">Varle · Elesen · Amazon.DE · Amazon.PL</div></div>
-        <div class="set-row"><div class="sr-n" id="set-status-lbl">Status</div><div class="sr-v" style="display:flex;align-items:center;gap:6px;"><span id="api-status-dot2" style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span><span id="api-status-txt2">—</span></div></div>
+        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Parduotuvės</div><div class="sr-v">Varle · Elesen · Amazon.DE · Amazon.PL</div></div>
+        <div class="set-row"><div class="sr-n" id="set-status-lbl">Būklė</div><div class="sr-v" style="display:flex;align-items:center;gap:6px;"><span id="api-status-dot2" style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span><span id="api-status-txt2">—</span></div></div>
       </div>
     </div>
     <div class="set-section">
-      <div class="set-label" id="set-lbl-data">Data</div>
+      <div class="set-label" id="set-lbl-data">Duomenys</div>
       <div class="set-card">
-        <div class="set-row" id="clear-data-row" onclick="clearData()" style="cursor:pointer;"><div class="sr-n" style="color:var(--red);" id="clear-data-lbl">Clear all data</div><div class="sr-a">›</div></div>
+        <div class="set-row" id="clear-data-row" onclick="clearData()" style="cursor:pointer;"><div class="sr-n" style="color:var(--red);" id="clear-data-lbl">Ištrinti visus duomenis</div><div class="sr-a">›</div></div>
       </div>
     </div>
   </div>
@@ -663,12 +663,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <!-- CAMERA SHEET -->
   <div class="cam-sheet" id="cam-sheet">
     <div class="cam-head">
-      <div class="cam-title" id="cam-title">Scan price tag</div>
+      <div class="cam-title" id="cam-title">Nuskaityti kainų etiketę</div>
       <button class="cam-close" onclick="closeCam()">✕</button>
     </div>
     <div class="cam-modes">
-      <button class="cam-mode on" id="cm-pr" onclick="switchCM('price')">📷 Price photo</button>
-      <button class="cam-mode" id="cm-bc" onclick="switchCM('barcode')">▦ Barcode</button>
+      <button class="cam-mode on" id="cm-pr" onclick="switchCM('price')">📷 <span id="cm-pr-lbl">Kainos nuotrauka</span></button>
+      <button class="cam-mode" id="cm-bc" onclick="switchCM('barcode')">▦ <span id="cm-bc-lbl">Barkodas</span></button>
     </div>
     <div class="vf-wrap" id="vf-wrap">
       <video class="vf-video" id="vf-video" autoplay playsinline muted></video>
@@ -676,15 +676,15 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="green-flash" id="green-flash"></div>
       <div class="vf-overlay">
         <div class="vf-frame" id="vf-frame">
-          <div class="bc-hint" id="bc-hint">Point at barcode</div>
+          <div class="bc-hint" id="bc-hint">Nukreipk į barkodą</div>
           <div class="vfc tl"></div><div class="vfc tr"></div>
           <div class="vfc bl"></div><div class="vfc br"></div>
           <div class="vf-scanline" id="vf-sl"></div>
         </div>
       </div>
       <div class="bc-result-bar" id="bc-result-bar">
-        <div class="bc-res-label">Barcode found</div>
-        <div class="bc-res-name" id="bc-res-name">Searching...</div>
+        <div class="bc-res-label">Barkodas rastas</div>
+        <div class="bc-res-name" id="bc-res-name">Ieškoma...</div>
         <div class="bc-res-code" id="bc-res-code"></div>
       </div>
     </div>
@@ -694,12 +694,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="cam-upload">
       <button class="upload-btn" onclick="document.getElementById('fu').click()">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M5 6l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        Upload photo
+        Įkelti nuotrauką
       </button>
     </div>
     <div class="cam-snap-wrap">
       <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
-        <span>📷</span><span>Enable camera</span>
+        <span>📷</span><span>Įjungti kamerą</span>
       </button>
     </div>
   </div>
@@ -718,16 +718,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="ob-step" id="ob-s3"></div>
       </div>
       <div class="ob-icon" id="ob-icon">📷</div>
-      <div class="ob-title" id="ob-title">Scan any price tag</div>
-      <div class="ob-sub" id="ob-sub">Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.</div>
-      <button class="ob-btn" id="ob-btn" onclick="nextOnboard()">Next →</button>
-      <span class="ob-skip" onclick="closeOnboard()">Skip intro</span>
+      <div class="ob-title" id="ob-title">Nuskenuok kainų etiketę</div>
+      <div class="ob-sub" id="ob-sub">Nukreipk kamerą į kainą bet kurioje parduotuvėje. Goody akimirksniu randa pigesnę alternatyvą internete.</div>
+      <button class="ob-btn" id="ob-btn" onclick="nextOnboard()">Toliau →</button>
+      <span class="ob-skip" id="ob-skip" onclick="closeOnboard()">Praleisti</span>
     </div>
   </div>
 
 
   <div class="translate-bar">
-    <span class="translate-label">Language:</span>
+    <span class="translate-label">Kalba:</span>
     <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
     <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
     <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
@@ -742,12 +742,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
     <button class="nav-btn on" id="nav-home" onclick="navTo('home')" aria-label="Home">
       <svg viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-      <span class="nav-lbl">Home</span>
+      <span class="nav-lbl">Pradžia</span>
       <div class="nav-dot"></div>
     </button>
     <button class="nav-btn" id="nav-scan" onclick="openCam('price')" aria-label="Scan price tag">
       <svg viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 14h3M15 12v5M12 12h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <span class="nav-lbl">Scan</span>
+      <span class="nav-lbl">Skanuoti</span>
       <div class="nav-dot"></div>
     </button>
     <button class="nav-btn" id="nav-saved" onclick="navTo('saved')" aria-label="Saved items">
@@ -755,12 +755,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <svg viewBox="0 0 22 22" width="22" height="22" fill="none"><path d="M11 18.5L4 11.5a4 4 0 015.66-5.66L11 7l1.34-1.34A4 4 0 0118 11l-7 7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
         <span class="wl-badge" id="nav-wl-badge"></span>
       </div>
-      <span class="nav-lbl">Saved</span>
+      <span class="nav-lbl">Išsaugota</span>
       <div class="nav-dot"></div>
     </button>
     <button class="nav-btn" id="nav-settings" onclick="navTo('settings')" aria-label="Settings">
       <svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M4.22 17.78l1.42-1.42M16.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <span class="nav-lbl">Settings</span>
+      <span class="nav-lbl">Nustatymai</span>
       <div class="nav-dot"></div>
     </button>
   </nav>
@@ -774,12 +774,16 @@ const API_BASE = "https://goody-backend.onrender.com";
 const CATS = [
   {ic:"📱",lt:"Telefonai",en:"Phones",de:"Handys",pl:"Telefony",q:"iPhone 16 Pro"},
   {ic:"💻",lt:"Nešiojami",en:"Laptops",de:"Laptops",pl:"Laptopy",q:"MacBook Air M3"},
-  {ic:"📺",lt:"Televizoriai",en:"TVs",de:"TVs",pl:"Telewizory",q:"Samsung QLED 65"},
-  {ic:"🎧",lt:"Garsas",en:"Audio",de:"Audio",pl:"Audio",q:"Sony WH-1000XM5"},
+  {ic:"📺",lt:"Televizoriai",en:"TVs",de:"TVs",pl:"Telewizory",q:"Samsung QLED 65",
+    qlt:"Samsung televizorius 65",qde:"Samsung QLED 65 Zoll"},
+  {ic:"🎧",lt:"Garsas",en:"Audio",de:"Audio",pl:"Audio",q:"Sony WH-1000XM5",
+    qlt:"Sony ausinės",qde:"Sony Kopfhörer",qpl:"Sony słuchawki"},
   {ic:"⌚",lt:"Laikrodžiai",en:"Watches",de:"Uhren",pl:"Zegarki",q:"Apple Watch Series 10"},
   {ic:"🎮",lt:"Žaidimai",en:"Gaming",de:"Gaming",pl:"Gaming",q:"PlayStation 5"},
-  {ic:"📷",lt:"Foto",en:"Photo",de:"Foto",pl:"Foto",q:"Sony A7 IV"},
-  {ic:"🏠",lt:"Buitis",en:"Appliances",de:"Haushalts",pl:"AGD",q:"Bosch washing machine"},
+  {ic:"📷",lt:"Foto",en:"Photo",de:"Foto",pl:"Foto",q:"Sony A7 IV",
+    qlt:"Sony fotoaparatas"},
+  {ic:"🏠",lt:"Buitis",en:"Appliances",de:"Haushalts",pl:"AGD",q:"Bosch washing machine",
+    qlt:"Bosch skalbyklė",qde:"Bosch Waschmaschine",qpl:"Bosch pralka"},
 ];
 
 let wl = JSON.parse(localStorage.getItem("gy_wl")||"[]");
@@ -825,6 +829,7 @@ function setObStep(i){
   document.getElementById("ob-sub").textContent=s.sub;
   document.getElementById("ob-btn").textContent=s.btn;
   [0,1,2].forEach(j=>document.getElementById("ob-s"+(j+1)).classList.toggle("done",j<=i));
+  const sk=document.getElementById("ob-skip");if(sk)sk.textContent={"lt":"Praleisti","de":"Überspringen","pl":"Pomiń"}[curLang]||"Skip intro";
 }
 function nextOnboard(){
   if(_obStep<_obSteps().length-1){setObStep(_obStep+1);}
@@ -857,17 +862,17 @@ window.addEventListener("DOMContentLoaded",()=>{
       const r=await fetch(`${API_BASE}/api/health`,{signal:AbortSignal.timeout(6000)});
       const d=r.ok?await r.json():null;
       if(d&&d.status==="ok"){
-        setDots("var(--green)","Online");
+        setDots("var(--green)",{"lt":"Prisijungta","de":"Online","pl":"Online"}[curLang]||"Online");
         const v=document.getElementById("app-version");
         if(v&&d.version)v.textContent="v"+d.version;
         if(d.cache&&txt2){
-          txt2.textContent=`Online · ${d.cache.hit_rate_pct}% cache hits`;
+          txt2.textContent=({"lt":"Prisijungta","de":"Online","pl":"Online"}[curLang]||"Online")+` · ${d.cache.hit_rate_pct}% `+({"lt":"iš cache","de":"Cache-Treffer","pl":"z cache"}[curLang]||"cache hits");
         }
       } else {
-        setDots("var(--amber)","Degraded");
+        setDots("var(--amber)",{"lt":"Ribotai veikia","de":"Eingeschränkt","pl":"Ograniczona"}[curLang]||"Degraded");
       }
     }catch(e){
-      setDots("var(--red)","Offline");
+      setDots("var(--red)",{"lt":"Neprisijungta","de":"Offline","pl":"Offline"}[curLang]||"Offline");
     }
   })();
   const qParam=new URLSearchParams(window.location.search).get("q");
@@ -879,9 +884,10 @@ function buildCats(){
   const g=document.getElementById("cats-grid"); g.innerHTML="";
   CATS.forEach(c=>{
     const label=c[curLang]||c.en||c.lt;
+    const query=c["q"+curLang]||c.q;
     const el=document.createElement("div"); el.className="cat";
     el.innerHTML=`<span class="cat-ic">${c.ic}</span><div class="cat-n">${label}</div>`;
-    el.onclick=()=>{document.getElementById("srch-inp").value=c.q;doSearch();};
+    el.onclick=()=>{document.getElementById("srch-inp").value=query;doSearch();};
     g.appendChild(el);
   });
 }
@@ -1060,18 +1066,18 @@ function _showSearchError(){
   const retryLbl={"lt":"Bandyti dar kartą","de":"Erneut versuchen","pl":"Spróbuj ponownie"}[curLang]||"Try again";
   const title={"lt":"Nepavyko prisijungti","de":"Verbindungsfehler","pl":"Błąd połączenia"}[curLang]||"Connection error";
   document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">😞</div><div class="error-title">${title}</div><div class="error-msg">${errMsg}</div><button class="retry-btn" onclick="doSearch()">${retryLbl}</button></div></div>`;
-  document.getElementById("res-meta").textContent="Error";
+  document.getElementById("res-meta").textContent={"lt":"Klaida","de":"Fehler","pl":"Błąd"}[curLang]||"Error";
 }
 function _showRateLimitError(e){
   const msg={"lt":"Viršytas dienos paieškų limitas. Limitas atsinaujins rytoj.","de":"Tageslimit für Suchen erreicht. Limit wird morgen zurückgesetzt.","pl":"Osiągnięto dzienny limit wyszukiwań. Limit zostanie zresetowany jutro."}[curLang]||"Daily search limit reached. Limit resets tomorrow.";
   const homeBtn={"lt":"Grįžti į pradžią","de":"Zur Startseite","pl":"Wróć do strony głównej"}[curLang]||"Go to home";
   document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">⏳</div><div class="error-title">${{"lt":"Limitas pasiektas","de":"Limit erreicht","pl":"Limit osiągnięty"}[curLang]||"Limit reached"}</div><div class="error-msg">${msg}</div><button class="retry-btn" onclick="navTo('home')">${homeBtn}</button></div></div>`;
-  document.getElementById("res-meta").textContent="429";
+  document.getElementById("res-meta").textContent={"lt":"Limitas","de":"Limit","pl":"Limit"}[curLang]||"Limit";
 }
 
 async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
-  if(!q){toast(curLang==="lt"?"Įveskite produkto pavadinimą":"Enter a product name");return;}
+  if(!q){toast({"lt":"Įveskite produkto pavadinimą","de":"Produktname eingeben","pl":"Wpisz nazwę produktu"}[curLang]||"Enter a product name");return;}
   lastQ=q;
   history.pushState({q},"","/?q="+encodeURIComponent(q));
   navTo("results");
@@ -1324,7 +1330,7 @@ function renderResults(d,q,opts){opts=opts||{};
           ?({"lt":"Kaina atrodo normali","de":"Preis sieht fair aus","pl":"Cena wygląda normalnie"}[lang]||"Price looks fair")
           :({"lt":"Rasta kaina","de":"Preise gefunden","pl":"Znaleziono ceny"}[lang]||"Prices found"))
       :({"lt":"Kaina neatrodo ypatinga","de":"Preis ist nicht außergewöhnlich","pl":"Cena nie jest wyjątkowa"}[lang]||"Price is not exceptional");
-    const sub=d.verdict_reason||d.buy_recommendation||({"lt":"Palyginome kainas iš kelių parduotuvių.","de":"Wir haben Preise aus mehreren Shops verglichen.","pl":"Porównaliśmy ceny z kilku sklepów."}[lang]||"We compared prices across shops.");
+    const sub=escHtml(d.verdict_reason||d.buy_recommendation||({"lt":"Palyginome kainas iš kelių parduotuvių.","de":"Wir haben Preise aus mehreren Shops verglichen.","pl":"Porównaliśmy ceny z kilku sklepów."}[lang]||"We compared prices across shops."));
     const cardCls=score>=75?"":score>=50?"warn":"bad";
     const nOffers=onlineResults.length||results.length;
     const offersLbl={"lt":nOffers===1?"pasiūlymas":"pasiūlymai","de":nOffers===1?"Angebot":"Angebote","pl":nOffers===1?"oferta":"oferty"}[lang]||"offers";
@@ -1443,7 +1449,7 @@ function renderResults(d,q,opts){opts=opts||{};
       <div class="pc-top" style="${winnerCrown?"margin-top:14px;":""}">
         <div class="pc-shop">
           <div class="pc-logo">${logo}</div>
-          <div><div class="pc-name">${escHtml(r.shop||"Shop")}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
+          <div><div class="pc-name">${escHtml(r.shop||"Shop")}</div><div class="pc-delivery">${escHtml(delivery)}</div>${deltaHtml}</div>
         </div>
         <div style="text-align:right;">
           <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
@@ -1545,7 +1551,7 @@ function updateRateUI(d){
 
 /* ── CAMERA ── */
 function openCam(mode){
-  if(typeof ZXing==="undefined"){toast({"lt":"Skeneris dar kraunamas...","de":"Scanner lädt noch...","pl":"Skaner ładuje się..."}[curLang]||"Scanner loading...");return;}
+  if(typeof ZXing==="undefined"){toast({"lt":"Skeneris dar kraunamas, palaukite...","de":"Scanner lädt noch...","pl":"Skaner ładuje się..."}[curLang]||"Scanner loading...");return;}
   camMode=mode; capturedB64=null;
   switchCM(mode);
   document.getElementById("cp-wrap").style.display="none";
@@ -1579,14 +1585,14 @@ function switchCM(mode){
   camMode=mode;
   document.getElementById("cm-bc").classList.toggle("on",mode==="barcode");
   document.getElementById("cm-pr").classList.toggle("on",mode==="price");
-  const lt2=getLang();document.getElementById("cam-title").textContent=mode==="barcode"?(lt2.scan_barcode||"Scan barcode"):(lt2.scan_price||"Scan price tag");
+  const lt2=getLang();document.getElementById("cam-title").textContent=mode==="barcode"?(lt2.scan_barcode||"Nuskaityti barkodą"):(lt2.scan_price||"Nuskaityti kainų etiketę");
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   capturedB64=null;document.getElementById("cp-wrap").style.display="none";resetSnap();
 }
 function resetSnap(){
   const btn=document.getElementById("c-snap");btn.disabled=false;btn.style.background="var(--green)";
-  btn.innerHTML=`<span>📷</span><span>${camStream?(camMode==="barcode"?"Scanning...":"Take photo"):"Enable camera"}</span>`;
+  btn.innerHTML=`<span>📷</span><span>${camStream?(camMode==="barcode"?({"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning..."):({"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")):({"lt":"Įjungti kamerą","de":"Kamera aktivieren","pl":"Włącz kamerę"}[curLang]||"Enable camera")}</span>`;
   btn.onclick=()=>snapOrSearch();
 }
 async function snapOrSearch(){
@@ -1596,7 +1602,7 @@ async function snapOrSearch(){
 }
 async function startCam(){
   const btn=document.getElementById("c-snap");btn.disabled=true;
-  btn.innerHTML="<span>⏳</span><span>Connecting...</span>";
+  btn.innerHTML="<span>⏳</span><span>"+( {"lt":"Jungiamasi...","de":"Verbinde...","pl":"Łączę..."}[curLang]||"Connecting...")+"</span>";
   try{
     camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
     const v=document.getElementById("vf-video");v.srcObject=camStream;
@@ -1604,9 +1610,9 @@ async function startCam(){
     document.querySelector(".vf-frame").style.display="block";
     await new Promise(r=>v.onloadedmetadata=r);
     btn.disabled=false;
-    if(camMode==="barcode"){btn.innerHTML="<span>▦</span><span>Scanning...</span>";btn.disabled=true;startBcLoop();}
-    else btn.innerHTML="<span>📷</span><span>Take photo</span>";
-  }catch(e){btn.disabled=false;resetSnap();toast("Camera: "+e.message);}
+    if(camMode==="barcode"){btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";btn.disabled=true;startBcLoop();}
+    else btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";
+  }catch(e){btn.disabled=false;resetSnap();toast({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: "+e.message);}
 }
 function playBeep(){
   try{
@@ -1665,7 +1671,7 @@ function onBcFound(code){
 
   // 6. Show result bar with code, then update with product name
   document.getElementById("bc-res-code").textContent=code;
-  document.getElementById("bc-res-name").textContent="Searching...";
+  document.getElementById("bc-res-name").textContent={"lt":"Ieškoma...","de":"Suche...","pl":"Szukam..."}[curLang]||"Searching...";
   const bar=document.getElementById("bc-result-bar");
   if(bar)setTimeout(()=>bar.classList.add("show"),60);
 
@@ -1683,9 +1689,9 @@ function captureFrame(){
 }
 function setPrevImage(b64,src){
   capturedB64=b64;
-  setPrevUI("data:image/jpeg;base64,"+b64,null,src==="camera"?"Photo taken":"Photo uploaded","Ready to analyze","Tap Analyze →");
+  setPrevUI("data:image/jpeg;base64,"+b64,null,src==="camera"?({"lt":"Nuotrauka padaryta","de":"Foto aufgenommen","pl":"Zdjęcie zrobione"}[curLang]||"Photo taken"):({"lt":"Nuotrauka įkelta","de":"Foto hochgeladen","pl":"Zdjęcie przesłane"}[curLang]||"Photo uploaded"),({"lt":"Paruošta analizei","de":"Bereit zur Analyse","pl":"Gotowe do analizy"}[curLang]||"Ready to analyze"),({"lt":"Spausti Analizuoti →","de":"Analysieren →","pl":"Analizuj →"}[curLang]||"Tap Analyze →"));
   const btn=document.getElementById("c-snap");btn.disabled=false;
-  btn.style.background="var(--green)";btn.innerHTML="<span>🔍</span><span>Analyze with AI →</span>";
+  btn.style.background="var(--green)";btn.innerHTML="<span>🔍</span><span>"+( {"lt":"Analizuoti AI →","de":"Mit KI analysieren →","pl":"Analizuj z AI →"}[curLang]||"Analyze with AI →")+"</span>";
   btn.onclick=()=>snapOrSearch();
 }
 function setPrevUI(imgSrc,ic,lbl,val,sub){
@@ -1722,28 +1728,31 @@ function tryDecImg(dataUrl,b64){
 }
 async function runScan(){
   const btn=document.getElementById("c-snap");btn.disabled=true;
-  btn.innerHTML="<span>⏳</span><span>Analyzing...</span>";
+  btn.innerHTML="<span>⏳</span><span>"+( {"lt":"Analizuojama...","de":"Analysiere...","pl":"Analizuję..."}[curLang]||"Analyzing...")+"</span>";
   // 1. Uždaryti kamerą iš karto
   closeCam();
   // 2. Rodyti results puslapį su loading
   navTo("results");
-  document.getElementById("res-title").textContent="Scanning photo...";
-  document.getElementById("res-meta").textContent="AI identifying product";
+  document.getElementById("res-title").textContent={"lt":"Nuskenuojama nuotrauka...","de":"Foto wird gescannt...","pl":"Skanowanie zdjęcia..."}[curLang]||"Scanning photo...";
+  document.getElementById("res-meta").textContent={"lt":"AI atpažįsta produktą...","de":"KI erkennt Produkt...","pl":"AI rozpoznaje produkt..."}[curLang]||"AI identifying product";
   const scanShops=["Varle.lt","Elesen.lt","Amazon.DE","Amazon.PL"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
+  const _analyzeTitle={"lt":"Analizuojama nuotrauka","de":"Foto wird analysiert","pl":"Analizowanie zdjęcia"}[curLang]||"Analyzing photo";
+  const _analyzeAi={"lt":"AI atpažįsta produktą...","de":"KI erkennt Produkt...","pl":"AI rozpoznaje produkt..."}[curLang]||"AI identifying product...";
+  const _checkingPfx={"lt":"Tikriname","de":"Prüfe","pl":"Sprawdzam"}[curLang]||"Checking";
   document.getElementById("res-body").innerHTML=`
     <div style="text-align:center;padding:24px 0 16px;">
       <div style="font-size:36px;margin-bottom:8px;">📷</div>
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Analizuojama nuotrauka</div>
-      <div style="font-size:12px;color:var(--ink3);">AI atpažįsta produktą...</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">${_analyzeTitle}</div>
+      <div style="font-size:12px;color:var(--ink3);">${_analyzeAi}</div>
     </div>
-    <div class="shop-status" style="margin-bottom:16px;"><div class="shop-dot"></div><span id="scan-status-txt">🔍 Tikriname ${scanShops[0]}...</span></div>
+    <div class="shop-status" style="margin-bottom:16px;"><div class="shop-dot"></div><span id="scan-status-txt">🔍 ${_checkingPfx} ${scanShops[0]}...</span></div>
     ${skels}`;
   const scanTimer=setInterval(()=>{
     scanIdx=(scanIdx+1)%scanShops.length;
     const el=document.getElementById("scan-status-txt");
-    if(el)el.textContent="🔍 Tikriname "+scanShops[scanIdx]+"...";
+    if(el)el.textContent="🔍 "+_checkingPfx+" "+scanShops[scanIdx]+"...";
   },1200);
   try{
     const _sc=new AbortController();const _st=setTimeout(()=>_sc.abort(),90000);
@@ -1755,23 +1764,23 @@ async function runScan(){
       document.getElementById("res-body").innerHTML=`
         <div class="no-results">
           <div class="nr-ico">❌</div>
-          <div class="nr-title">Not recognized</div>
-          <div class="nr-sub">Could not identify the product from your photo.</div>
+          <div class="nr-title">${{"lt":"Neatpažinta","de":"Nicht erkannt","pl":"Nie rozpoznano"}[curLang]||"Not recognized"}</div>
+          <div class="nr-sub">${{"lt":"Nepavyko atpažinti produkto iš nuotraukos.","de":"Produkt konnte aus dem Foto nicht erkannt werden.","pl":"Nie udało się rozpoznać produktu ze zdjęcia."}[curLang]||"Could not identify the product from your photo."}</div>
           <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
-            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>Make sure product name/label is clearly visible</span></div>
-            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🔆 <span>Try better lighting or a closer shot</span></div>
-            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">✏️ <span>Or just type the product name below</span></div>
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${{"lt":"Įsitikink, kad produkto pavadinimas aiškiai matomas","de":"Stelle sicher, dass der Produktname gut sichtbar ist","pl":"Upewnij się, że nazwa produktu jest wyraźnie widoczna"}[curLang]||"Make sure product name/label is clearly visible"}</span></div>
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🔆 <span>${{"lt":"Pabandyk geresnį apšvietimą arba priartink kamerą","de":"Versuche bessere Beleuchtung oder näher ran","pl":"Spróbuj lepszego oświetlenia lub zbliż aparat"}[curLang]||"Try better lighting or a closer shot"}</span></div>
+            <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">✏️ <span>${{"lt":"Arba tiesiog įvesk produkto pavadinimą ranka","de":"Oder tippe einfach den Produktnamen ein","pl":"Albo po prostu wpisz nazwę produktu"}[curLang]||"Or just type the product name below"}</span></div>
           </div>
-          <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← Try again</button>
+          <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← ${{"lt":"Bandyti dar kartą","de":"Erneut versuchen","pl":"Spróbuj ponownie"}[curLang]||"Try again"}</button>
         </div>`;
-      document.getElementById("res-title").textContent="Not recognized";
+      document.getElementById("res-title").textContent={"lt":"Neatpažinta","de":"Nicht erkannt","pl":"Nie rozpoznano"}[curLang]||"Not recognized";
       document.getElementById("res-meta").textContent="";
       return;
     }
     if(data.results&&data.results.length>0){
       const q=data.scanned_product||data.product_name||"product";
       document.getElementById("srch-inp").value=q;
-      if(data.store_price)toast(`Store price: €${data.store_price}`);
+      if(data.store_price)toast(({"lt":"Kaina parduotuvėje","de":"Ladenpreis","pl":"Cena w sklepie"}[curLang]||"Store price")+`: €${data.store_price}`);
       lastQ=q;lastData=data;
       addToHist(q,data);
       renderResults(data,q);
@@ -1786,8 +1795,8 @@ async function runScan(){
   }catch(e){
     clearInterval(scanTimer);
     btn.disabled=false;btn.style.background="var(--green)";
-    btn.innerHTML="<span>🔍</span><span>Analyze with AI →</span>";btn.onclick=()=>snapOrSearch();
-    toast("Error: "+e.message);
+    btn.innerHTML="<span>🔍</span><span>"+( {"lt":"Analizuoti AI →","de":"Mit KI analysieren →","pl":"Analizuj z AI →"}[curLang]||"Analyze with AI →")+"</span>";btn.onclick=()=>snapOrSearch();
+    toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Error: ")+e.message);
   }
 }
 
@@ -1977,12 +1986,17 @@ function applyLang(){
   const rl=document.getElementById("rate-label");if(rl)rl.textContent=t.daily_searches||"Daily searches used";
   // Settings page translations
   const settingsTitles={"lt":"Nustatymai","de":"Einstellungen","pl":"Ustawienia"};
-  const st=document.querySelector(".set-title");if(st)st.textContent=settingsTitles[curLang]||"Settings";
+  const st=document.getElementById("set-title")||document.querySelector(".set-title");if(st)st.textContent=settingsTitles[curLang]||"Settings";
+  const svt=document.getElementById("saved-title");if(svt)svt.textContent={"lt":"Išsaugota","de":"Gespeichert","pl":"Zapisane"}[curLang]||"Saved";
+  const svl=document.getElementById("set-version-lbl");if(svl)svl.textContent={"lt":"Versija","de":"Version","pl":"Wersja"}[curLang]||"Version";
   const cd=document.getElementById("clear-data-lbl");if(cd)cd.textContent=t.clear_data||"Clear all data";
   const sla=document.getElementById("set-lbl-app");if(sla)sla.textContent={"lt":"Programa","de":"App","pl":"Aplikacja"}[curLang]||"App";
   const sld=document.getElementById("set-lbl-data");if(sld)sld.textContent={"lt":"Duomenys","de":"Daten","pl":"Dane"}[curLang]||"Data";
   const slsh=document.getElementById("set-shops-lbl");if(slsh)slsh.textContent={"lt":"Parduotuvės","de":"Shops","pl":"Sklepy"}[curLang]||"Shops";
   const slst=document.getElementById("set-status-lbl");if(slst)slst.textContent={"lt":"Būklė","de":"Status","pl":"Status"}[curLang]||"Status";
+  const cmpr=document.getElementById("cm-pr-lbl");if(cmpr)cmpr.textContent={"lt":"Kainos nuotrauka","de":"Preisfoto","pl":"Zdjęcie ceny"}[curLang]||"Price photo";
+  const cmbc=document.getElementById("cm-bc-lbl");if(cmbc)cmbc.textContent={"lt":"Barkodas","de":"Barcode","pl":"Kod kreskowy"}[curLang]||"Barcode";
+  const uploadBtn=document.querySelector(".upload-btn");if(uploadBtn){const svg=uploadBtn.querySelector("svg");uploadBtn.innerHTML=(svg?svg.outerHTML:"")+" "+({"lt":"Įkelti nuotrauką","de":"Foto hochladen","pl":"Prześlij zdjęcie"}[curLang]||"Upload photo");}
   if(_popularItems.length)_renderPopular(_popularItems);
   buildCats();
   buildRecent();
@@ -2121,7 +2135,8 @@ async function fetchPriceHistory(q) {
     if (!d.labels || d.labels.length < 2 || !(d.datasets||[]).length) {
       const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
       const noDataMsg={"lt":"Dar nėra duomenų — patikrinkite po kelių paieškų","de":"Noch keine Daten — nach weiteren Suchen prüfen","pl":"Brak danych — sprawdź po kilku wyszukiwaniach"}[curLang]||"No history yet — search again later to build price trends";
-      container.innerHTML=`<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge" style="background:var(--card2);color:var(--ink3);">New</span></div><div class="chart-empty" style="padding:20px;text-align:center;font-size:12px;color:var(--ink3);">📊 ${noDataMsg}</div></div>`;
+      const newLbl={"lt":"Nauja","de":"Neu","pl":"Nowe"}[curLang]||"New";
+      container.innerHTML=`<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge" style="background:var(--card2);color:var(--ink3);">${newLbl}</span></div><div class="chart-empty" style="padding:20px;text-align:center;font-size:12px;color:var(--ink3);">📊 ${noDataMsg}</div></div>`;
       return;
     }
     renderPriceChart(container, d, q);
