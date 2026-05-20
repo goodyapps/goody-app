@@ -1202,10 +1202,11 @@ function renderResults(d,q){
 
   const _titleIcon=d.category_icon||_getIcon(d.product_name||q);
   document.getElementById("res-title").textContent=(_titleIcon?_titleIcon+" ":"")+(d.product_name||q);
-  const cachedStr=d._cached?(" · "+( isLt?"iš cache":{"de":"gecacht","pl":"z cache"}[lang]||"cached")):"";
+  const cachedStr=d._cached?(" · "+({"lt":"iš cache","de":"gecacht","pl":"z cache"}[lang]||"cached")):"";
   const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
+  const noResLbl={"lt":"Nieko nerasta","de":"Keine Ergebnisse","pl":"Brak wyników"}[lang]||"No results";
   const timeFoundStr=d.search_time_ms&&!d._cached?` · ${(d.search_time_ms/1000).toFixed(1)}s`:""
-  document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr+timeFoundStr):(isLt?"Nieko nerasta":"No results");
+  document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr+timeFoundStr):noResLbl;
 
   let html="";
 
