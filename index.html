@@ -319,7 +319,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .shop-status{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px;margin-top:4px;}
 .shop-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
-.shop-load-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.shop-load-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;}
 .shop-load-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;transition:opacity .4s;}
 .shop-load-flag{font-size:14px;flex-shrink:0;}
 .shop-load-name{font-size:12px;font-weight:700;flex:1;color:var(--ink2);}
@@ -686,7 +686,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="set-row"><div class="sr-n">App</div><div class="sr-v">Goody</div></div>
         <div class="set-row"><div class="sr-n" id="set-version-lbl">Versija</div><div class="sr-v" id="app-version">—</div></div>
         <div class="set-row"><div class="sr-n">Backend</div><div class="sr-v" id="be-url" style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div></div>
-        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Parduotuvės</div><div class="sr-v">Varle · Elesen · Amazon.DE · Amazon.PL</div></div>
+        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Parduotuvės</div><div class="sr-v" style="font-size:11px;">Varle · Elesen · Pigu · Topo · a.de · a.pl</div></div>
         <div class="set-row"><div class="sr-n" id="set-status-lbl">Būklė</div><div class="sr-v" style="display:flex;align-items:center;gap:6px;"><span id="api-status-dot2" style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span><span id="api-status-txt2">—</span></div></div>
       </div>
     </div>
@@ -856,22 +856,22 @@ let lastData=null, lastQ="";
 const OB_STEPS={
   en:[
     {ic:"📷",title:"Scan any price tag",sub:"Point your camera at a price tag in any store. Goody instantly finds if there's a better deal online.",btn:"Next →"},
-    {ic:"🌍",title:"We check 4 shops",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — all compared at once, in seconds.",btn:"Next →"},
+    {ic:"🌍",title:"We check 6 shops",sub:"Varle, Elesen, Pigu, Topocentras, Amazon.DE & Amazon.PL — all compared at once, in seconds.",btn:"Next →"},
     {ic:"🔥",title:"Get the best deal",sub:"See the lowest price, savings, and an AI verdict on whether to buy now or wait.",btn:"Let's go!"},
   ],
   lt:[
     {ic:"📷",title:"Nuskenuok kainų etiketę",sub:"Nukreipk kamerą į kainą bet kurioje parduotuvėje. Goody akimirksniu randa pigesnę alternatyvą internete.",btn:"Toliau →"},
-    {ic:"🌍",title:"Tikriname 4 parduotuves",sub:"Varle.lt, Elesen.lt, Amazon.DE ir Amazon.PL — visos palyginamos iš karto, per kelias sekundes.",btn:"Toliau →"},
+    {ic:"🌍",title:"Tikriname 6 parduotuves",sub:"Varle, Elesen, Pigu, Topocentras, Amazon.DE ir Amazon.PL — visos palyginamos iš karto.",btn:"Toliau →"},
     {ic:"🔥",title:"Rask geriausią kainą",sub:"Matyk pigiausią kainą, sutaupymą ir AI patarimą — pirkti dabar ar palaukti.",btn:"Pradėti!"},
   ],
   de:[
     {ic:"📷",title:"Preisschild scannen",sub:"Richte die Kamera auf ein Preisschild in jedem Laden. Goody findet sofort bessere Online-Preise.",btn:"Weiter →"},
-    {ic:"🌍",title:"4 Shops im Vergleich",sub:"Varle.lt, Elesen.lt, Amazon.DE & Amazon.PL — alle gleichzeitig verglichen, in Sekunden.",btn:"Weiter →"},
+    {ic:"🌍",title:"6 Shops im Vergleich",sub:"Varle, Elesen, Pigu, Topocentras, Amazon.DE & Amazon.PL — alle gleichzeitig verglichen.",btn:"Weiter →"},
     {ic:"🔥",title:"Besten Deal sichern",sub:"Sieh den günstigsten Preis, deine Ersparnis und ein KI-Urteil — jetzt kaufen oder warten?",btn:"Los geht's!"},
   ],
   pl:[
     {ic:"📷",title:"Zeskanuj etykietę cenową",sub:"Skieruj aparat na cenę w dowolnym sklepie. Goody natychmiast znajdzie lepszą ofertę online.",btn:"Dalej →"},
-    {ic:"🌍",title:"Sprawdzamy 4 sklepy",sub:"Varle.lt, Elesen.lt, Amazon.DE i Amazon.PL — wszystkie porównane od razu, w kilka sekund.",btn:"Dalej →"},
+    {ic:"🌍",title:"Sprawdzamy 6 sklepów",sub:"Varle, Elesen, Pigu, Topocentras, Amazon.DE i Amazon.PL — wszystkie porównane od razu.",btn:"Dalej →"},
     {ic:"🔥",title:"Znajdź najlepszą ofertę",sub:"Zobacz najniższą cenę, oszczędność i rekomendację AI — kupować teraz czy czekać?",btn:"Zaczynamy!"},
   ],
 };
@@ -1087,7 +1087,33 @@ window.addEventListener("popstate",()=>{
 function onSrchInput(el){
   const clr=document.getElementById("srch-clear");
   if(clr)clr.classList.toggle("vis",el.value.length>0);
+  _showSuggestions(el.value);
 }
+let _sugTimeout=null;
+function _showSuggestions(val){
+  clearTimeout(_sugTimeout);
+  let box=document.getElementById("srch-suggestions");
+  if(!val||val.length<2){if(box)box.remove();return;}
+  const q=val.toLowerCase();
+  const matches=[...hist.map(h=>h.q),...POPULAR_FALLBACK.map(p=>p.q)]
+    .filter((v,i,a)=>a.indexOf(v)===i)
+    .filter(s=>s.toLowerCase().includes(q)&&s.toLowerCase()!==q)
+    .slice(0,5);
+  if(!matches.length){if(box)box.remove();return;}
+  if(!box){
+    box=document.createElement("div");box.id="srch-suggestions";
+    box.style.cssText="position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);margin-top:4px;z-index:200;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4);";
+    document.querySelector(".search-bar").style.position="relative";
+    document.querySelector(".search-bar").appendChild(box);
+  }
+  box.innerHTML=matches.map(s=>`<div class="sug-item" style="padding:12px 16px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};_hideSuggestions();doSearch()"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5" opacity=".5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>${escHtml(s)}</div>`).join("");
+  box.querySelectorAll(".sug-item").forEach(el=>{
+    el.addEventListener("mouseover",()=>el.style.background="var(--card2)");
+    el.addEventListener("mouseout",()=>el.style.background="");
+  });
+}
+function _hideSuggestions(){const b=document.getElementById("srch-suggestions");if(b)b.remove();}
+document.addEventListener("click",e=>{if(!e.target.closest(".search-bar"))_hideSuggestions();});
 function clearSearch(){
   const inp=document.getElementById("srch-inp");
   inp.value="";inp.focus();
@@ -1412,6 +1438,14 @@ function renderResults(d,q,opts){opts=opts||{};
     return;
   }
 
+  // ── CACHED REFRESH NOTICE ──
+  if(d._cached&&d._cache_age_s>120){
+    const ageMin=Math.round(d._cache_age_s/60);
+    const cachedNotice={"lt":`📍 Kainos prieš ${ageMin} min — `,de:`📍 Preise vor ${ageMin} Min — `,pl:`📍 Ceny sprzed ${ageMin} min — `}[lang]||`📍 Prices from ${ageMin}min ago — `;
+    const refreshLbl={"lt":"Atnaujinti","de":"Aktualisieren","pl":"Odśwież"}[lang]||"Refresh";
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 14px;margin-bottom:10px;font-size:12px;color:var(--ink3);">${cachedNotice}<button onclick="doSearch()" style="background:none;border:none;color:var(--green);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;padding:0;">${refreshLbl} →</button></div>`;
+  }
+
   // ── INSTANT VERDICT BAR (Eglė — visible without scrolling) ──
   if(onlineResults.length>=1 && !scannedPrice){
     const maxOnline=Math.max(...onlineResults.map(r=>r.price));
@@ -1474,6 +1508,7 @@ function renderResults(d,q,opts){opts=opts||{};
       sub=`${escHtml(bestOnline.shop)}: ${Math.abs(pct).toFixed(1)}% `+({"lt":"pigiau nei kaina nuotraukoje","de":"günstiger als der Foto-Preis","pl":"taniej niż cena ze zdjęcia"}[lang]||"cheaper than the photo price")+".";
       proof=`${_sc.photo_lbl}: ${money(scannedPrice)}. ${_sc.online_lbl}: ${money(bestOnline.price)}. `+({"lt":"Prieš perkant dar patikrink pristatymą ir pardavėjo sąlygas.","de":"Lieferung und Verkäuferbedingungen vor dem Kauf prüfen.","pl":"Sprawdź dostawę i warunki sprzedawcy przed zakupem."}[lang]||"Check delivery and seller terms before buying.");
       setTimeout(()=>fireConfetti(diff.toFixed(2)),550);
+      if(navigator.vibrate)navigator.vibrate([40,20,40]);
     }else if(diff>5){
       badge="🟢 GOOD DEAL";
       title={"lt":"Internete šiek tiek pigiau","de":"Online etwas günstiger","pl":"Online nieco taniej"}[lang]||"Slightly cheaper online";
@@ -1517,6 +1552,7 @@ function renderResults(d,q,opts){opts=opts||{};
     </div>`;
   }else{
     const score=d.deal_score||50;
+    if(score>=75&&navigator.vibrate)navigator.vibrate([40,20,40]);
     const hasAI=!!(d.verdict_reason||d.buy_recommendation);
     const label=score>=75?"🔥 GOOD DEAL":score>=50?(hasAI?"👌 FAIR DEAL":"📊 MARKET PRICE"):"⚠️ MAYBE WAIT";
     const title=score>=75
@@ -1717,6 +1753,8 @@ function getShopLogo(shop){
   if(s.includes("amazon"))return`<span style="background:#FF9900;color:#131921;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">amzn</span>`;
   if(s.includes("varle"))return`<span style="background:#e31e24;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Vrl</span>`;
   if(s.includes("elesen"))return`<span style="background:#1565c0;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Els</span>`;
+  if(s.includes("pigu"))return`<span style="background:#ff5722;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Pgu</span>`;
+  if(s.includes("topo"))return`<span style="background:#1a237e;color:#fff;font-size:9px;font-weight:900;border-radius:4px;padding:2px 5px;letter-spacing:-.3px;">Tpo</span>`;
   if(s.includes("scan")||s.includes("scanned"))return"📷";
   return"🛍";
 }
@@ -2035,7 +2073,7 @@ const LANGS = {
     tomorrow:"Tomorrow",
     today:"Today",
     in_store:"In store",
-    loading_msgs:["Hunting for the best price...","Checking 4 shops...","Almost there — hold tight!"],
+    loading_msgs:["Hunting for the best price...","Checking 6 shops...","Almost there — hold tight!"],
     popular:"Trending now",
     recent_scans:"Recent searches",
     clear:"Clear all",
@@ -2073,7 +2111,7 @@ const LANGS = {
     tomorrow:"Rytoj",
     today:"Šiandien",
     in_store:"Parduotuvėje",
-    loading_msgs:["Ieškome geriausių kainų...","Tikrinama 4 parduotuves...","Jau baigiam..."],
+    loading_msgs:["Ieškome geriausių kainų...","Tikrinama 6 parduotuves...","Jau baigiam..."],
     popular:"Populiariausi",
     recent_scans:"Paskutinės paieškos",
     clear:"Išvalyti",
@@ -2111,7 +2149,7 @@ const LANGS = {
     tomorrow:"Morgen",
     today:"Heute",
     in_store:"Im Laden",
-    loading_msgs:["Beste Preise werden gesucht...","4 Shops werden geprüft...","Fast fertig..."],
+    loading_msgs:["Beste Preise werden gesucht...","6 Shops werden geprüft...","Fast fertig..."],
     popular:"Beliebt",
     recent_scans:"Letzte Suchen",
     clear:"Löschen",
@@ -2149,7 +2187,7 @@ const LANGS = {
     tomorrow:"Jutro",
     today:"Dziś",
     in_store:"W sklepie",
-    loading_msgs:["Szukam najlepszych cen...","Sprawdzam 4 sklepy...","Prawie gotowe..."],
+    loading_msgs:["Szukam najlepszych cen...","Sprawdzam 6 sklepów...","Prawie gotowe..."],
     popular:"Popularne",
     recent_scans:"Ostatnie wyszukiwania",
     clear:"Wyczyść",
@@ -2242,6 +2280,8 @@ function fireConfetti(savings){
 const _LOADING_SHOPS=[
   {name:"Varle.lt",flag:"🇱🇹"},
   {name:"Elesen.lt",flag:"🇱🇹"},
+  {name:"Pigu.lt",flag:"🇱🇹"},
+  {name:"Topocentras",flag:"🇱🇹"},
   {name:"Amazon.DE",flag:"🇩🇪"},
   {name:"Amazon.PL",flag:"🇵🇱"},
 ];
@@ -2262,7 +2302,7 @@ function _markShopDone(idx){
 function showLoading(){
   const total=_LOADING_SHOPS.length;
   let pct=5;
-  const checkingMeta={"lt":`Tikriname ${total} parduotuves...`,"de":`${total} Shops werden geprüft...`,"pl":`Sprawdzam ${total} sklepy...`}[curLang]||`Checking ${total} shops...`;
+  const checkingMeta={"lt":`Tikriname ${total} parduotuves...`,"de":`${total} Shops werden geprüft...`,"pl":`Sprawdzam ${total} sklepów...`}[curLang]||`Checking ${total} shops...`;
   document.getElementById("res-meta").textContent=checkingMeta;
   const skel=()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`;
   document.getElementById("res-body").innerHTML=`
@@ -2285,13 +2325,16 @@ function shareResults(name, price){
   const params=new URLSearchParams({q:name});
   if(curLang&&curLang!=="en")params.set("lang",curLang);
   const url="https://goodyapp.eu/?"+params.toString();
-  const priceStr=price?` — ${price}`:"";
+  const priceStr=price?` už ${price}`:"";
+  // Compute savings from lastData
+  const savingsAmt=lastData&&lastData.price_min&&lastData.price_max&&lastData.price_max>lastData.price_min?money(lastData.price_max-lastData.price_min):"";
+  const savingsStr=savingsAmt?({lt:` · Taupyk ${savingsAmt}`,de:` · Spare ${savingsAmt}`,pl:` · Oszczędzaj ${savingsAmt}`}[curLang]||` · Save ${savingsAmt}`):"";
   const shareTexts={
-    lt:`Rasta ${name}${priceStr} Goody!`,
-    de:`Gefunden: ${name}${priceStr} bei Goody!`,
-    pl:`Znaleziono ${name}${priceStr} na Goody!`,
+    lt:`Rasta: ${name}${priceStr}${savingsStr} 🔥 Goody kainų palyginimas`,
+    de:`Gefunden: ${name}${price?" für "+price:""}${savingsStr} 🔥 Goody Preisvergleich`,
+    pl:`Znaleziono: ${name}${price?" za "+price:""}${savingsStr} 🔥 Goody porównanie cen`,
   };
-  const text=shareTexts[curLang]||`Found ${name}${priceStr} on Goody!`;
+  const text=shareTexts[curLang]||`Found: ${name}${price?" for "+price:""}${savingsStr} 🔥 via Goody`;
   const copyLbl={"lt":"🔗 Nuoroda nukopijuota!","de":"🔗 Link kopiert!","pl":"🔗 Link skopiowany!"}[curLang]||"🔗 Link copied!";
   if(navigator.share){
     navigator.share({title:"Goody — "+name,text,url}).catch(()=>{});
@@ -2318,6 +2361,10 @@ function toggleWatch(name, price){
     toast({"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!");
   }
   localStorage.setItem(key,JSON.stringify(watches));
+  // Update nav badge with combined wishlist + watchlist count
+  const _wlTotal=wl.length+watches.length;
+  const _nb=document.getElementById("nav-wl-badge");if(_nb){_nb.textContent=_wlTotal||"";_nb.classList.toggle("vis",_wlTotal>0);}
+  const _hb=document.getElementById("home-wl-badge");if(_hb){_hb.textContent=_wlTotal||"";_hb.style.display=_wlTotal>0?"flex":"none";}
 }
 
 function initWatchBtn(name){
@@ -2441,6 +2488,25 @@ function toast(m){
   const el=document.getElementById("toast");el.textContent=m;el.classList.add("on");
   clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove("on"),2800);
 }
+
+/* ── PWA INSTALL ── */
+let _pwaPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();_pwaPrompt=e;
+  if(localStorage.getItem("gy_pwa_dismissed"))return;
+  setTimeout(()=>{
+    const bar=document.createElement("div");
+    const installLbl={"lt":"📲 Įdiegti Goody — greita kaip programa","de":"📲 Goody installieren — wie eine App","pl":"📲 Zainstaluj Goody — działa jak aplikacja"}[curLang]||"📲 Install Goody — works like a native app";
+    const yesLbl={"lt":"Įdiegti","de":"Installieren","pl":"Zainstaluj"}[curLang]||"Install";
+    const noLbl={"lt":"Ne dabar","de":"Später","pl":"Później"}[curLang]||"Later";
+    bar.style.cssText="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--green);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:390px;width:calc(100%-40px);font-size:13px;";
+    bar.innerHTML=`<span style="flex:1;color:var(--ink2);">${installLbl}</span><button onclick="_installPwa()" style="background:var(--green);border:none;border-radius:8px;padding:7px 13px;font-family:var(--ff);font-size:12px;font-weight:800;color:#121A24;cursor:pointer;">${yesLbl}</button><button onclick="_dismissPwa(this.parentNode)" style="background:none;border:none;color:var(--ink3);font-size:18px;cursor:pointer;padding:0 2px;">×</button>`;
+    document.querySelector(".app").appendChild(bar);
+    setTimeout(()=>bar.remove(),12000);
+  },3000);
+});
+function _installPwa(){if(_pwaPrompt){_pwaPrompt.prompt();_pwaPrompt.userChoice.then(()=>{_pwaPrompt=null;});}}
+function _dismissPwa(el){localStorage.setItem("gy_pwa_dismissed","1");el.remove();}
 
 /* ── KEYBOARD SHORTCUTS ── */
 document.addEventListener("keydown",e=>{
