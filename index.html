@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Goody">
 <meta name="description" content="Scan any price tag. Find the best deal instantly.">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -2789,6 +2790,55 @@ document.addEventListener("keydown",e=>{
     c.style.transform="";c.style.transition="";
     if(dy>80)closeCam();
   },{passive:true});
+})();
+
+/* ── SERVICE WORKER + PWA INSTALL ── */
+(function(){
+  // Register service worker for offline support
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("/sw.js").catch(()=>{});
+  }
+
+  // Capture PWA install prompt and show a native-feeling banner
+  let _deferredPrompt=null;
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault();
+    _deferredPrompt=e;
+    // Only show if user hasn't dismissed before
+    if(localStorage.getItem("gy_pwa_dismissed"))return;
+    setTimeout(_showInstallBanner,3000);
+  });
+
+  function _showInstallBanner(){
+    if(document.getElementById("pwa-install-bar"))return;
+    const lang=window.curLang||"en";
+    const installMsg={"lt":"📲 Pridėk Goody į pagrindinį ekraną — veiks kaip app!","de":"📲 Goody zum Startbildschirm hinzufügen — wie eine App!","pl":"📲 Dodaj Goody do ekranu głównego — jak prawdziwa aplikacja!"}[lang]||"📲 Add Goody to your home screen for the best experience!";
+    const installLbl={"lt":"Įdiegti","de":"Installieren","pl":"Zainstaluj"}[lang]||"Install";
+    const dismissLbl={"lt":"Ne dabar","de":"Nicht jetzt","pl":"Nie teraz"}[lang]||"Not now";
+    const bar=document.createElement("div");
+    bar.id="pwa-install-bar";
+    bar.style.cssText="position:fixed;bottom:70px;left:12px;right:12px;z-index:999;background:var(--card);border:1px solid var(--green-m);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:var(--ff);";
+    bar.innerHTML=`<div style="flex:1;font-size:13px;color:var(--ink1);">${installMsg}</div><button onclick="_triggerInstall()" style="flex-shrink:0;background:var(--green);color:#121A24;border:none;border-radius:var(--r-sm);padding:8px 14px;font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;min-height:36px;">${installLbl}</button><button onclick="_dismissInstall()" style="background:none;border:none;color:var(--ink3);font-size:20px;cursor:pointer;padding:4px;line-height:1;min-width:28px;min-height:28px;">✕</button>`;
+    document.body.appendChild(bar);
+  }
+
+  window._triggerInstall=function(){
+    if(!_deferredPrompt)return;
+    _deferredPrompt.prompt();
+    _deferredPrompt.userChoice.then(r=>{
+      if(r.outcome==="accepted")localStorage.setItem("gy_pwa_dismissed","1");
+      const bar=document.getElementById("pwa-install-bar");if(bar)bar.remove();
+      _deferredPrompt=null;
+    });
+  };
+  window._dismissInstall=function(){
+    localStorage.setItem("gy_pwa_dismissed","1");
+    const bar=document.getElementById("pwa-install-bar");if(bar)bar.remove();
+  };
+
+  // Handle ?action=scan or ?action=search shortcuts from PWA manifest
+  const _act=new URLSearchParams(location.search).get("action");
+  if(_act==="scan")window.addEventListener("DOMContentLoaded",()=>setTimeout(()=>openCam("price"),800));
 })();
 </script>
 </body>
