@@ -968,6 +968,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   // Show savings stats and check watchlist drops with slight delay (non-blocking)
   setTimeout(_showSavingsStat,1200);
   setTimeout(_checkWatchlistDrops,2000);
+  setTimeout(_checkWatchlistBackend,4000);
 });
 
 function _extractSharedQuery(url, title, text){
@@ -1033,6 +1034,30 @@ function _checkWatchlistDrops(){
       setTimeout(()=>toast(msg),300);
     }
   });
+}
+
+function _checkWatchlistBackend(){
+  const watches=JSON.parse(localStorage.getItem("gy_watch")||"[]");
+  if(!watches.length)return;
+  // Throttle: once per 6 hours
+  const lastCheck=parseInt(localStorage.getItem("gy_watch_checked")||"0");
+  if(Date.now()-lastCheck<6*3600*1000)return;
+  const items=watches.map(w=>({name:w.name,price:w.price,target:w.target||null}));
+  fetch("/api/watchlist-check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items})})
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{
+      if(!data||!data.alerts||!data.alerts.length)return;
+      localStorage.setItem("gy_watch_checked",String(Date.now()));
+      data.alerts.forEach((a,i)=>{
+        const name=a.name||"";
+        const p=a.current_price||0;
+        const msg=a.hit_target
+          ?{"lt":`🎯 ${name.slice(0,24)}: tikslinė kaina pasiekta €${p}!`,"de":`🎯 ${name.slice(0,24)}: Zielpreis €${p} erreicht!`,"pl":`🎯 ${name.slice(0,24)}: cena docelowa €${p} osiągnięta!`}[curLang]||`🎯 ${name.slice(0,24)}: target price €${p} reached!`
+          :{"lt":`🔔 ${name.slice(0,24)}: kaina krito −€${a.drop}!`,"de":`🔔 ${name.slice(0,24)}: Preis sank −€${a.drop}!`,"pl":`🔔 ${name.slice(0,24)}: cena spadła −€${a.drop}!`}[curLang]||`🔔 ${name.slice(0,24)} price dropped −€${a.drop}!`;
+        setTimeout(()=>toast(msg),i*800);
+      });
+    })
+    .catch(()=>{});
 }
 
 function buildCats(){
