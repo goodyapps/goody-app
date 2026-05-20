@@ -471,6 +471,53 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 /* ── PRICE CARD RATING ROW (shown below badges when both exist) ── */
 .pc-rating-extra{display:flex;align-items:center;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 
+/* ── SEARCH CLEAR + VOICE ── */
+.search-bar{position:relative;}
+.srch-clear{position:absolute;right:48px;top:0;height:50px;width:36px;display:none;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);background:none;border:none;font-size:16px;transition:color var(--dur);}
+.srch-clear:hover{color:var(--ink);}
+.srch-clear.vis{display:flex;}
+.voice-btn{position:absolute;right:0;top:0;height:50px;width:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);background:none;border:none;transition:color var(--dur);}
+.voice-btn:hover{color:var(--green);}
+.voice-btn.listening{color:var(--red);animation:pulse-r 1s ease infinite;}
+@keyframes pulse-r{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.search-go{right:50px!important;}
+.search-go.with-voice{right:96px!important;}
+
+/* ── COPY PRICE BUTTON ── */
+.copy-price-btn{background:none;border:none;cursor:pointer;color:var(--ink4);padding:4px;border-radius:6px;transition:color var(--dur),background var(--dur);display:inline-flex;align-items:center;}
+.copy-price-btn:hover{color:var(--green);background:var(--green-l);}
+.copy-price-btn.copied{color:var(--green);}
+
+/* ── PRICE POSITION BAR ── */
+.price-pos-bar{margin:10px 0 4px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--green-l),var(--amber-l),var(--red-l));position:relative;}
+.price-pos-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid var(--bg);box-shadow:0 0 6px rgba(39,224,138,.5);}
+.price-pos-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);margin-top:2px;}
+
+/* ── WATCHLIST NAV BADGE ── */
+.wl-badge{position:absolute;top:-2px;right:-4px;background:var(--green);color:#121A24;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 3px;line-height:1;}
+.wl-badge.vis{display:flex;}
+#nav-saved{position:relative;}
+
+/* ── % DELTA PILL ── */
+.pct-delta{font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--green-l);color:var(--green);margin-left:6px;display:inline-block;}
+.pct-delta.expensive{background:var(--red-l);color:var(--red);}
+
+/* ── HOME EMPTY STATE ── */
+.home-empty-hint{background:var(--card);border:1px dashed var(--border2);border-radius:var(--r-lg);padding:18px;margin:0 22px 20px;text-align:center;}
+.heh-title{font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:8px;}
+.heh-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+.heh-chip{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;transition:background var(--dur),border-color var(--dur);}
+.heh-chip:active{background:var(--green-l);border-color:var(--green);color:var(--green);}
+
+/* ── SCAN HERO — compact on small screens ── */
+.scan-hero{padding:clamp(12px,3vw,28px) 22px clamp(10px,2.5vw,24px);}
+.scan-wrap{width:clamp(120px,36vw,160px);height:clamp(120px,36vw,160px);}
+.scan-btn{width:clamp(80px,22vw,100px);height:clamp(80px,22vw,100px);}
+.ring:nth-child(1){width:clamp(116px,34vw,152px);height:clamp(116px,34vw,152px);}
+.ring:nth-child(2){width:clamp(96px,28vw,126px);height:clamp(96px,28vw,126px);}
+.ring:nth-child(3){width:clamp(76px,22vw,100px);height:clamp(76px,22vw,100px);}
+.cat-n{font-size:clamp(11px,2.5vw,12px);}
+
 </style>
 </head>
 <body>
@@ -487,9 +534,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="logo-mark">good<span>y</span></div>
         <div class="logo-sub" id="logo-sub">Never overpay again.</div>
       </div>
-      <div class="notif-btn" role="button" aria-label="Notifications" tabindex="0">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a5 5 0 015 5v3l1.5 2.5H2.5L4 10V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5"/><path d="M7 14.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.5"/></svg>
-      </div>
+      <button class="notif-btn" id="wl-shortcut-btn" onclick="navTo('saved')" aria-label="Saved items" style="position:relative;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 15.5L3 9.5a3.5 3.5 0 015-4.9l1 1 1-1a3.5 3.5 0 015 4.9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span id="home-wl-badge" style="position:absolute;top:0;right:0;background:var(--green);color:#121A24;font-size:9px;font-weight:900;min-width:15px;height:15px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 2px;"></span>
+      </button>
     </div>
 
     <div class="scan-hero">
@@ -515,10 +563,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="search-bar">
       <input type="text" id="srch-inp" placeholder="Search any product..." autocomplete="off"
         onkeydown="if(event.key==='Enter')doSearch()"
+        oninput="onSrchInput(this)"
         onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
-        aria-label="Search for a product">
-      <button class="search-go" onclick="doSearch()" aria-label="Search">
+        aria-label="Search for a product"
+        style="padding-right:98px;">
+      <button class="srch-clear" id="srch-clear" onclick="clearSearch()" aria-label="Clear search">✕</button>
+      <button class="search-go" id="srch-go" onclick="doSearch()" aria-label="Search" style="right:50px;">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="voice-btn" id="voice-btn" onclick="startVoice()" aria-label="Voice search">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="6.5" y="1" width="5" height="9" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 9a6 6 0 0012 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 15v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
     </div>
 
@@ -680,7 +734,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="nav-dot"></div>
     </button>
     <button class="nav-btn" id="nav-saved" onclick="navTo('saved')" aria-label="Saved items">
-      <svg viewBox="0 0 22 22" fill="none"><path d="M11 18.5L4 11.5a4 4 0 015.66-5.66L11 7l1.34-1.34A4 4 0 0118 11l-7 7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <div style="position:relative;display:inline-flex;">
+        <svg viewBox="0 0 22 22" width="22" height="22" fill="none"><path d="M11 18.5L4 11.5a4 4 0 015.66-5.66L11 7l1.34-1.34A4 4 0 0118 11l-7 7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="wl-badge" id="nav-wl-badge"></span>
+      </div>
       <span class="nav-lbl">Saved</span>
       <div class="nav-dot"></div>
     </button>
@@ -698,14 +755,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 const API_BASE = "https://goody-backend.onrender.com";
 
 const CATS = [
-  {ic:"📱",n:"Telefonai",q:"iPhone 16 Pro"},
-  {ic:"💻",n:"Nešiojami",q:"MacBook Air M3"},
-  {ic:"📺",n:"Televizoriai",q:"Samsung QLED 65"},
-  {ic:"🎧",n:"Garsas",q:"Sony WH-1000XM5"},
-  {ic:"⌚",n:"Laikrodžiai",q:"Apple Watch Series 10"},
-  {ic:"🎮",n:"Žaidimai",q:"PlayStation 5"},
-  {ic:"📷",n:"Foto",q:"Sony A7 IV"},
-  {ic:"🏠",n:"Buitis",q:"Dyson V15"},
+  {ic:"📱",lt:"Telefonai",en:"Phones",de:"Handys",pl:"Telefony",q:"iPhone 16 Pro"},
+  {ic:"💻",lt:"Nešiojami",en:"Laptops",de:"Laptops",pl:"Laptopy",q:"MacBook Air M3"},
+  {ic:"📺",lt:"Televizoriai",en:"TVs",de:"TVs",pl:"Telewizory",q:"Samsung QLED 65"},
+  {ic:"🎧",lt:"Garsas",en:"Audio",de:"Audio",pl:"Audio",q:"Sony WH-1000XM5"},
+  {ic:"⌚",lt:"Laikrodžiai",en:"Watches",de:"Uhren",pl:"Zegarki",q:"Apple Watch Series 10"},
+  {ic:"🎮",lt:"Žaidimai",en:"Gaming",de:"Gaming",pl:"Gaming",q:"PlayStation 5"},
+  {ic:"📷",lt:"Foto",en:"Photo",de:"Foto",pl:"Foto",q:"Sony A7 IV"},
+  {ic:"🏠",lt:"Buitis",en:"Appliances",de:"Haushalts",pl:"AGD",q:"Bosch washing machine"},
 ];
 
 let wl = JSON.parse(localStorage.getItem("gy_wl")||"[]");
@@ -745,7 +802,7 @@ function closeOnboard(){
 
 /* ── BOOT ── */
 window.addEventListener("DOMContentLoaded",()=>{
-  setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved();
+  setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved(); _updateWlBadge();
   document.getElementById("be-url").textContent=API_BASE;
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
@@ -762,8 +819,9 @@ window.addEventListener("DOMContentLoaded",()=>{
 function buildCats(){
   const g=document.getElementById("cats-grid"); g.innerHTML="";
   CATS.forEach(c=>{
+    const label=c[curLang]||c.en||c.lt;
     const el=document.createElement("div"); el.className="cat";
-    el.innerHTML=`<span class="cat-ic">${c.ic}</span><div class="cat-n">${c.n}</div>`;
+    el.innerHTML=`<span class="cat-ic">${c.ic}</span><div class="cat-n">${label}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=c.q;doSearch();};
     g.appendChild(el);
   });
@@ -822,17 +880,32 @@ function _relTime(ts){
   return Math.floor(diff/86400)+"d";
 }
 function removeHist(i){hist.splice(i,1);localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();}
+const _HOME_HINTS = ["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Dyson V15","Sony WH-1000XM5"];
 function buildRecent(){
   const t=getLang();
   const g=document.getElementById("recent-list"); g.innerHTML="";
-  if(!hist.length){g.innerHTML=`<div style="padding:16px 0;text-align:center;color:var(--ink3);font-size:13px;">${t.no_recent||"No recent searches yet"}</div>`;return;}
+  if(!hist.length){
+    // Show inviting empty state with quick-search chips
+    const chips=_HOME_HINTS.map(s=>`<button class="heh-chip" onclick="document.getElementById('srch-inp').value='${s}';doSearch()">${s}</button>`).join("");
+    const hintTitle={"lt":"Bandyk ieškoti:","de":"Suche zum Beispiel:","pl":"Spróbuj wyszukać:"}[curLang]||"Try searching for:";
+    g.innerHTML=`<div class="home-empty-hint"><div class="heh-title">${hintTitle}</div><div class="heh-chips">${chips}</div></div>`;
+    return;
+  }
   hist.slice(0,8).forEach((h,i)=>{
     const age=h.ts?_relTime(h.ts):(h.time||t.recently||"recently");
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${h.ic||"🔍"}</div><div><div class="rec-name">${h.q}</div><div class="rec-meta">${h.shops||0} ${t.shops||"shops"} · ${age}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="rec-price">${h.price||""}</div><button style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 6px;line-height:1;" aria-label="Remove" onclick="event.stopPropagation();removeHist(${i})">×</button></div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=h.q;doSearch();};
     g.appendChild(el);
   });
+}
+
+function _updateWlBadge(){
+  const n=wl.length;
+  const nb=document.getElementById("nav-wl-badge");
+  const hb=document.getElementById("home-wl-badge");
+  if(nb){nb.textContent=n||"";nb.classList.toggle("vis",n>0);}
+  if(hb){hb.textContent=n||"";hb.style.display=n>0?"flex":"none";}
 }
 
 function buildSaved(){
@@ -852,8 +925,8 @@ function buildSaved(){
 
 function clearHistory(){hist=[];localStorage.setItem("gy_hist",JSON.stringify(hist));buildRecent();toast("History cleared");}
 function clearData(){if(!confirm("Clear all data?"))return;localStorage.clear();location.reload();}
-function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}const ic=lastData.category_icon||_getIcon(lastQ)||"🔍";wl.push({q:lastQ,ic,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();toast("💚 Saved!");}
-function removeWl(i){wl.splice(i,1);localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();}
+function saveWishlist(){if(!lastData||!lastQ){toast("Nothing to save");return;}const ex=wl.find(w=>w.q===lastQ);if(ex){toast("Already saved!");return;}const ic=lastData.category_icon||_getIcon(lastQ)||"🔍";wl.push({q:lastQ,ic,price:lastData.price_min?"€"+lastData.price_min.toFixed(2):""});localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();_updateWlBadge();toast("💚 Saved!");}
+function removeWl(i){wl.splice(i,1);localStorage.setItem("gy_wl",JSON.stringify(wl));buildSaved();_updateWlBadge();}
 
 /* ── NAV ── */
 function navTo(id){
@@ -871,6 +944,48 @@ window.addEventListener("popstate",()=>{
   if(p){document.getElementById("srch-inp").value=p;navTo("results");}
   else navTo("home");
 });
+
+/* ── SEARCH CLEAR + VOICE ── */
+function onSrchInput(el){
+  const clr=document.getElementById("srch-clear");
+  if(clr)clr.classList.toggle("vis",el.value.length>0);
+}
+function clearSearch(){
+  const inp=document.getElementById("srch-inp");
+  inp.value="";inp.focus();
+  const clr=document.getElementById("srch-clear");
+  if(clr)clr.classList.remove("vis");
+}
+
+let _voiceActive=false;
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast("Voice search not supported in this browser");return;}
+  if(_voiceActive)return;
+  _voiceActive=true;
+  const btn=document.getElementById("voice-btn");
+  if(btn)btn.classList.add("listening");
+  const rec=new SR();
+  rec.lang={"lt":"lt-LT","de":"de-DE","pl":"pl-PL"}[curLang]||"en-US";
+  rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onresult=e=>{
+    const q=e.results[0][0].transcript;
+    document.getElementById("srch-inp").value=q;
+    onSrchInput(document.getElementById("srch-inp"));
+    doSearch();
+  };
+  rec.onerror=()=>{toast("Voice not recognized — try again");};
+  rec.onend=()=>{_voiceActive=false;if(btn)btn.classList.remove("listening");};
+  rec.start();
+  const voiceLbl={"lt":"Klausomasi...","de":"Höre zu...","pl":"Słucham..."}[curLang]||"Listening...";
+  toast(voiceLbl);
+}
+
+function copyPrice(price){
+  navigator.clipboard.writeText(price).then(()=>{
+    toast("💰 "+price+" copied!");
+  }).catch(()=>toast(price));
+}
 
 /* ── SEARCH ── */
 function _showSearchError(){
@@ -1009,7 +1124,8 @@ function renderResults(d,q){
   document.getElementById("res-title").textContent=(_titleIcon?_titleIcon+" ":"")+(d.product_name||q);
   const cachedStr=d._cached?(" · "+( isLt?"iš cache":{"de":"gecacht","pl":"z cache"}[lang]||"cached")):"";
   const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
-  document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr):(isLt?"Nieko nerasta":"No results");
+  const timeFoundStr=d.search_time_ms&&!d._cached?` · ${(d.search_time_ms/1000).toFixed(1)}s`:""
+  document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr+timeFoundStr):(isLt?"Nieko nerasta":"No results");
 
   let html="";
 
@@ -1079,7 +1195,7 @@ function renderResults(d,q){
       bestColor="var(--amber)";
     }else{
       cardCls="bad";
-      badge="🛡️ GOOD DEAL";
+      badge=isLt?"🏪 PIRK PARDUOTUVĖJE":{"de":"🏪 IM LADEN KAUFEN","pl":"🏪 KUP W SKLEPIE"}[lang]||"🏪 STAY IN STORE";
       title=isLt?"Kaina nuotraukoje geresnė":"Photo price is better";
       hero=(isLt?"Internete +":"Online +")+money(Math.abs(diff));
       sub=isLt
@@ -1134,15 +1250,36 @@ function renderResults(d,q){
   if(d.price_min&&d.price_max&&d.price_max>d.price_min){
     const spread=d.price_max-d.price_min;
     const pct=Math.round((spread/d.price_max)*100);
+    const dotPct=Math.round(((d.price_min-d.price_min)/spread)*100); // always 0 for cheapest
+    const summaryTitle={"lt":"Ką radome","de":"Was wir gefunden haben","pl":"Co znaleźliśmy"}[lang]||"What we found";
+    const lowestLbl={"lt":"Pigiausia","de":"Günstigster","pl":"Najtaniej"}[lang]||"Lowest";
+    const highestLbl={"lt":"Brangiausia","de":"Teuerster","pl":"Najdrożej"}[lang]||"Highest";
+    const gapLbl={"lt":"Skirtumas","de":"Spanne","pl":"Różnica"}[lang]||"Gap";
     html+=`<div class="market-summary win fade-up">
-      <div class="ms-title">${isLt?"Ką radome":"What we found"}</div>
-      <div class="ms-row"><span>${isLt?"Pigiausia kaina":"Lowest price"}</span><strong>${money(d.price_min)}</strong></div>
-      <div class="ms-row"><span>${isLt?"Brangiausia kaina":"Highest price"}</span><strong>${money(d.price_max)}</strong></div>
-      <div class="ms-row"><span>${isLt?"Kainų skirtumas":"Market gap"}</span><strong>${money(spread)} · ${pct}%</strong></div>
+      <div class="ms-title">${summaryTitle}</div>
+      <div class="ms-row"><span>${lowestLbl}</span><strong>${money(d.price_min)}</strong></div>
+      <div class="ms-row"><span>${highestLbl}</span><strong>${money(d.price_max)}</strong></div>
+      <div class="ms-row"><span>${gapLbl}</span><strong>${money(spread)} · ${pct}%</strong></div>
+      <div class="price-pos-bar"><div class="price-pos-dot" style="left:0%"></div></div>
+      <div class="price-pos-labels"><span>${money(d.price_min)}</span><span>${money(d.price_max)}</span></div>
     </div>`;
   }
 
-  html+=`<div class="price-list-label">${isLt?"Pasiūlymai":"Offers"}</div>`;
+  // AI coach ABOVE price list so users see it before scrolling
+  if(d.ai_summary||d.buy_recommendation){
+    const coachText=d.buy_recommendation||d.ai_summary||"";
+    if(coachText){
+      const coachTitle={"lt":"AI patarimas","de":"KI-Ratschlag","pl":"Porada AI"}[lang]||"AI Shopping Coach";
+      html+=`<div class="coach-card fade-up">
+        <div class="coach-head"><div class="coach-ico">🧠</div><div class="coach-title">${coachTitle}</div></div>
+        <div class="coach-body">${coachText}</div>
+        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 ${{"lt":"Alternatyva","de":"Alternative","pl":"Alternatywa"}[lang]||"Alternative"}: <span style="color:var(--ink);font-weight:700;">${d.alternative}</span></div>`:""}
+      </div>`;
+    }
+  }
+
+  const offersLbl2={"lt":"Pasiūlymai","de":"Angebote","pl":"Oferty"}[lang]||"Offers";
+  html+=`<div class="price-list-label">${offersLbl2}</div>`;
   html+='<div class="price-list">';
 
   results.forEach((r,i)=>{
@@ -1154,11 +1291,11 @@ function renderResults(d,q){
     let badges="";
 
     if(scan){
-      badges+=`<span class="badge b-gray">${isLt?"Kaina nuotraukoje":"Photo price"}</span>`;
+      badges+=`<span class="badge b-gray">${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[lang]||"Photo price"}</span>`;
     }else{
-      if(r.is_cheapest)badges+=`<span class="badge b-green">${isLt?"Geriausia internete":"Best online"}</span>`;
-      if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">GOOD DEAL</span>`;
-      if(r.is_top_rated)badges+=`<span class="badge b-amber">${isLt?"Top reitingas":"Top rated"}</span>`;
+      if(r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geriausia internete","de":"Bestes Online","pl":"Najlepiej online"}[lang]||"Best online"}</span>`;
+      if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geras pasiūlymas","de":"Gutes Angebot","pl":"Dobra oferta"}[lang]||"Good deal"}</span>`;
+      if(r.is_top_rated)badges+=`<span class="badge b-amber">${{"lt":"Top reitingas","de":"Top bewertet","pl":"Najwyżej oceniony"}[lang]||"Top rated"}</span>`;
     }
 
     let deltaHtml="";
@@ -1179,7 +1316,7 @@ function renderResults(d,q){
       rating=`<div class="pc-rating">${dots}<span class="rc">${r.rating.toFixed(1)}${r.review_count>0?" · "+r.review_count.toLocaleString():""}</span></div>`;
     }
 
-    const delivery=humanDelivery(r.delivery);
+    const delivery=humanDelivery(r.delivery, lang);
     const buyLbl={"lt":"Pirkti →","de":"Kaufen →","pl":"Kup →"}[lang]||"Buy now →";
     const viewLbl={"lt":"Peržiūrėti →","de":"Ansehen →","pl":"Zobacz →"}[lang]||"View →";
     const btnLabel=best&&!scan?buyLbl:viewLbl;
@@ -1189,6 +1326,17 @@ function renderResults(d,q){
       ?`<a class="${btnClass}" href="${link}" target="_blank" rel="noopener">${btnLabel}</a>`
       :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${noLinkLbl}</span>`;
     const origPriceHtml=r.original_price?`<div style="font-size:10px;color:var(--ink3);">${r.original_currency} ${Math.round(r.original_price)}</div>`:"";
+    // % delta vs cheapest (only for non-cheapest, non-scan cards)
+    let pctDeltaHtml="";
+    if(!scan&&!best&&bestOnline&&r.price>0&&bestOnline.price>0){
+      const pctAbove=Math.round((r.price-bestOnline.price)/bestOnline.price*100);
+      if(pctAbove>0)pctDeltaHtml=`<span class="pct-delta expensive">+${pctAbove}%</span>`;
+    }
+    // Copy price button
+    const priceStr=r.price>0?money(r.price):"";
+    const copyBtn=priceStr?`<button class="copy-price-btn" onclick="event.stopPropagation();copyPrice('${priceStr}')" aria-label="Copy price" title="Copy price">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 10H2a1 1 0 01-1-1V2a1 1 0 011-1h7a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.3"/></svg>
+    </button>`:"";
 
     html+=`<div class="p-card${best&&!scan?" best":""} fade-up" style="animation-delay:${i*0.06}s">
       ${best&&!scan?'<div class="p-card-shimmer"></div>':""}
@@ -1198,8 +1346,11 @@ function renderResults(d,q){
           <div><div class="pc-name">${r.shop||"Shop"}</div><div class="pc-delivery">${delivery}</div>${deltaHtml}</div>
         </div>
         <div style="text-align:right;">
-          <div class="pc-price">${r.price>0?money(r.price):"—"}</div>
-          ${origPriceHtml}
+          <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
+            <div class="pc-price">${r.price>0?money(r.price):"—"}</div>
+            ${copyBtn}
+          </div>
+          ${origPriceHtml}${pctDeltaHtml}
         </div>
       </div>
       <div class="pc-bot">
@@ -1210,17 +1361,6 @@ function renderResults(d,q){
     </div>`;
   });
   html+='</div>';
-
-  if(d.ai_summary||d.buy_recommendation){
-    const coachText=d.buy_recommendation||d.ai_summary||"";
-    if(coachText){
-      html+=`<div class="ai-coach fade-up">
-        <div class="ac-head"><div class="ac-icon">🧠</div><div class="ac-title">AI Shopping Coach</div></div>
-        <div class="ac-text">${coachText}</div>
-        ${d.alternative?`<div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r-sm);font-size:12px;color:var(--ink3);">💡 Alternative: <span style="color:var(--ink);font-weight:700;">${d.alternative}</span></div>`:""}
-      </div>`;
-    }
-  }
 
   if(results.length>0){
     const safeName=(d.product_name||q).replace(/'/g,"\\'");
@@ -1258,13 +1398,16 @@ function getShopLogo(shop){
   return"🛍";
 }
 
-function humanDelivery(d){
+function humanDelivery(d,lang){
   if(!d)return"";
   const dl=d.toLowerCase();
-  if(dl.includes("tomorrow")||dl.includes("1-2"))return"Tomorrow";
-  if(dl.includes("today")||dl.includes("šiandien"))return"Today";
-  if(dl.includes("prime"))return"Prime · Tomorrow";
-  if(dl.includes("fizin"))return"In store";
+  const tomorrow={"lt":"Rytoj","de":"Morgen","pl":"Jutro"}[lang]||"Tomorrow";
+  const today={"lt":"Šiandien","de":"Heute","pl":"Dziś"}[lang]||"Today";
+  const inStore={"lt":"Parduotuvėje","de":"Im Laden","pl":"W sklepie"}[lang]||"In store";
+  if(dl.includes("tomorrow")||dl.includes("1-2"))return tomorrow;
+  if(dl.includes("today")||dl.includes("šiandien"))return today;
+  if(dl.includes("prime"))return"Prime · "+tomorrow;
+  if(dl.includes("fizin")||dl.includes("in store"))return inStore;
   return d;
 }
 
@@ -1717,6 +1860,7 @@ function applyLang(){
   const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear all";
   const rl=document.getElementById("rate-label");if(rl)rl.textContent=t.daily_searches||"Daily searches used";
   if(_popularItems.length)_renderPopular(_popularItems);
+  buildCats();
   buildRecent();
   buildSaved();
 }
