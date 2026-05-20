@@ -1117,7 +1117,7 @@ async function doSearch(){
           if(msg.type==="partial"){
             if(!gotResult){clearInterval(loadTimer);gotResult=true;}
             lastData=msg.payload;
-            renderResults(msg.payload,q);
+            renderResults(msg.payload,q,{fetchHistory:false});
             const done=msg.payload._shops_done||0;
             const total=msg.payload._shops_total||4;
             const left=Math.max(0,total-done);
@@ -1190,7 +1190,7 @@ function escHtml(s){
   return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
 
-function renderResults(d,q){
+function renderResults(d,q,opts){opts=opts||{};
   const results=d.results||[];
   const onlineResults=results.filter(r=>!isScanResult(r)&&Number(r.price)>0);
   const scannedPrice=findScannedPrice(d,results);
@@ -1221,7 +1221,7 @@ function renderResults(d,q){
       again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
     };
     const suggestions=["iPhone 16 Pro","MacBook Air M3","Samsung Galaxy S24","Sony WH-1000XM5","Dyson V15"];
-    const sugHtml=suggestions.map(s=>`<button onclick="document.getElementById('srch-inp').value='${s}';doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${s}</button>`).join("");
+    const sugHtml=suggestions.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
@@ -1339,7 +1339,6 @@ function renderResults(d,q){
   if(d.price_min&&d.price_max&&d.price_max>d.price_min){
     const spread=d.price_max-d.price_min;
     const pct=Math.round((spread/d.price_max)*100);
-    const dotPct=Math.round(((d.price_min-d.price_min)/spread)*100); // always 0 for cheapest
     const summaryTitle={"lt":"Ką radome","de":"Was wir gefunden haben","pl":"Co znaleźliśmy"}[lang]||"What we found";
     const lowestLbl={"lt":"Pigiausia","de":"Günstigster","pl":"Najtaniej"}[lang]||"Lowest";
     const highestLbl={"lt":"Brangiausia","de":"Teuerster","pl":"Najdrożej"}[lang]||"Highest";
@@ -1495,7 +1494,7 @@ function renderResults(d,q){
     if(vc)vc.scrollIntoView({behavior:"smooth",block:"start"});
   },80);
   setTimeout(()=>initWatchBtn(_productName),100);
-  fetchPriceHistory(_productName);
+  if(opts.fetchHistory!==false)fetchPriceHistory(_productName);
 }
 
 function getShopLogo(shop){
