@@ -557,6 +557,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 /* ── CAT KEYBOARD NAV ── */
 .cat:focus-visible{outline:2px solid var(--green);outline-offset:2px;background:var(--green-l);}
+/* ── SUGGESTIONS ── */
+#srch-suggestions .sug-item:last-child{border-bottom:none!important;}
 
 /* ── PREFERS REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
@@ -1031,7 +1033,8 @@ function buildRecent(){
 }
 
 function _updateWlBadge(){
-  const n=wl.length;
+  const watches=JSON.parse(localStorage.getItem("gy_watch")||"[]");
+  const n=wl.length+watches.length;
   const nb=document.getElementById("nav-wl-badge");
   const hb=document.getElementById("home-wl-badge");
   if(nb){nb.textContent=n||"";nb.classList.toggle("vis",n>0);}
@@ -1041,8 +1044,9 @@ function _updateWlBadge(){
 function buildSaved(){
   const t=getLang();
   const g=document.getElementById("saved-list");
-  const n=wl.length;
-  document.getElementById("saved-count").textContent=n===0?(t.no_recent||""):n+" "+(t.items_saved||"saved");
+  const watches=JSON.parse(localStorage.getItem("gy_watch")||"[]");
+  const n=wl.length+watches.length;
+  document.getElementById("saved-count").textContent=n===0?"":n+" "+(t.items_saved||"saved");
   if(!n){
     const quickSearches=["iPhone 16","MacBook Air","Sony WH-1000XM5","Dyson V15"];
     const quickBtns=quickSearches.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
@@ -1052,11 +1056,30 @@ function buildSaved(){
   g.innerHTML="";
   const bestLbl={"lt":"Geriausia","de":"Beste","pl":"Najlepsza"}[curLang]||"Best";
   const removeLbl={"lt":"Šalinti","de":"Löschen","pl":"Usuń"}[curLang]||"Remove";
+  const checkLbl={"lt":"Tikrinti","de":"Prüfen","pl":"Sprawdź"}[curLang]||"Check";
+  const watchingLbl={"lt":"Stebima","de":"Beobachtet","pl":"Obserwowane"}[curLang]||"Watching";
+  // Watchlist items first
+  if(watches.length){
+    const secEl=document.createElement("div");
+    secEl.innerHTML=`<div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--amber);text-transform:uppercase;padding:0 0 8px;display:flex;align-items:center;gap:6px;">🔔 ${watchingLbl} <span style="background:var(--amber-l);border-radius:20px;padding:2px 7px;">${watches.length}</span></div>`;
+    g.appendChild(secEl);
+    watches.forEach((item,i)=>{
+      const el=document.createElement("div"); el.className="rec-item fade-up";
+      el.style.cssText="border-color:rgba(255,184,48,0.25);background:rgba(255,184,48,0.05);";
+      el.innerHTML=`<div class="rec-left"><div class="rec-ico" style="background:var(--amber-l);">🔔</div><div><div class="rec-name">${escHtml(item.name)}</div><div class="rec-meta">${bestLbl}: ${escHtml(item.price?"€"+item.price:"—")}</div></div></div><div style="display:flex;gap:6px;"><button data-q="${escHtml(item.name)}" style="background:var(--green-l);border:1px solid var(--green-m);border-radius:8px;padding:6px 12px;color:var(--green);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;">${checkLbl}</button><button data-wi="${i}" style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 10px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;">×</button></div>`;
+      el.querySelector("[data-q]").onclick=(e)=>{e.stopPropagation();document.getElementById("srch-inp").value=e.currentTarget.dataset.q;navTo("home");setTimeout(doSearch,50);};
+      el.querySelector("[data-wi]").onclick=(e)=>{e.stopPropagation();const idx=parseInt(e.currentTarget.dataset.wi);watches.splice(idx,1);localStorage.setItem("gy_watch",JSON.stringify(watches));buildSaved();_updateWlBadge();};
+      el.onclick=()=>{document.getElementById("srch-inp").value=item.name;navTo("home");setTimeout(doSearch,50);};
+      g.appendChild(el);
+    });
+    if(wl.length){const divEl=document.createElement("div");divEl.style.cssText="height:1px;background:var(--border);margin:12px 0;";g.appendChild(divEl);}
+  }
+  // Wishlist items
   wl.forEach((item,i)=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
     el.innerHTML=`<div class="rec-left"><div class="rec-ico">${item.ic||"🛒"}</div><div><div class="rec-name">${escHtml(item.q)}</div><div class="rec-meta">${bestLbl}: ${escHtml(item.price||"—")}</div></div></div><button data-idx="${i}" style="background:var(--red-l);border:1px solid rgba(255,136,136,0.2);border-radius:8px;padding:6px 12px;color:var(--red);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;">${removeLbl}</button>`;
     el.querySelector("button").onclick=(e)=>{e.stopPropagation();removeWl(parseInt(e.currentTarget.dataset.idx));};
-    el.onclick=()=>{document.getElementById("srch-inp").value=item.q;doSearch();};
+    el.onclick=()=>{document.getElementById("srch-inp").value=item.q;navTo("home");setTimeout(doSearch,50);};
     g.appendChild(el);
   });
 }
@@ -2513,7 +2536,10 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
     const cam=document.getElementById("cam-sheet");
     if(cam&&cam.classList.contains("open")){closeCam();return;}
+    _hideSuggestions();
+    return;
   }
+  if(e.key==="Enter"){_hideSuggestions();}
   if(e.key==="/"&&document.activeElement.tagName!=="INPUT"&&document.activeElement.tagName!=="TEXTAREA"){
     e.preventDefault();
     navTo("home");
