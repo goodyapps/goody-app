@@ -766,8 +766,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   </nav>
 </div>
 
-<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
 <script>
 const API_BASE = "https://goody-backend.onrender.com";
 
@@ -1545,6 +1545,7 @@ function updateRateUI(d){
 
 /* ── CAMERA ── */
 function openCam(mode){
+  if(typeof ZXing==="undefined"){toast({"lt":"Skeneris dar kraunamas...","de":"Scanner lädt noch...","pl":"Skaner ładuje się..."}[curLang]||"Scanner loading...");return;}
   camMode=mode; capturedB64=null;
   switchCM(mode);
   document.getElementById("cp-wrap").style.display="none";
