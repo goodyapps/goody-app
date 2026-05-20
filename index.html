@@ -1275,14 +1275,14 @@ function renderResults(d,q,opts){opts=opts||{};
       badge="🔥 GOOD DEAL";
       title={"lt":"Internete rasta geresnė kaina","de":"Besserer Preis online gefunden","pl":"Znaleziono lepszą cenę online"}[lang]||"Better price found online";
       hero=_sc.save+money(diff);
-      sub=`${bestOnline.shop}: ${Math.abs(pct).toFixed(1)}% `+({"lt":"pigiau nei kaina nuotraukoje","de":"günstiger als der Foto-Preis","pl":"taniej niż cena ze zdjęcia"}[lang]||"cheaper than the photo price")+".";
+      sub=`${escHtml(bestOnline.shop)}: ${Math.abs(pct).toFixed(1)}% `+({"lt":"pigiau nei kaina nuotraukoje","de":"günstiger als der Foto-Preis","pl":"taniej niż cena ze zdjęcia"}[lang]||"cheaper than the photo price")+".";
       proof=`${_sc.photo_lbl}: ${money(scannedPrice)}. ${_sc.online_lbl}: ${money(bestOnline.price)}. `+({"lt":"Prieš perkant dar patikrink pristatymą ir pardavėjo sąlygas.","de":"Lieferung und Verkäuferbedingungen vor dem Kauf prüfen.","pl":"Sprawdź dostawę i warunki sprzedawcy przed zakupem."}[lang]||"Check delivery and seller terms before buying.");
       setTimeout(()=>fireConfetti(diff.toFixed(2)),550);
     }else if(diff>5){
       badge="🟢 GOOD DEAL";
       title={"lt":"Internete šiek tiek pigiau","de":"Online etwas günstiger","pl":"Online nieco taniej"}[lang]||"Slightly cheaper online";
       hero=_sc.save+money(diff);
-      sub=`${bestOnline.shop} `+({"lt":"yra pigiau nei kaina nuotraukoje","de":"ist günstiger als der Foto-Preis","pl":"jest tańszy niż cena ze zdjęcia"}[lang]||"is cheaper than the photo price")+".";
+      sub=`${escHtml(bestOnline.shop)} `+({"lt":"yra pigiau nei kaina nuotraukoje","de":"ist günstiger als der Foto-Preis","pl":"jest tańszy niż cena ze zdjęcia"}[lang]||"is cheaper than the photo price")+".";
       proof={"lt":"Skirtumas nėra didelis, bet tai vis tiek geras dealas, jei pristatymas nekainuoja daug.","de":"Der Unterschied ist nicht riesig, aber immer noch ein guter Deal bei günstiger Lieferung.","pl":"Różnica nie jest duża, ale to nadal dobra okazja przy niskich kosztach dostawy."}[lang]||"The gap is not huge, but it is still a good deal if delivery is low.";
     }else if(diff>=-5){
       cardCls="warn";
