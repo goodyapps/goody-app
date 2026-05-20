@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.23 — scan shops 6, shops_total fallback 6, LT grammar fix ── */
+/* ── GOODY GOOD DEAL v5.24 — remove duplicate PWA install prompt (double banner bug) ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -2789,24 +2789,7 @@ function toast(m){
   clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove("on"),2800);
 }
 
-/* ── PWA INSTALL ── */
-let _pwaPrompt=null;
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault();_pwaPrompt=e;
-  if(localStorage.getItem("gy_pwa_dismissed"))return;
-  setTimeout(()=>{
-    const bar=document.createElement("div");
-    const installLbl={"lt":"📲 Įdiegti Goody — greita kaip programa","de":"📲 Goody installieren — wie eine App","pl":"📲 Zainstaluj Goody — działa jak aplikacja"}[curLang]||"📲 Install Goody — works like a native app";
-    const yesLbl={"lt":"Įdiegti","de":"Installieren","pl":"Zainstaluj"}[curLang]||"Install";
-    const noLbl={"lt":"Ne dabar","de":"Später","pl":"Później"}[curLang]||"Later";
-    bar.style.cssText="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--green);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:390px;width:calc(100%-40px);font-size:13px;";
-    bar.innerHTML=`<span style="flex:1;color:var(--ink2);">${installLbl}</span><button onclick="_installPwa()" style="background:var(--green);border:none;border-radius:8px;padding:7px 13px;font-family:var(--ff);font-size:12px;font-weight:800;color:#121A24;cursor:pointer;">${yesLbl}</button><button onclick="_dismissPwa(this.parentNode)" style="background:none;border:none;color:var(--ink3);font-size:18px;cursor:pointer;padding:0 2px;">×</button>`;
-    document.querySelector(".app").appendChild(bar);
-    setTimeout(()=>bar.remove(),12000);
-  },3000);
-});
-function _installPwa(){if(_pwaPrompt){_pwaPrompt.prompt();_pwaPrompt.userChoice.then(()=>{_pwaPrompt=null;});}}
-function _dismissPwa(el){localStorage.setItem("gy_pwa_dismissed","1");el.remove();}
+/* ── PWA INSTALL — handled by the service-worker IIFE below ── */
 
 /* ── KEYBOARD SHORTCUTS ── */
 document.addEventListener("keydown",e=>{
