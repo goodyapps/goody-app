@@ -957,13 +957,43 @@ window.addEventListener("DOMContentLoaded",()=>{
       setDots("var(--red)",{"lt":"Neprisijungta","de":"Offline","pl":"Offline"}[curLang]||"Offline");
     }
   })();
-  const qParam=new URLSearchParams(window.location.search).get("q");
+  const _sp=new URLSearchParams(window.location.search);
+  const qParam=_sp.get("q");
+  // Web Share Target: extract product query from shared URL/title/text
+  const _shareUrl=_sp.get("url")||"", _shareTitle=_sp.get("title")||"", _shareText=_sp.get("text")||"";
+  const sharedQuery=_extractSharedQuery(_shareUrl,_shareTitle,_shareText);
   if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
+  else if(sharedQuery){document.getElementById("srch-inp").value=sharedQuery;doSearch();}
   else{setTimeout(showOnboard,800);}
   // Show savings stats and check watchlist drops with slight delay (non-blocking)
   setTimeout(_showSavingsStat,1200);
   setTimeout(_checkWatchlistDrops,2000);
 });
+
+function _extractSharedQuery(url, title, text){
+  // Extract a product search query from a shared URL, title, or text
+  if(!url&&!title&&!text)return "";
+  // Try to parse product name from URL path (works for Amazon, Varle, etc.)
+  if(url){
+    try{
+      const u=new URL(url);
+      // Amazon: /Logitech-MX-Master-3S/dp/B09XX... — first path segment often is name
+      const parts=u.pathname.split('/').filter(p=>p&&p!=='dp'&&!/^[A-Z0-9]{10}$/.test(p)&&p.length>3);
+      if(parts.length>0){
+        const namePart=parts[0].replace(/-/g,' ').replace(/_/g,' ');
+        if(namePart.length>5)return namePart.slice(0,80);
+      }
+    }catch(_){}
+  }
+  // Fallback to title (remove site name suffix like " | Amazon.de" or " - Varle.lt")
+  if(title){
+    const cleaned=title.replace(/\s*[\|—\-]\s*(amazon|varle|elesen|pigu|topocentras|ebay|allegro|google|shopping).*/i,'').trim();
+    if(cleaned.length>3)return cleaned.slice(0,80);
+  }
+  // Last resort: use raw text
+  if(text&&text.length>3)return text.slice(0,80);
+  return "";
+}
 
 function _showSavingsStat(){
   // Compute total savings potential from history (best price saved each search)
