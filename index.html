@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.25 — update CATS and hints to 2025/2026 products ── */
+/* ── GOODY GOOD DEAL v5.26 — fix browser back button restoring wrong search results ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1250,8 +1250,11 @@ function navTo(id){
 }
 window.addEventListener("popstate",()=>{
   const p=new URLSearchParams(location.search).get("q");
-  if(p){document.getElementById("srch-inp").value=p;navTo("results");}
-  else navTo("home");
+  if(p){
+    document.getElementById("srch-inp").value=p;
+    if(p===lastQ&&lastData){navTo("results");renderResults(lastData,p,{fetchHistory:false});}
+    else{_skipHistoryPush=true;navTo("results");doSearch();}
+  } else navTo("home");
 });
 
 /* ── SEARCH CLEAR + VOICE ── */
@@ -1459,11 +1462,13 @@ function _showRateLimitError(e){
   document.getElementById("res-meta").textContent={"lt":"Limitas","de":"Limit","pl":"Limit"}[curLang]||"Limit";
 }
 
+let _skipHistoryPush=false;
 async function doSearch(){
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast({"lt":"Įveskite produkto pavadinimą","de":"Produktname eingeben","pl":"Wpisz nazwę produktu"}[curLang]||"Enter a product name");return;}
   lastQ=q;_budgetMax=0;_curSort='cheapest';
-  history.pushState({q},"","/?q="+encodeURIComponent(q));
+  if(!_skipHistoryPush)history.pushState({q},"","/?q="+encodeURIComponent(q));
+  _skipHistoryPush=false;
   navTo("results");
   document.getElementById("res-title").textContent=q;
   document.getElementById("res-meta").textContent={"lt":"Ieškoma...","de":"Wird gesucht...","pl":"Szukamy cen..."}[curLang]||"Searching...";
