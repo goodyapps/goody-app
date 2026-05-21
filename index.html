@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.46 — _extractSharedQuery: use last path segment (fixes LT shop share URLs) ── */
+/* ── GOODY GOOD DEAL v5.47 — no-results: show backend search_suggestion as clickable shortcut; POPULAR_FALLBACK Dyson 🌀→🧹 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1080,7 +1080,7 @@ const POPULAR_FALLBACK = [
   {ic:"📱", q:"iPhone 17 Pro", price:"from €1,199"},
   {ic:"💻", q:"MacBook Air M4", price:"from €1,099"},
   {ic:"🎧", q:"Sony WH-1000XM5", price:"from €279"},
-  {ic:"🌀", q:"Dyson V15 Detect", price:"from €549"},
+  {ic:"🧹", q:"Dyson V15 Detect", price:"from €549"},
   {ic:"📺", q:"Samsung QLED 65", price:"from €799"},
   {ic:"🤖", q:"Roborock S8", price:"from €399"},
 ];
@@ -1654,10 +1654,13 @@ function renderResults(d,q,opts){opts=opts||{};
     };
     const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
     const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
+    const _suggestion=d.search_suggestion||d.alternative||"";
+    const _suggBtn=_suggestion&&_suggestion!==q?`<div style="margin:12px 0;"><span style="font-size:12px;color:var(--ink3);">${{"lt":"Pabandyk:","de":"Versuche:","pl":"Spróbuj:"}[lang]||"Try:"}</span> <button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(_suggestion))};doSearch()" style="background:var(--green-l);border:1px solid var(--green);border-radius:20px;padding:5px 12px;color:var(--green);font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;">${escHtml(_suggestion)}</button></div>`:"";
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
       <div class="nr-sub">${_nr.sub}: <strong>${escHtml(q)}</strong>.</div>
+      ${_suggBtn}
       <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
         <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.tips}</div>
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${_nr.tip1}</span></div>
