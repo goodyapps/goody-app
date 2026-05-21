@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.44 — fix XSS: escHtml(href link, ic icons, trackClick JSON.stringify) ── */
+/* ── GOODY GOOD DEAL v5.45 — _getIcon: fix vacuum 🌀→🧹; add camera/headphone/watch/gaming/lighting keywords ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1105,20 +1105,20 @@ function _getIcon(q){
     "iphone":"📱","samsung galaxy":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱",
     "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas kompiuteris":"💻","nešiojamas kompiuteris":"💻","chromebook":"💻","thinkpad":"💻",
     "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺",
-    "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
-    "sony wh":"🎧","bose qc":"🎧",
-    "robot":"🤖","robotinis":"🤖","saugroboter":"🤖","roomba":"🤖",
-    "dyson":"🌀","vacuum":"🌀","staubsauger":"🌀","odkurzacz":"🌀","siurblys":"🌀",
-    "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚",
-    "playstation":"🎮","xbox":"🎮","nintendo":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮",
-    "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷",
+    "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","earbuds":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
+    "sony wh":"🎧","bose qc":"🎧","jabra":"🎧","beats studio":"🎧","marshall major":"🎧",
+    "robot":"🤖","robotinis":"🤖","saugroboter":"🤖","roomba":"🤖","roborock":"🤖",
+    "dyson":"🧹","vacuum":"🧹","staubsauger":"🧹","odkurzacz":"🧹","siurblys":"🧹",
+    "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚","apple watch":"⌚","fossil":"⌚","polar":"⌚","suunto":"⌚",
+    "playstation":"🎮","ps5":"🎮","ps4":"🎮","xbox":"🎮","nintendo":"🎮","gamepad":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮",
+    "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷","nikon":"📷","canon":"📷","gopro":"📷","fujifilm":"📷","olympus":"📷",
     "ipad":"📱","tablet":"📱","planšetė":"📱",
     "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧","dishwasher":"🫧","spülmaschine":"🫧","zmywarka":"🫧","indaplovė":"🫧","indaplove":"🫧",
     "fridge":"❄️","šaldytuvas":"❄️","šaldiklis":"❄️","saldytuvas":"❄️","saldiklis":"❄️","saldymo":"❄️","kühlschrank":"❄️","gefrierschrank":"❄️","lodówka":"❄️","zamrażarka":"❄️","zamrazarka":"❄️",
     "air condition":"🌬️","kondicionierius":"🌬️","klimaanlage":"🌬️","klimatyzator":"🌬️",
     "kettle":"☕","virdulys":"☕","wasserkocher":"☕","czajnik":"☕",
     "coffee":"☕","kavos":"☕","kaffeemaschine":"☕","ekspres":"☕",
-    "vacuum cleaner":"🌀","hoover":"🌀",
+    "vacuum cleaner":"🧹","hoover":"🧹",
     "drill":"🔨","screwdriver":"🔨","electric tool":"🔨","makita":"🔨","dewalt":"🔨",
     "bohrmaschine":"🔨","wiertarka":"🔨","grąžtas":"🔨","graztas":"🔨","pjūklas":"🔨","pjuklas":"🔨","perforatorius":"🔨",
     "šlifuoklis":"🔨","slifuoklis":"🔨","suktukas":"🔨","kampinis":"🔨","szlifierka":"🔨","wkrętarka":"🔨","schleifer":"🔨","schrauber":"🔨",
@@ -1134,7 +1134,7 @@ function _getIcon(q){
     "speaker":"🔊","soundbar":"🔊","garsiakalbis":"🔊","garsinė":"🔊","garsine":"🔊","kolonėlė":"🔊","kolonele":"🔊","lautsprecher":"🔊","głośnik":"🔊",
     "mouse":"🖱️","pelė":"🖱️","pele":"🖱️","maus":"🖱️","mysz":"🖱️",
     "iron":"👕","laidynas":"👕","lygintuvas":"👕","bügeleisen":"👕","bugeleisen":"👕","żelazko":"👕",
-    "shaver":"🪒","skustuvas":"🪒","rasierer":"🪒","golarka":"🪒","epilator":"🪒","epilatorius":"🪒","gillette":"🪒","oral-b":"🪒","toothbrush":"🪒","zahnbürste":"🪒","šepetėlis":"🪒","szczoteczka":"🪒",
+    "shaver":"🪒","skustuvas":"🪒","rasierer":"🪒","golarka":"🪒","epilator":"🪒","epilatorius":"🪒","gillette":"🪒","oral-b":"🪒","toothbrush":"🪒","zahnbürste":"🪒","šepetėlis":"🪒","sepetelis":"🪒","szczoteczka":"🪒",
     "lego":"🧸","zaislai":"🧸","pampers":"🧸","chicco":"🧸","baby":"🧸",
     "nokia":"📱",
     "ssd":"🖥️","nvme":"🖥️","hdd":"🖥️","diskas":"🖥️","festplatte":"🖥️","dysk":"🖥️",
@@ -1142,7 +1142,7 @@ function _getIcon(q){
     "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐",
     "alarm clock":"⏰","zadintuvas":"⏰","žadintuvas":"⏰","wecker":"⏰","budzik":"⏰",
     "binocular":"🔭","ziuronai":"🔭","žiūronai":"🔭","fernglas":"🔭","lornetka":"🔭",
-    "lempa":"💡","lampe":"💡","led bulb":"💡","smart bulb":"💡","lemputė":"💡","lempute":"💡","lemputės":"💡","lemputes":"💡",
+    "lempa":"💡","lampe":"💡","lampa":"💡","led bulb":"💡","led strip":"💡","led lamp":"💡","smart bulb":"💡","smart lamp":"💡","lemputė":"💡","lempute":"💡","lemputės":"💡","lemputes":"💡","sviestuvas":"💡","sviestuvai":"💡",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
