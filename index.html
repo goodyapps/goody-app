@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.29 — fix suggestion keydown: typing while suggestions open no longer triggers premature search ── */
+/* ── GOODY GOOD DEAL v5.30 — fix runScan: use store_price (not price_visible) in toast for no-results branch ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -2293,7 +2293,7 @@ async function runScan(){
       const q=data.scanned_product||data.barcode||data.product_name||data.context||"";
       if(!q){toast({"lt":"Produktas neatpažintas — pabandykite kitą nuotrauką","de":"Produkt nicht erkannt — anderes Foto versuchen","pl":"Nie rozpoznano produktu — spróbuj innego zdjęcia"}[curLang]||"Could not identify product — try another photo");return;}
       document.getElementById("srch-inp").value=q;
-      if(data.price_visible)toast(`${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[curLang]||"Price tag"}: €${data.price_visible}`);
+      if(data.store_price)toast(`${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[curLang]||"Price tag"}: €${data.store_price}`);
       doSearch();
     }
   }catch(e){
