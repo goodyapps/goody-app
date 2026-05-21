@@ -962,7 +962,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   // Web Share Target: extract product query from shared URL/title/text
   const _shareUrl=_sp.get("url")||"", _shareTitle=_sp.get("title")||"", _shareText=_sp.get("text")||"";
   const sharedQuery=_extractSharedQuery(_shareUrl,_shareTitle,_shareText);
-  if(qParam){document.getElementById("srch-inp").value=qParam;doSearch();}
+  if(qParam){document.getElementById("srch-inp").value=qParam;_skipHistoryPush=true;doSearch();}
   else if(sharedQuery){document.getElementById("srch-inp").value=sharedQuery;doSearch();}
   else{setTimeout(showOnboard,800);}
   // Show savings stats and check watchlist drops with slight delay (non-blocking)
