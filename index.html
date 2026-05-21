@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.45 — _getIcon: fix vacuum 🌀→🧹; add camera/headphone/watch/gaming/lighting keywords ── */
+/* ── GOODY GOOD DEAL v5.46 — _extractSharedQuery: use last path segment (fixes LT shop share URLs) ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -978,10 +978,10 @@ function _extractSharedQuery(url, title, text){
   if(url){
     try{
       const u=new URL(url);
-      // Amazon: /Logitech-MX-Master-3S/dp/B09XX... — first path segment often is name
-      const parts=u.pathname.split('/').filter(p=>p&&p!=='dp'&&!/^[A-Z0-9]{10}$/.test(p)&&p.length>3);
+      // Use last meaningful path segment: works for both Amazon (/name/dp/ASIN) and LT shops (/cat/subcat/product-slug)
+      const parts=u.pathname.split('/').filter(p=>p&&p!=='dp'&&p!=='prekes'&&p!=='lt'&&!/^[A-Z0-9]{10}$/.test(p)&&p.length>3);
       if(parts.length>0){
-        const namePart=parts[0].replace(/-/g,' ').replace(/_/g,' ');
+        const namePart=parts[parts.length-1].replace(/-/g,' ').replace(/_/g,' ');
         if(namePart.length>5)return namePart.slice(0,80);
       }
     }catch(_){}
