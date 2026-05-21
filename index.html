@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.38 — _getIcon: +mic🎙️, router🌐, alarm⏰, binoculars🔭, lamp💡 ── */
+/* ── GOODY GOOD DEAL v5.39 — _getIcon: robotinis🤖 before siurblys; nesiojamas kompiuteris fix; +lempute💡 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1103,12 +1103,12 @@ function _getIcon(q){
   const ql=(q||"").toLowerCase();
   const iconMap={
     "iphone":"📱","samsung galaxy":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱",
-    "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas":"💻","nešiojamas":"💻","chromebook":"💻","thinkpad":"💻",
+    "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas kompiuteris":"💻","nešiojamas kompiuteris":"💻","chromebook":"💻","thinkpad":"💻",
     "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺",
     "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
     "sony wh":"🎧","bose qc":"🎧",
+    "robot":"🤖","robotinis":"🤖","saugroboter":"🤖","roomba":"🤖",
     "dyson":"🌀","vacuum":"🌀","staubsauger":"🌀","odkurzacz":"🌀","siurblys":"🌀",
-    "robot":"🤖","saugroboter":"🤖","roomba":"🤖",
     "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚",
     "playstation":"🎮","xbox":"🎮","nintendo":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮",
     "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷",
@@ -1138,7 +1138,7 @@ function _getIcon(q){
     "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐",
     "alarm clock":"⏰","zadintuvas":"⏰","žadintuvas":"⏰","wecker":"⏰","budzik":"⏰",
     "binocular":"🔭","ziuronai":"🔭","žiūronai":"🔭","fernglas":"🔭","lornetka":"🔭",
-    "lempa":"💡","lampe":"💡","led bulb":"💡","smart bulb":"💡","lemputė":"💡",
+    "lempa":"💡","lampe":"💡","led bulb":"💡","smart bulb":"💡","lemputė":"💡","lempute":"💡","lemputės":"💡","lemputes":"💡",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
