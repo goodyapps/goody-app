@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.42 — _getIcon: +dishwasher🫧; +fridge no-diacritics❄️; +beamer📽️; +mechanical⌨️; consistent with backend v6.39 ── */
+/* ── GOODY GOOD DEAL v5.43 — fix XSS: escHtml(JSON.stringify) for onclick search values ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1177,7 +1177,7 @@ function buildRecent(){
   const g=document.getElementById("recent-list"); g.innerHTML="";
   if(!hist.length){
     // Show inviting empty state with quick-search chips
-    const chips=_HOME_HINTS.map(s=>`<button class="heh-chip" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()">${escHtml(s)}</button>`).join("");
+    const chips=_HOME_HINTS.map(s=>`<button class="heh-chip" onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()">${escHtml(s)}</button>`).join("");
     const hintTitle={"lt":"Bandyk ieškoti:","de":"Suche zum Beispiel:","pl":"Spróbuj wyszukać:"}[curLang]||"Try searching for:";
     g.innerHTML=`<div class="home-empty-hint"><div class="heh-title">${hintTitle}</div><div class="heh-chips">${chips}</div></div>`;
     return;
@@ -1209,7 +1209,7 @@ function buildSaved(){
   document.getElementById("saved-count").textContent=n===0?"":n+" "+(t.items_saved||"saved");
   if(!n){
     const _saveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,4).map(p=>p.q);
-    const quickBtns=_saveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
+    const quickBtns=_saveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};navTo('home');setTimeout(doSearch,50)" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;">${escHtml(s)}</button>`).join("");
     g.innerHTML=`<div class="saved-empty"><div class="se-ico">🤍</div><div class="se-title">${t.saved_empty||"Nothing saved yet"}</div><div class="se-sub">${t.saved_empty_sub||"Find a great deal and tap ♥ to save it"}</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;">${quickBtns}</div></div>`;
     return;
   }
@@ -1318,7 +1318,7 @@ function _showSuggestions(val){
     document.querySelector(".search-bar").style.position="relative";
     document.querySelector(".search-bar").appendChild(box);
   }
-  box.innerHTML=matches.map(s=>`<div class="sug-item" style="padding:12px 16px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .1s;" onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};_hideSuggestions();doSearch()"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5" opacity=".5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>${escHtml(s)}</div>`).join("");
+  box.innerHTML=matches.map(s=>`<div class="sug-item" style="padding:12px 16px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .1s;" onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};_hideSuggestions();doSearch()"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5" opacity=".5"/><path d="M13 13l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>${escHtml(s)}</div>`).join("");
   box.querySelectorAll(".sug-item").forEach(el=>{
     el.addEventListener("mouseover",()=>{_sugIdx=-1;el.style.background="var(--card2)";el.style.color="";});
     el.addEventListener("mouseout",()=>{el.style.background="";el.style.color="";});
@@ -1653,7 +1653,7 @@ function renderResults(d,q,opts){opts=opts||{};
       again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
     };
     const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
-    const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${JSON.stringify(s)};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
+    const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
