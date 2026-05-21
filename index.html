@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.78 — _getIcon: +chromecast/fire tv/fire stick/apple tv/nvidia shield📺; +alienware🎮 ── */
+/* ── GOODY GOOD DEAL v5.79 — _getIcon: +huawei📱; +lg📺; +bose/sennheiser🎧; +jbl🔊; +nvidia🎮; +intel/amd🖥️; +dyson🧹; +siemens/zanussi/electrolux🫧; +delonghi☕; +tefal🍳; +braun🪒 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1095,11 +1095,11 @@ function _renderPopular(items){
 function _getIcon(q){
   const ql=(q||"").toLowerCase();
   const iconMap={
-    "iphone":"📱","samsung galaxy":"📱","galaxy tab":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱","poco":"📱","redmi":"📱","nothing phone":"📱","xiaomi":"📱","motorola":"📱","oneplus":"📱","honor":"📱","realme":"📱","oppo":"📱","vivo":"📱",
+    "iphone":"📱","samsung galaxy":"📱","galaxy tab":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱","poco":"📱","redmi":"📱","nothing phone":"📱","xiaomi":"📱","motorola":"📱","oneplus":"📱","honor":"📱","realme":"📱","oppo":"📱","vivo":"📱","huawei":"📱",
     "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas kompiuteris":"💻","nešiojamas kompiuteris":"💻","chromebook":"💻","thinkpad":"💻","dell xps":"💻","surface pro":"💻","surface laptop":"💻",
-    "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺","chromecast":"📺","fire tv":"📺","fire stick":"📺","firestick":"📺","apple tv":"📺","nvidia shield":"📺","android tv":"📺",
+    "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺","chromecast":"📺","fire tv":"📺","fire stick":"📺","firestick":"📺","apple tv":"📺","nvidia shield":"📺","android tv":"📺","lg":"📺",
     "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","earbuds":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
-    "sony wh":"🎧","bose qc":"🎧","jabra":"🎧","beats":"🎧","marshall":"🎧","audio-technica":"🎧",
+    "sony wh":"🎧","bose qc":"🎧","bose":"🎧","sennheiser":"🎧","jabra":"🎧","beats":"🎧","marshall":"🎧","audio-technica":"🎧",
     "robot kuchenny":"🍳","kuchenny":"🍳","thermomix":"🍳","küchenmaschine":"🍳",
     "robot":"🤖","robotinis":"🤖","saugroboter":"🤖","roomba":"🤖","roborock":"🤖","dreame":"🤖","ecovacs":"🤖","eufy":"🤖",
     "air purifier":"💨","luftreiniger":"💨","oczyszczacz powietrza":"💨","oro valytuvas":"💨","levoit":"💨","blueair":"💨","coway":"💨","winix":"💨","luftbefeuchter":"💧","oro drekintuvas":"💧","nawilżacz":"💧",
@@ -1107,14 +1107,14 @@ function _getIcon(q){
     "boileris":"🚿","bojler":"🚿","warmwasserbereiter":"🚿","podgrzewacz wody":"🚿","water heater":"🚿","katilas":"🚿","gaskessel":"🚿","kociol":"🚿","ariston":"🚿",
     "dyson":"🧹","miele":"🧹","vacuum":"🧹","staubsauger":"🧹","odkurzacz":"🧹","siurblys":"🧹","hoover":"🧹",
     "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚","apple watch":"⌚","fossil":"⌚","polar":"⌚","suunto":"⌚",
-    "playstation":"🎮","ps5":"🎮","ps4":"🎮","xbox":"🎮","nintendo":"🎮","gamepad":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮","konsole":"🎮","rtx":"🎮","geforce":"🎮","radeon rx":"🎮","gigabyte":"🎮","msi":"🎮","zotac":"🎮","sapphire":"🎮","razer":"🎮","corsair":"🎮","steelseries":"🎮","hyperx":"🎮","alienware":"🎮",
+    "playstation":"🎮","ps5":"🎮","ps4":"🎮","xbox":"🎮","nintendo":"🎮","gamepad":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮","konsole":"🎮","nvidia":"🎮","rtx":"🎮","geforce":"🎮","radeon rx":"🎮","gigabyte":"🎮","msi":"🎮","zotac":"🎮","sapphire":"🎮","razer":"🎮","corsair":"🎮","steelseries":"🎮","hyperx":"🎮","alienware":"🎮",
     "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷","nikon":"📷","canon":"📷","gopro":"📷","fujifilm":"📷","olympus":"📷","dji":"📷","vaizdo":"📷","veiksmo":"📷","sony alpha":"📷","sony zv":"📷","leica":"📷","dronas":"📷","drohne":"📷","dron":"📷",
     "ipad":"📱","tablet":"📱","planšetė":"📱","kindle":"📱","kobo":"📱","e-reader":"📱",
-    "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧","dishwasher":"🫧","spülmaschine":"🫧","zmywarka":"🫧","indaplovė":"🫧","indaplove":"🫧","bosch wan":"🫧","samsung ww":"🫧","asko":"🫧","bauknecht":"🫧","constructa":"🫧","indesit":"🫧","candy":"🫧","beko":"🫧","gorenje":"🫧","haier":"🫧","whirlpool":"🫧","hotpoint":"🫧","grundig":"🫧",
+    "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧","dishwasher":"🫧","spülmaschine":"🫧","zmywarka":"🫧","indaplovė":"🫧","indaplove":"🫧","bosch wan":"🫧","samsung ww":"🫧","siemens":"🫧","zanussi":"🫧","electrolux":"🫧","asko":"🫧","bauknecht":"🫧","constructa":"🫧","indesit":"🫧","candy":"🫧","beko":"🫧","gorenje":"🫧","haier":"🫧","whirlpool":"🫧","hotpoint":"🫧","grundig":"🫧",
     "fridge":"❄️","šaldytuvas":"❄️","šaldiklis":"❄️","saldytuvas":"❄️","saldiklis":"❄️","šaldymo":"❄️","saldymo":"❄️","kühlschrank":"❄️","gefrierschrank":"❄️","lodówka":"❄️","zamrażarka":"❄️","zamrazarka":"❄️","liebherr":"❄️",
     "air condition":"🌬️","kondicionierius":"🌬️","klimaanlage":"🌬️","klimatyzator":"🌬️","wärmepumpe":"🌬️","warmepumpe":"🌬️","silumos siurblys":"🌬️","silumos pompa":"🌬️","heat pump":"🌬️","pompa ciepla":"🌬️","daikin":"🌬️","midea":"🌬️","vaillant":"🚿","viessmann":"🚿","baxi":"🚿",
     "kettle":"☕","virdulys":"☕","wasserkocher":"☕","czajnik":"☕",
-    "coffee":"☕","kavos":"☕","kaffeemaschine":"☕","ekspres":"☕","nespresso":"☕","sage":"☕","russell":"☕","breville":"☕","melitta":"☕",
+    "coffee":"☕","kavos":"☕","kaffeemaschine":"☕","ekspres":"☕","nespresso":"☕","delonghi":"☕","sage":"☕","russell":"☕","breville":"☕","melitta":"☕",
     "vacuum cleaner":"🧹","hoover":"🧹",
     "drill":"🔨","screwdriver":"🔨","electric tool":"🔨","makita":"🔨","dewalt":"🔨","bosch gsr":"🔨","karcher":"🔨","kärcher":"🔨","stihl":"🔨","husqvarna":"🔨","winkelschleifer":"🔨",
     "bohrmaschine":"🔨","wiertarka":"🔨","grąžtas":"🔨","graztas":"🔨","pjūklas":"🔨","pjuklas":"🔨","perforatorius":"🔨",
@@ -1124,19 +1124,19 @@ function _getIcon(q){
     "scooter":"🛴","paspirtukas":"🛴","e-roller":"🛴","elektroroller":"🛴","hulajnoga elektryczna":"🛴",
     "treadmill":"🏃","laufband":"🏃","bieżnia":"🏃","begimo":"🏃","bėgimo":"🏃","treniruoklis":"🏃",
     "juicer":"🥤","sulčiaspaudė":"🥤","sulciaspaude":"🥤","sulčių":"🥤","sulciu":"🥤","spaustuvas":"🥤","entsafter":"🥤","wyciskarka":"🥤",
-    "air fryer":"🍳","blender":"🍳","blenderis":"🍳","mikser":"🍳","mikseris":"🍳","keptuvė":"🍳","keptuve":"🍳","multicooker":"🍳","gruzdintuvė":"🍳","gruzdintuve":"🍳","fritteuse":"🍳","frytkownica":"🍳","maisto procesorius":"🍳","moulinex":"🍳","krups":"🍳","cuisinart":"🍳","neff":"🍳","severin":"🍳","bomann":"🍳","kenwood":"🍳","kitchenaid":"🍳","ninja":"🍳","smeg":"🍳",
+    "air fryer":"🍳","blender":"🍳","blenderis":"🍳","mikser":"🍳","mikseris":"🍳","keptuvė":"🍳","keptuve":"🍳","multicooker":"🍳","gruzdintuvė":"🍳","gruzdintuve":"🍳","fritteuse":"🍳","frytkownica":"🍳","maisto procesorius":"🍳","tefal":"🍳","moulinex":"🍳","krups":"🍳","cuisinart":"🍳","neff":"🍳","severin":"🍳","bomann":"🍳","kenwood":"🍳","kitchenaid":"🍳","ninja":"🍳","smeg":"🍳",
     "virykle":"🍳","gasherd":"🍳","kuchenka gazowa":"🍳","indukcinis":"🍳","indukcine":"🍳","kaitlente":"🍳","kochfeld":"🍳","induktion":"🍳",
     "projector":"📽️","projektorius":"📽️","projektor":"📽️","beamer":"📽️",
     "printer":"🖨️","spausdintuvas":"🖨️","drukarka":"🖨️","drucker":"🖨️","epson":"🖨️","hp laserjet":"🖨️","hp inkjet":"🖨️",
     "monitor":"🖥️","monitorius":"🖥️","display":"🖥️","bildschirm":"🖥️","ekran komputerowy":"🖥️",
     "keyboard":"⌨️","klaviatūra":"⌨️","klaviatura":"⌨️","klawiatura":"⌨️","tastatur":"⌨️","mechaninė":"⌨️","mechanine":"⌨️",
-    "speaker":"🔊","soundbar":"🔊","garsiakalbis":"🔊","garsinė":"🔊","garsine":"🔊","kolonėlė":"🔊","kolonele":"🔊","lautsprecher":"🔊","głośnik":"🔊","sonos":"🔊","harman kardon":"🔊","yamaha":"🔊","denon":"🔊","marantz":"🔊","pioneer":"🔊","onkyo":"🔊","klipsch":"🔊",
+    "speaker":"🔊","soundbar":"🔊","garsiakalbis":"🔊","garsinė":"🔊","garsine":"🔊","kolonėlė":"🔊","kolonele":"🔊","lautsprecher":"🔊","głośnik":"🔊","sonos":"🔊","harman kardon":"🔊","jbl":"🔊","yamaha":"🔊","denon":"🔊","marantz":"🔊","pioneer":"🔊","onkyo":"🔊","klipsch":"🔊",
     "mouse":"🖱️","pelė":"🖱️","pele":"🖱️","maus":"🖱️","mysz":"🖱️","logitech":"🖱️",
     "iron":"👕","laidynas":"👕","lygintuvas":"👕","bügeleisen":"👕","bugeleisen":"👕","dampfbügeleisen":"👕","dampfbugeleisen":"👕","żelazko":"👕",
-    "shaver":"🪒","skustuvas":"🪒","rasierer":"🪒","golarka":"🪒","epilator":"🪒","epilatorius":"🪒","gillette":"🪒","oral-b":"🪒","toothbrush":"🪒","zahnbürste":"🪒","šepetėlis":"🪒","sepetelis":"🪒","szczoteczka":"🪒","beurer":"🩺","omron":"🩺","medisana":"🩺","withings":"🩺","blood pressure":"🩺","cisnienomierz":"🩺","svarstykles":"⚖️","svarstyklės":"⚖️","körperwaage":"⚖️","korperwaage":"⚖️","body scale":"⚖️","personenwaage":"⚖️","waga lazienkowa":"⚖️","waga łazienkowa":"⚖️",
+    "shaver":"🪒","skustuvas":"🪒","rasierer":"🪒","golarka":"🪒","braun":"🪒","epilator":"🪒","epilatorius":"🪒","gillette":"🪒","oral-b":"🪒","toothbrush":"🪒","zahnbürste":"🪒","šepetėlis":"🪒","sepetelis":"🪒","szczoteczka":"🪒","beurer":"🩺","omron":"🩺","medisana":"🩺","withings":"🩺","blood pressure":"🩺","cisnienomierz":"🩺","svarstykles":"⚖️","svarstyklės":"⚖️","körperwaage":"⚖️","korperwaage":"⚖️","body scale":"⚖️","personenwaage":"⚖️","waga lazienkowa":"⚖️","waga łazienkowa":"⚖️",
     "lego":"🧸","žaislai":"🧸","zaislai":"🧸","žaislas":"🧸","zaislas":"🧸","pampers":"🧸","chicco":"🧸","fisher-price":"🧸","baby":"🧸",
     "nokia":"📱",
-    "ssd":"🖥️","nvme":"🖥️","hdd":"🖥️","diskas":"🖥️","festplatte":"🖥️","dysk":"🖥️","ryzen":"🖥️","core i":"🖥️","procesorius":"🖥️","ram ddr":"🖥️","ddr5":"🖥️","ddr4":"🖥️","cpu":"🖥️","kingston fury":"🖥️",
+    "ssd":"🖥️","nvme":"🖥️","hdd":"🖥️","diskas":"🖥️","festplatte":"🖥️","dysk":"🖥️","intel":"🖥️","amd":"🖥️","ryzen":"🖥️","core i":"🖥️","procesorius":"🖥️","ram ddr":"🖥️","ddr5":"🖥️","ddr4":"🖥️","cpu":"🖥️","kingston fury":"🖥️",
     "microphone":"🎙️","mikrofonas":"🎙️","mikrofon":"🎙️","podcast mic":"🎙️","shure":"🎙️","rode":"🎙️",
     "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐","tinklo":"🌐","tp-link":"🌐","ubiquiti":"🌐","netgear":"🌐","zyxel":"🌐","fritzbox":"🌐","fritz!box":"🌐",
     "alarm clock":"⏰","zadintuvas":"⏰","žadintuvas":"⏰","wecker":"⏰","budzik":"⏰",
