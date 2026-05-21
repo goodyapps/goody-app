@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.37 — _getIcon: +speaker🔊, mouse🖱️, iron👕, storage🖥️ icons ── */
+/* ── GOODY GOOD DEAL v5.38 — _getIcon: +mic🎙️, router🌐, alarm⏰, binoculars🔭, lamp💡 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1134,6 +1134,11 @@ function _getIcon(q){
     "mouse":"🖱️","pelė":"🖱️","pele":"🖱️","maus":"🖱️","mysz":"🖱️",
     "iron":"👕","laidynas":"👕","lygintuvas":"👕","bügeleisen":"👕","bugeleisen":"👕","żelazko":"👕",
     "ssd":"🖥️","nvme":"🖥️","hdd":"🖥️","diskas":"🖥️","festplatte":"🖥️","dysk":"🖥️",
+    "microphone":"🎙️","mikrofonas":"🎙️","mikrofon":"🎙️","podcast mic":"🎙️",
+    "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐",
+    "alarm clock":"⏰","zadintuvas":"⏰","žadintuvas":"⏰","wecker":"⏰","budzik":"⏰",
+    "binocular":"🔭","ziuronai":"🔭","žiūronai":"🔭","fernglas":"🔭","lornetka":"🔭",
+    "lempa":"💡","lampe":"💡","led bulb":"💡","smart bulb":"💡","lemputė":"💡",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
