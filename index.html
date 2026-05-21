@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.26 — fix browser back button restoring wrong search results ── */
+/* ── GOODY GOOD DEAL v5.27 — abort previous search on new search; fix camera error toast ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1463,7 +1463,9 @@ function _showRateLimitError(e){
 }
 
 let _skipHistoryPush=false;
+let _activeSearchCtrl=null;
 async function doSearch(){
+  if(_activeSearchCtrl){try{_activeSearchCtrl.abort();}catch(e){}}_activeSearchCtrl=null;
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast({"lt":"Įveskite produkto pavadinimą","de":"Produktname eingeben","pl":"Wpisz nazwę produktu"}[curLang]||"Enter a product name");return;}
   lastQ=q;_budgetMax=0;_curSort='cheapest';
@@ -1474,6 +1476,7 @@ async function doSearch(){
   document.getElementById("res-meta").textContent={"lt":"Ieškoma...","de":"Wird gesucht...","pl":"Szukamy cen..."}[curLang]||"Searching...";
   const loadTimer=showLoading();
   const _ctrl=new AbortController();
+  _activeSearchCtrl=_ctrl;
   const _tid=setTimeout(()=>_ctrl.abort(),90000);
 
   try{
@@ -1536,9 +1539,11 @@ async function doSearch(){
       }
     }
     if(!gotResult){clearInterval(loadTimer);_showSearchError();}
+    _activeSearchCtrl=null;
 
   }catch(e){
     clearInterval(loadTimer);clearTimeout(_tid);
+    _activeSearchCtrl=null;
     if(e.message==="no_stream"){await _doSearchFallback(q);return;}
     if(e.name!=="AbortError")_showSearchError();
   }
@@ -2111,7 +2116,7 @@ async function startCam(){
     btn.disabled=false;
     if(camMode==="barcode"){btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";btn.disabled=true;startBcLoop();}
     else btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";
-  }catch(e){btn.disabled=false;resetSnap();toast({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: "+e.message);}
+  }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
 }
 function playBeep(){
   try{
