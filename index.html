@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.54 — _getIcon: +žaislai/žaislas toy icons (diacritics form) ── */
+/* ── GOODY GOOD DEAL v5.55 — _showSavingsStat: remove dead loop (wlQ/totalSaved unused) ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -997,15 +997,8 @@ function _extractSharedQuery(url, title, text){
 }
 
 function _showSavingsStat(){
-  // Compute total savings potential from history (best price saved each search)
   if(!hist.length)return;
   const wl2=JSON.parse(localStorage.getItem("gy_wl")||"[]");
-  const wlQ=new Set(wl2.map(w=>w.q));
-  let totalSaved=0;
-  hist.forEach(h=>{
-    // each hist item has "price" = best price found; we don't have the worst, so skip savings calc
-    // instead just show search count + items saved
-  });
   const searches=hist.length;
   const saved=wl2.length+JSON.parse(localStorage.getItem("gy_watch")||"[]").length;
   if(searches<2)return; // too early to show stats
