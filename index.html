@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.31 — fix watchlist throttle: always write gy_watch_checked even when no alerts ── */
+/* ── GOODY GOOD DEAL v5.32 — fix partial scroll reset; fix watchlist add: update home badge via _updateWlBadge ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1514,7 +1514,7 @@ async function doSearch(){
           if(msg.type==="partial"){
             if(!gotResult){clearInterval(loadTimer);gotResult=true;}
             lastData=msg.payload;
-            renderResults(msg.payload,q,{fetchHistory:false});
+            renderResults(msg.payload,q,{fetchHistory:false,_partial:true});
             const done=msg.payload._shops_done||0;
             const total=msg.payload._shops_total||6;
             const left=Math.max(0,total-done);
@@ -1624,10 +1624,6 @@ function renderResults(d,q,opts){opts=opts||{};
   document.getElementById("res-meta").textContent=results.length?(results.length+" "+shopsWord+" · "+timeStr+cachedStr+timeFoundStr):noResLbl;
 
   let html="";
-
-  // ── SCROLL RESET (Eglė) ──
-  const _rb=document.getElementById("res-body");
-  if(_rb)_rb.scrollTop=0;
 
   if(!results.length){
     const _nr={
@@ -1996,9 +1992,8 @@ function renderResults(d,q,opts){opts=opts||{};
   const _watchBtn=document.getElementById(_watchId);
   if(_watchBtn)_watchBtn.onclick=()=>toggleWatch(_watchBtn.dataset.name, _watchBtn.dataset.price||0);
 
-  // Keep scroll at top — instant verdict bar is already visible at top of res-body
-  const _rb2=document.getElementById("res-body");
-  if(_rb2)_rb2.scrollTop=0;
+  // Keep scroll at top for full renders; preserve position on streaming partial updates
+  if(!opts._partial){const _rb2=document.getElementById("res-body");if(_rb2)_rb2.scrollTop=0;}
   setTimeout(()=>initWatchBtn(_productName),100);
   if(opts.fetchHistory!==false)fetchPriceHistory(_productName);
 }
@@ -2643,8 +2638,7 @@ function toggleWatch(name, price){
       watches2.push({name,price,target:targetPrice||null,added:new Date().toISOString()});
       localStorage.setItem(key,JSON.stringify(watches2));
       if(btn){btn.classList.add("active");btn.textContent=watchingLbl;}
-      const _wlTotal2=wl.length+watches2.length;
-      const _nb2=document.getElementById("nav-wl-badge");if(_nb2){_nb2.textContent=_wlTotal2||"";_nb2.classList.toggle("vis",_wlTotal2>0);}
+      _updateWlBadge();
       const tMsg=targetPrice?{"lt":`💚 Pranešime kai kaina ≤ €${targetPrice}`,"de":`💚 Benachrichtigung bei ≤ €${targetPrice}`,"pl":`💚 Powiadomimy gdy ≤ €${targetPrice}`}[curLang]||`💚 Alert when ≤ €${targetPrice}`:{"lt":"💚 Pridėta į stebimus!","de":"💚 Zur Beobachtung hinzugefügt!","pl":"💚 Dodano do obserwowanych!"}[curLang]||"💚 Added to watchlist!";
       toast(tMsg);
       if("Notification" in window&&Notification.permission==="default"){setTimeout(()=>Notification.requestPermission(),600);}
