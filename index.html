@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.97 — _getIcon: +gręžtuvas🔨/tonometras🩺/palapinė⛺/ofiso kėdė🪑/motoroleris🛵/kalėdinė🎄/signalizacija🚨; backend v7.42 ── */
+/* ── GOODY GOOD DEAL v5.98 — _getIcon: +gitara🎸/pianinas🎹/bügnai🥁/batutas🤸/slidu⛷️/paciuzos⛸️/meskere🎣/lova🛋️/registratorius📹/pienuke☕; backend v7.43 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1153,6 +1153,16 @@ function _getIcon(q){
     "binocular":"🔭","ziuronai":"🔭","žiūronai":"🔭","fernglas":"🔭","lornetka":"🔭",
     "lempa":"💡","lampe":"💡","lampa":"💡","led bulb":"💡","led strip":"💡","led juosta":"💡","led lamp":"💡","smart bulb":"💡","smart lamp":"💡","lemputė":"💡","lempute":"💡","lemputės":"💡","lemputes":"💡","sviestuvas":"💡","sviestuvai":"💡","prozektorius":"💡","philips hue":"💡","hue":"💡","smart light":"💡","zigbee":"💡","nanoleaf":"💡","taschenlampe":"💡","latarka":"💡","žibintas":"💡","zibintas":"💡","flashlight":"💡","torch":"💡","thermostat":"💡","termoregliatorius":"💡","termoreguliatorius":"💡","smart plug":"💡","smart steckdose":"💡","nest":"💡","tado":"💡","shelly":"💡","sonoff":"💡","meross":"💡","aqara":"💡","tapo":"💡",
     "power station":"🔋","powerstation":"🔋","portable power":"🔋","solar generator":"🔋","jackery":"🔋","ecoflow":"🔋","bluetti":"🔋","goal zero":"🔋","anker solix":"🔋","galios stotelė":"🔋","galios stotele":"🔋",
+    "gitara":"🎸","gitaros":"🎸","gitarre":"🎸","acoustic guitar":"🎸","electric guitar":"🎸","classical guitar":"🎸","fender":"🎸",
+    "pianinas":"🎹","pianino":"🎹","klavier":"🎹","elektrinis pianinas":"🎹","e-piano":"🎹","sintezatorius":"🎹","synthesizer":"🎹","syntezator":"🎹","yamaha p-":"🎹","roland fp":"🎹","casio px":"🎹","korg b":"🎹",
+    "bugnas":"🥁","bugnu":"🥁","schlagzeug":"🥁","perkusja":"🥁","drum kit":"🥁","e-drums":"🥁","smuikas":"🥁","skrzypce":"🥁","geige":"🥁","violin":"🥁","fleita":"🥁","flet":"🥁","flöte":"🥁","flute":"🥁",
+    "batutas":"🤸","trampolin":"🤸","trampolina":"🤸","trampoline":"🤸",
+    "slidu":"⛷️","skihelm":"⛷️","narty ":"⛷️",
+    "paciuzos":"⛸️","schlittschuhe":"⛸️","łyżwy":"⛸️","ice skates":"⛸️",
+    "meskere":"🎣","angelrute":"🎣","wedka":"🎣","wędka":"🎣","fishing rod":"🎣","zvejybos":"🎣","zvejyba":"🎣","angeln":"🎣","wedkarstwo":"🎣","fishing":"🎣",
+    "lova":"🛋️","lovos":"🛋️","bett ":"🛋️","łóżko":"🛋️","bed frame":"🛋️","spinta":"🛋️","spintos":"🛋️","kleiderschrank":"🛋️","szafa":"🛋️","kilimas":"🛋️","kilimo":"🛋️","teppich":"🛋️","dywan":"🛋️","carpet":"🛋️",
+    "vaizdo registratorius":"📹","registratorius":"📹","dashcam":"📹","dash cam":"📹","wideorejestrator":"📹","blackvue":"📹","viofo":"📹","nextbase":"📹","70mai":"📹",
+    "pienuke":"☕","pienu putuke":"☕","milchaufschäumer":"☕","spieniacz do mleka":"☕","milk frother":"☕","aeroccino":"☕",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
