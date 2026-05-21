@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.48 — _extractSharedQuery: strip .html/.htm extension from URL path slug ── */
+/* ── GOODY GOOD DEAL v5.49 — _getIcon: robot kuchenny/küchenmaschine/thermomix → 🍳 (not 🤖); loading shop name fix ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1107,6 +1107,7 @@ function _getIcon(q){
     "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺",
     "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","earbuds":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
     "sony wh":"🎧","bose qc":"🎧","jabra":"🎧","beats studio":"🎧","marshall major":"🎧",
+    "robot kuchenny":"🍳","kuchenny":"🍳","thermomix":"🍳","küchenmaschine":"🍳",
     "robot":"🤖","robotinis":"🤖","saugroboter":"🤖","roomba":"🤖","roborock":"🤖",
     "dyson":"🧹","vacuum":"🧹","staubsauger":"🧹","odkurzacz":"🧹","siurblys":"🧹",
     "watch":"⌚","smartwatch":"⌚","laikrodis":"⌚","garmin":"⌚","fitbit":"⌚","zegarek":"⌚","apple watch":"⌚","fossil":"⌚","polar":"⌚","suunto":"⌚",
@@ -2552,7 +2553,7 @@ const _LOADING_SHOPS=[
   {name:"Varle.lt",flag:"🇱🇹"},
   {name:"Elesen.lt",flag:"🇱🇹"},
   {name:"Pigu.lt",flag:"🇱🇹"},
-  {name:"Topocentras",flag:"🇱🇹"},
+  {name:"Topo centras",flag:"🇱🇹"},
   {name:"Amazon.DE",flag:"🇩🇪"},
   {name:"Amazon.PL",flag:"🇵🇱"},
 ];
