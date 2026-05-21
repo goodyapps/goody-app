@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.91 — _getIcon: +rasentrimmer/trimeris🔨; +massagesessel🩺; +luftentfeuchter/dehumidifier💧 ── */
+/* ── GOODY GOOD DEAL v5.92 — _getIcon: +panasonic/toshiba📺; +hitachi🫧; +avm🌐; +mitsubishi electric🌬️ ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1097,7 +1097,7 @@ function _getIcon(q){
   const iconMap={
     "iphone":"📱","samsung galaxy":"📱","galaxy tab":"📱","pixel":"📱","phone":"📱","telefonas":"📱","smartfon":"📱","poco":"📱","redmi":"📱","nothing phone":"📱","xiaomi":"📱","motorola":"📱","oneplus":"📱","honor":"📱","realme":"📱","oppo":"📱","vivo":"📱","huawei":"📱",
     "macbook":"💻","laptop":"💻","notebook":"💻","nesiojamas kompiuteris":"💻","nešiojamas kompiuteris":"💻","chromebook":"💻","thinkpad":"💻","dell xps":"💻","surface pro":"💻","surface laptop":"💻","lenovo":"💻","acer":"💻","dell":"💻",
-    "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺","chromecast":"📺","fire tv":"📺","fire stick":"📺","firestick":"📺","apple tv":"📺","nvidia shield":"📺","android tv":"📺","hisense":"📺","tcl":"📺","sharp":"📺","blaupunkt":"📺",
+    "tv":"📺","televizorius":"📺","television":"📺","oled":"📺","qled":"📺","fernseher":"📺","telewizor":"📺","chromecast":"📺","fire tv":"📺","fire stick":"📺","firestick":"📺","apple tv":"📺","nvidia shield":"📺","android tv":"📺","hisense":"📺","tcl":"📺","sharp":"📺","blaupunkt":"📺","panasonic":"📺","toshiba":"📺",
     "headphone":"🎧","kopfhörer":"🎧","earphone":"🎧","earbuds":"🎧","airpods":"🎧","ausines":"🎧","ausinės":"🎧","słuchawki":"🎧","ausinukai":"🎧",
     "sony wh":"🎧","bose qc":"🎧","bose":"🎧","sennheiser":"🎧","jabra":"🎧","beats":"🎧","marshall":"🎧","audio-technica":"🎧",
     "robot kuchenny":"🍳","kuchenny":"🍳","thermomix":"🍳","küchenmaschine":"🍳",
@@ -1110,9 +1110,9 @@ function _getIcon(q){
     "playstation":"🎮","ps5":"🎮","ps4":"🎮","xbox":"🎮","nintendo":"🎮","gamepad":"🎮","gaming":"🎮","konsolė":"🎮","konsola":"🎮","spielkonsole":"🎮","konsole":"🎮","nvidia":"🎮","rtx":"🎮","geforce":"🎮","radeon rx":"🎮","gigabyte":"🎮","msi":"🎮","zotac":"🎮","sapphire":"🎮","razer":"🎮","corsair":"🎮","steelseries":"🎮","hyperx":"🎮","alienware":"🎮",
     "camera":"📷","kamera":"📷","fotoaparatas":"📷","mirrorless":"📷","dslr":"📷","aparat":"📷","nikon":"📷","canon":"📷","gopro":"📷","fujifilm":"📷","olympus":"📷","dji":"📷","vaizdo":"📷","veiksmo":"📷","sony alpha":"📷","sony zv":"📷","leica":"📷","dronas":"📷","drohne":"📷","dron":"📷","ring doorbell":"📷","arlo":"📷","security camera":"📷","überwachungskamera":"📷",
     "ipad":"📱","tablet":"📱","planšetė":"📱","kindle":"📱","kobo":"📱","e-reader":"📱",
-    "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧","dishwasher":"🫧","spülmaschine":"🫧","zmywarka":"🫧","indaplovė":"🫧","indaplove":"🫧","bosch wan":"🫧","samsung ww":"🫧","siemens":"🫧","zanussi":"🫧","electrolux":"🫧","asko":"🫧","bauknecht":"🫧","constructa":"🫧","indesit":"🫧","candy":"🫧","beko":"🫧","gorenje":"🫧","haier":"🫧","whirlpool":"🫧","hotpoint":"🫧","grundig":"🫧","aeg":"🫧",
+    "washing":"🫧","skalbyklė":"🫧","waschmaschine":"🫧","pralka":"🫧","skalbykle":"🫧","dishwasher":"🫧","spülmaschine":"🫧","zmywarka":"🫧","indaplovė":"🫧","indaplove":"🫧","bosch wan":"🫧","samsung ww":"🫧","siemens":"🫧","zanussi":"🫧","electrolux":"🫧","asko":"🫧","bauknecht":"🫧","constructa":"🫧","indesit":"🫧","candy":"🫧","beko":"🫧","gorenje":"🫧","haier":"🫧","whirlpool":"🫧","hotpoint":"🫧","grundig":"🫧","aeg":"🫧","hitachi":"🫧",
     "fridge":"❄️","šaldytuvas":"❄️","šaldiklis":"❄️","saldytuvas":"❄️","saldiklis":"❄️","šaldymo":"❄️","saldymo":"❄️","kühlschrank":"❄️","gefrierschrank":"❄️","lodówka":"❄️","zamrażarka":"❄️","zamrazarka":"❄️","liebherr":"❄️",
-    "air condition":"🌬️","kondicionierius":"🌬️","klimaanlage":"🌬️","klimatyzator":"🌬️","wärmepumpe":"🌬️","warmepumpe":"🌬️","silumos siurblys":"🌬️","silumos pompa":"🌬️","heat pump":"🌬️","pompa ciepla":"🌬️","daikin":"🌬️","midea":"🌬️","gree":"🌬️","vaillant":"🚿","viessmann":"🚿","baxi":"🚿",
+    "air condition":"🌬️","kondicionierius":"🌬️","klimaanlage":"🌬️","klimatyzator":"🌬️","wärmepumpe":"🌬️","warmepumpe":"🌬️","silumos siurblys":"🌬️","silumos pompa":"🌬️","heat pump":"🌬️","pompa ciepla":"🌬️","daikin":"🌬️","midea":"🌬️","gree":"🌬️","mitsubishi electric":"🌬️","mitsubishi heavy":"🌬️","vaillant":"🚿","viessmann":"🚿","baxi":"🚿",
     "luftentfeuchter":"💧","pochłaniacz wilgoci":"💧","drėgmės surinktuvas":"💧","dregmes surinktuvas":"💧","dehumidifier":"💧",
     "kettle":"☕","virdulys":"☕","wasserkocher":"☕","czajnik":"☕",
     "coffee":"☕","kavos":"☕","kaffeemaschine":"☕","ekspres":"☕","nespresso":"☕","delonghi":"☕","sage":"☕","russell":"☕","breville":"☕","melitta":"☕","krups":"☕",
@@ -1139,7 +1139,7 @@ function _getIcon(q){
     "nokia":"📱",
     "ssd":"🖥️","nvme":"🖥️","hdd":"🖥️","diskas":"🖥️","festplatte":"🖥️","dysk":"🖥️","intel":"🖥️","amd":"🖥️","ryzen":"🖥️","core i":"🖥️","procesorius":"🖥️","ram ddr":"🖥️","ddr5":"🖥️","ddr4":"🖥️","cpu":"🖥️","kingston fury":"🖥️","seagate":"🖥️","sandisk":"🖥️","wd my":"🖥️","wd elements":"🖥️","wd blue":"🖥️","wd black":"🖥️","wd red":"🖥️",
     "microphone":"🎙️","mikrofonas":"🎙️","mikrofon":"🎙️","podcast mic":"🎙️","shure":"🎙️","rode":"🎙️",
-    "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐","tinklo":"🌐","tp-link":"🌐","ubiquiti":"🌐","netgear":"🌐","zyxel":"🌐","fritzbox":"🌐","fritz!box":"🌐",
+    "router":"🌐","marsrutizatorius":"🌐","maršrutizatorius":"🌐","mesh wifi":"🌐","access point":"🌐","wifi extender":"🌐","tinklo":"🌐","tp-link":"🌐","ubiquiti":"🌐","netgear":"🌐","zyxel":"🌐","fritzbox":"🌐","fritz!box":"🌐","avm":"🌐",
     "alarm clock":"⏰","zadintuvas":"⏰","žadintuvas":"⏰","wecker":"⏰","budzik":"⏰",
     "binocular":"🔭","ziuronai":"🔭","žiūronai":"🔭","fernglas":"🔭","lornetka":"🔭",
     "lempa":"💡","lampe":"💡","lampa":"💡","led bulb":"💡","led strip":"💡","led juosta":"💡","led lamp":"💡","smart bulb":"💡","smart lamp":"💡","lemputė":"💡","lempute":"💡","lemputės":"💡","lemputes":"💡","sviestuvas":"💡","sviestuvai":"💡","prozektorius":"💡","philips hue":"💡","hue":"💡","smart light":"💡","zigbee":"💡","nanoleaf":"💡","taschenlampe":"💡","latarka":"💡","žibintas":"💡","zibintas":"💡","flashlight":"💡","torch":"💡","thermostat":"💡","termoregliatorius":"💡","termoreguliatorius":"💡","smart plug":"💡","smart steckdose":"💡","nest":"💡","tado":"💡","shelly":"💡","sonoff":"💡","meross":"💡","aqara":"💡","tapo":"💡",
