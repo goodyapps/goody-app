@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v5.32 — fix partial scroll reset; fix watchlist add: update home badge via _updateWlBadge ── */
+/* ── GOODY GOOD DEAL v5.33 — fix price history race condition: nonce prevents stale fetch overwriting current results ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -2674,15 +2674,19 @@ const SHOP_COLORS = [
   "#AB47BC","#26C6DA","#FF7043","#66BB6A","#5C6BC0",
 ];
 let _priceChart = null;
+let _phNonce = 0;
 
 async function fetchPriceHistory(q) {
+  const myNonce = ++_phNonce;
   const container = document.getElementById("price-history-wrap");
   if (!container) return;
   container.innerHTML = "";
   try {
     const r = await fetch(`${API_BASE}/api/price-history?q=${encodeURIComponent(q)}`, {signal: AbortSignal.timeout(8000)});
+    if (_phNonce !== myNonce) return;  // superseded by a newer search
     if (!r.ok) return;
     const d = await r.json();
+    if (_phNonce !== myNonce) return;  // superseded after JSON parse
     // Inject "historical low" badge into instant verdict bar if current best price ≤ 30d low + 5%
     if(d.price_30d_min&&lastData&&lastData.price_min){
       const isAtLow=lastData.price_min<=d.price_30d_min*1.05;
@@ -2697,14 +2701,16 @@ async function fetchPriceHistory(q) {
         if(priceDiv)priceDiv.appendChild(badge);
       }
     }
+    const currentContainer = document.getElementById("price-history-wrap");
+    if (!currentContainer) return;
     if (!d.labels || d.labels.length < 2 || !(d.datasets||[]).length) {
       const histTitle={"lt":"Kainų istorija","de":"Preisverlauf","pl":"Historia cen"}[curLang]||"Price History";
       const noDataMsg={"lt":"Dar nėra duomenų — patikrinkite po kelių paieškų","de":"Noch keine Daten — nach weiteren Suchen prüfen","pl":"Brak danych — sprawdź po kilku wyszukiwaniach"}[curLang]||"No history yet — search again later to build price trends";
       const newLbl={"lt":"Nauja","de":"Neu","pl":"Nowe"}[curLang]||"New";
-      container.innerHTML=`<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge" style="background:var(--card2);color:var(--ink3);">${newLbl}</span></div><div class="chart-empty" style="padding:20px;text-align:center;font-size:12px;color:var(--ink3);">📊 ${noDataMsg}</div></div>`;
+      currentContainer.innerHTML=`<div class="chart-card"><div class="chart-header"><span class="chart-title">${histTitle}</span><span class="chart-badge" style="background:var(--card2);color:var(--ink3);">${newLbl}</span></div><div class="chart-empty" style="padding:20px;text-align:center;font-size:12px;color:var(--ink3);">📊 ${noDataMsg}</div></div>`;
       return;
     }
-    renderPriceChart(container, d, q);
+    renderPriceChart(currentContainer, d, q);
   } catch(e) { /* silently skip chart on error */ }
 }
 
