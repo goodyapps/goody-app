@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.03 — _getIcon: +kuprine🎒/rankine👜/portfelis💼/piniginė👛/dirzas🧶/papuošalai💍/puodelis☕/dubuo🥣/vazonas🪴/tentas⛺/siuvimo🧵/zaislinis🧸; backend v7.48 ── */
+/* ── GOODY GOOD DEAL v6.04 — _getIcon: +kremas🧴/dezodorantas🧴/vonia🛁/rankslostis🛁/katinas🐱/augintinis🐾/medziokle🏹/sliauztukai🦺; backend v7.49 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1218,6 +1218,13 @@ function _getIcon(q){
     "tentas":"⛺","tento":"⛺","plane ":"⛺","plandeka":"⛺","tarpaulin":"⛺","autoplane":"⛺",
     "siuvimo masina":"🧵","siuvimo":"🧵","nähmaschine":"🧵","maszyna do szycia":"🧵","sewing machine":"🧵",
     "zaislinis":"🧸","spielzeug":"🧸","zabawkowy":"🧸",
+    "kremas":"🧴","kremo":"🧴","veido kremas":"🧴","kuno kremas":"🧴","feuchtigkeitscreme":"🧴","gesichtscreme":"🧴","krem do twarzy":"🧴","krem do ciała":"🧴","losjonas":"🧴","losjono":"🧴","lotion":"🧴","balsam":"🧴","dezodorantas":"🧴","dezodoranto":"🧴","deodorant":"🧴","dezodorant":"🧴","cerave":"🧴","la roche":"🧴","neutrogena":"🧴","vichy":"🧴",
+    "vonia":"🛁","vonios":"🛁","badewanne":"🛁","wanna":"🛁","duschkabine":"🛁","bathtub":"🛁","whirlpool":"🛁",
+    "rankslostis":"🛁","ranklosciu":"🛁","handtuch":"🛁","ręcznik":"🛁","recznik":"🛁","towel":"🛁",
+    "katinas":"🐱","katino":"🐱","kater":"🐱",
+    "augintinis":"🐾","augintinio":"🐾","haustier":"🐾","zwierzak":"🐾",
+    "medziokle":"🏹","medziokles":"🏹","jagd":"🏹","myślistwo":"🏹","hunting":"🏹",
+    "sliauztukai":"🦺","sliauztukas":"🦺","knieschoner":"🦺","nakolanniki":"🦺","knee pad":"🦺",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
