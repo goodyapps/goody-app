@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.02 — _getIcon: +sofa🛋️/fotelis🪑/lentyna📦/komoda🪞/kepure🧢/salikas🧣/kelnes👖/marskiniai👔/dzinsai👖/maudymosi🩱/boksas🥊/riedutis⛸️/roges🛷/gertuve🍶/sauskelnes👶/jogos🧘; backend v7.47 ── */
+/* ── GOODY GOOD DEAL v6.03 — _getIcon: +kuprine🎒/rankine👜/portfelis💼/piniginė👛/dirzas🧶/papuošalai💍/puodelis☕/dubuo🥣/vazonas🪴/tentas⛺/siuvimo🧵/zaislinis🧸; backend v7.48 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1203,6 +1203,21 @@ function _getIcon(q){
     "gertuve":"🍶","gertuviu":"🍶","gertuvė":"🍶","trinkflasche":"🍶","bidon":"🍶","water bottle":"🍶","sports bottle":"🍶","nalgene":"🍶","camelbak":"🍶",
     "sauskelnes":"👶","sauskelnems":"👶","sauskelnės":"👶","windeln":"👶","pieluchy":"👶","pampers":"👶","huggies":"👶","diaper":"👶",
     "jogos kilimelis":"🧘","jogos":"🧘","yogamatte":"🧘","yoga mat":"🧘","mata do jogi":"🧘","yoga":"🧘","pilates mat":"🧘",
+    "kuprine":"🎒","kuprines":"🎒","kuprinė":"🎒","rucksack":"🎒","plecak":"🎒","backpack":"🎒",
+    "rankine":"👜","rankines":"👜","rankinė":"👜","handtasche":"👜","torebka":"👜","handbag":"👜","purse":"👜",
+    "portfelis":"💼","portfelio":"💼","aktentasche":"💼","aktówka":"💼","briefcase":"💼",
+    "piniginė":"👛","pinigines":"👛","geldbörse":"👛","portfel":"👛","wallet":"👛",
+    "dirzas":"🧶","dirzo":"🧶","gürtel":"🧶","pasek":"🧶","belt":"🧶",
+    "papuošalai":"💍","papuosalu":"💍","schmuck":"💍","biżuteria":"💍","jewelry":"💍","jewellery":"💍",
+    "karoliai":"💍","karoliu":"💍","halskette":"💍","naszyjnik":"💍","necklace":"💍",
+    "auskarai":"💍","auskariu":"💍","ohrringe":"💍","kolczyki":"💍","earrings":"💍",
+    "ziedas":"💍","ziedo":"💍","pierścionek":"💍","ring jewelry":"💍",
+    "puodelis":"☕","puodelio":"☕","tasse":"☕","kubek termiczny":"☕","mug":"☕",
+    "dubuo":"🥣","dubens":"🥣","schüssel":"🥣","miska":"🥣","bowl":"🥣",
+    "vazonas":"🪴","vazono":"🪴","blumentopf":"🪴","doniczka":"🪴","flower pot":"🪴","planter":"🪴",
+    "tentas":"⛺","tento":"⛺","plane ":"⛺","plandeka":"⛺","tarpaulin":"⛺","autoplane":"⛺",
+    "siuvimo masina":"🧵","siuvimo":"🧵","nähmaschine":"🧵","maszyna do szycia":"🧵","sewing machine":"🧵",
+    "zaislinis":"🧸","spielzeug":"🧸","zabawkowy":"🧸",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
