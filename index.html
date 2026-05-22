@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.05 — _getIcon: +automagnetola📻/vairas🚗/ratai🚗/dazai🖌️/tapetai🏠/laminatas🏠/akordeonas🪗/trimitas🎺/pieštukas✏️/fontanas⛲; backend v7.50 ── */
+/* ── GOODY GOOD DEAL v6.06 — _getIcon: +uzdanga🪟/rolete🪟/zaluzija🪟/paklode🛏️/apklotas🛏️/baseinas🏊/baidarele🛶/irklai🛶/kabelis🔌/plastilinas🎨/grindys🏠/plytelis🏠; backend v7.51 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1235,6 +1235,16 @@ function _getIcon(q){
     "trimitas":"🎺","trimito":"🎺","trompete":"🎺","trąbka":"🎺","trumpet":"🎺","saksofonas":"🎺","saksofono":"🎺","saxophon":"🎺","saksofon":"🎺","saxophone":"🎺",
     "pieštukas":"✏️","piestukas":"✏️","bleistift":"✏️","ołówek":"✏️","pencil":"✏️","flomasteris":"✏️","flomasteri":"✏️","filzstift":"✏️","flamaster":"✏️","marker pen":"✏️",
     "fontanas":"⛲","fontano":"⛲","brunnen":"⛲","fontanna":"⛲","fountain":"⛲",
+    "uzdanga":"🪟","uzdangu":"🪟","uzuolaida":"🪟","vorhang":"🪟","zasłona":"🪟","zaslona":"🪟","curtain":"🪟","gordijn":"🪟",
+    "rolete":"🪟","roletu":"🪟","rollo":"🪟","roleta":"🪟","roller blind":"🪟","zaluzija":"🪟","jalousie":"🪟","żaluzja":"🪟",
+    "paklode":"🛏️","paklodziu":"🛏️","bettlaken":"🛏️","prześcieradło":"🛏️","przescieradlo":"🛏️","bedsheet":"🛏️",
+    "apklotas":"🛏️","apklotu":"🛏️","decke":"🛏️","koc ":"🛏️","throw blanket":"🛏️","fleece blanket":"🛏️",
+    "baseinas":"🏊","baseino":"🏊","schwimmbecken":"🏊","basen":"🏊","planschbecken":"🏊","swimming pool":"🏊","intex pool":"🏊",
+    "baidarele":"🛶","baidareles":"🛶","kanoja":"🛶","kanojos":"🛶","kajak":"🛶","kanu ":"🛶","canoe":"🛶","kayak":"🛶",
+    "irklai":"🛶","irklu":"🛶","paddel":"🛶","wiosło":"🛶","paddle":"🛶",
+    "kabelis":"🔌","kabelio":"🔌","laidas":"🔌","laido":"🔌","tinklines":"🔌","tinkliniu":"🔌","steckdosenleiste":"🔌","listwa zasilająca":"🔌","power strip":"🔌","extension cord":"🔌",
+    "plastilinas":"🎨","plastilino":"🎨","knete":"🎨","plastelina":"🎨","plasticine":"🎨","modeling clay":"🎨","fimo":"🎨",
+    "grindys":"🏠","grindylentu":"🏠","plytelis":"🏠","plyteliu":"🏠","fliese":"🏠","fliesen":"🏠","płytka ceramiczna":"🏠","podłoga":"🏠",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
