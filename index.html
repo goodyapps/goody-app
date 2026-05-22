@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.04 — _getIcon: +kremas🧴/dezodorantas🧴/vonia🛁/rankslostis🛁/katinas🐱/augintinis🐾/medziokle🏹/sliauztukai🦺; backend v7.49 ── */
+/* ── GOODY GOOD DEAL v6.05 — _getIcon: +automagnetola📻/vairas🚗/ratai🚗/dazai🖌️/tapetai🏠/laminatas🏠/akordeonas🪗/trimitas🎺/pieštukas✏️/fontanas⛲; backend v7.50 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1225,6 +1225,16 @@ function _getIcon(q){
     "augintinis":"🐾","augintinio":"🐾","haustier":"🐾","zwierzak":"🐾",
     "medziokle":"🏹","medziokles":"🏹","jagd":"🏹","myślistwo":"🏹","hunting":"🏹",
     "sliauztukai":"🦺","sliauztukas":"🦺","knieschoner":"🦺","nakolanniki":"🦺","knee pad":"🦺",
+    "automagnetola":"📻","automagnetolos":"📻","automobilio radijas":"📻","autoradio":"📻","radio samochodowe":"📻","pioneer avh":"📻","kenwood ddx":"📻",
+    "vairas":"🚗","vairo":"🚗","lenkrad":"🚗","kierownica":"🚗","steering wheel":"🚗",
+    "ratai":"🚗","ratu":"🚗","felgen":"🚗","felgi":"🚗","autoräder":"🚗","alloy wheel":"🚗",
+    "dazai":"🖌️","dazo":"🖌️","sienu dazai":"🖌️","farbe":"🖌️","farba":"🖌️","wandfarbe":"🖌️","lacquer":"🖌️",
+    "tapetai":"🏠","tapetu":"🏠","tapete":"🏠","tapeta":"🏠","wallpaper":"🏠",
+    "laminatas":"🏠","laminato":"🏠","parketas":"🏠","parketo":"🏠","laminat":"🏠","parkett":"🏠","laminate flooring":"🏠",
+    "akordeonas":"🪗","akordeono":"🪗","akkordeon":"🪗","akordeon":"🪗","accordion":"🪗",
+    "trimitas":"🎺","trimito":"🎺","trompete":"🎺","trąbka":"🎺","trumpet":"🎺","saksofonas":"🎺","saksofono":"🎺","saxophon":"🎺","saksofon":"🎺","saxophone":"🎺",
+    "pieštukas":"✏️","piestukas":"✏️","bleistift":"✏️","ołówek":"✏️","pencil":"✏️","flomasteris":"✏️","flomasteri":"✏️","filzstift":"✏️","flamaster":"✏️","marker pen":"✏️",
+    "fontanas":"⛲","fontano":"⛲","brunnen":"⛲","fontanna":"⛲","fountain":"⛲",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
