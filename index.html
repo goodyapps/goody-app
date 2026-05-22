@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.00 — _getIcon: +knyga📚/striuke👕/supuokles🏡/baldai🛋️/konstruktorius🧸; backend v7.45 ── */
+/* ── GOODY GOOD DEAL v6.01 — _getIcon: +kvepalai🌸/zvake🕯️/ramelis🖼️/sampunas🧴/tenisas🎾/futbolas⚽/krepsis🏀/snieglente🏂/riedlente🛹/pagalve🛏️/termopuodelis☕; backend v7.46 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1175,6 +1175,18 @@ function _getIcon(q){
     "supuokles":"🏡","supuokliu":"🏡","schaukel":"🏡","hustawka":"🏡","pavesine":"🏡","pavesines":"🏡","pavillon":"🏡","pawilon":"🏡",
     "baldai":"🛋️","baldu":"🛋️","möbel":"🛋️","meble":"🛋️","lauko baldai":"🛋️","ikea":"🛋️",
     "konstruktorius":"🧸","konstruktoriaus":"🧸","bausatz":"🧸","masinyke":"🧸","masiniu":"🧸","spielzeugauto":"🧸","samochodzik":"🧸","matchbox":"🧸","hot wheels":"🧸",
+    "kvepalai":"🌸","kvepalu":"🌸","parfumas":"🌸","parfumo":"🌸","parfüm":"🌸","eau de toilette":"🌸","edt":"🌸","edp":"🌸","cologne":"🌸","fragrance":"🌸","perfumy":"🌸",
+    "zvake":"🕯️","zvakiu":"🕯️","aromatine zvake":"🕯️","duftkerze":"🕯️","świeca":"🕯️","swieca":"🕯️","kerze":"🕯️","candle":"🕯️",
+    "ramelis":"🖼️","ramelio":"🖼️","foto ramelis":"🖼️","bilderrahmen":"🖼️","ramka":"🖼️","photo frame":"🖼️","picture frame":"🖼️",
+    "sampunas":"🧴","sampuno":"🧴","shampoo":"🧴","szampon":"🧴","haarshampoo":"🧴",
+    "teniso rakete":"🎾","stalo teniso rakete":"🎾","badmintono rakete":"🎾","tenisas":"🎾","teniso":"🎾","badmintonas":"🎾","tennisschläger":"🎾","tischtennisschläger":"🎾","badmintonschläger":"🎾","rakieta tenisowa":"🎾","rakietka do tenisa":"🎾",
+    "futbolo kamuolys":"⚽","futbolas":"⚽","futbolo":"⚽","fußball":"⚽","fussball":"⚽","piłka nożna":"⚽","football":"⚽","soccer ball":"⚽",
+    "krepsinio kamuolys":"🏀","krepsis":"🏀","krepsinio":"🏀","basketball":"🏀","piłka do koszykówki":"🏀",
+    "snieglente":"🏂","snieglenciu":"🏂","snowboard":"🏂","deska snowboardowa":"🏂",
+    "riedlente":"🛹","riedlenciu":"🛹","skateboard":"🛹","deskorolka":"🛹",
+    "pagalve":"🛏️","pagalviu":"🛏️","ortopedine pagalve":"🛏️","kissen":"🛏️","poduszka":"🛏️","schlafkissen":"🛏️",
+    "patalyne":"🛏️","patalynes":"🛏️","bettwäsche":"🛏️","bettbezug":"🛏️","pościel":"🛏️","posciel":"🛏️",
+    "termopuodelis":"☕","termopuodelio":"☕","termosinis puodelis":"☕","termo puodelis":"☕","thermobecher":"☕","kubek termiczny":"☕","travel mug":"☕","thermos mug":"☕","hydro flask":"☕","stanley cup":"☕","contigo":"☕","yeti":"☕",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
