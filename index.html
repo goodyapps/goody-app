@@ -464,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .mini-score-pill{padding:4px 9px;border-radius:20px;background:var(--card2);color:var(--ink2);}
 
 
-/* ── GOODY GOOD DEAL v6.06 — _getIcon: +uzdanga🪟/rolete🪟/zaluzija🪟/paklode🛏️/apklotas🛏️/baseinas🏊/baidarele🛶/irklai🛶/kabelis🔌/plastilinas🎨/grindys🏠/plytelis🏠; backend v7.51 ── */
+/* ── GOODY GOOD DEAL v6.07 — _getIcon: +hamakas/ausinukas/menteliklis/stanga/suoliukas/irklente/stovyklavimo/aminoru; backend v7.52 ── */
 .deal-win-card{
   position:relative;overflow:hidden;
   background:radial-gradient(circle at 14% 0%,rgba(39,224,138,.24),transparent 34%),linear-gradient(135deg,rgba(39,224,138,.16),rgba(39,224,138,.045));
@@ -1245,6 +1245,14 @@ function _getIcon(q){
     "kabelis":"🔌","kabelio":"🔌","laidas":"🔌","laido":"🔌","tinklines":"🔌","tinkliniu":"🔌","steckdosenleiste":"🔌","listwa zasilająca":"🔌","power strip":"🔌","extension cord":"🔌",
     "plastilinas":"🎨","plastilino":"🎨","knete":"🎨","plastelina":"🎨","plasticine":"🎨","modeling clay":"🎨","fimo":"🎨",
     "grindys":"🏠","grindylentu":"🏠","plytelis":"🏠","plyteliu":"🏠","fliese":"🏠","fliesen":"🏠","płytka ceramiczna":"🏠","podłoga":"🏠",
+    "hamakas":"🪢","hamaku":"🪢","hängematte":"🪢","hamak":"🪢","hammock":"🪢",
+    "ausinukas":"🎧","ausinuko":"🎧","ohrhörer":"🎧","słuchawki douszne":"🎧","in-ear":"🎧",
+    "menteliklis":"🏋️","menteliklio":"🏋️","klimmzugstange":"🏋️","drążek do podciągania":"🏋️","pull-up bar":"🏋️",
+    "stanga":"🏋️","stangos":"🏋️","langhantel":"🏋️","sztanga":"🏋️","barbell":"🏋️",
+    "suoliukas":"🏋️","preso suoliukas":"🏋️","hantelbank":"🏋️","ławka treningowa":"🏋️","weight bench":"🏋️",
+    "irklente":"🏄","irklentes":"🏄","sup-board":"🏄","deska sup":"🏄","paddleboard":"🏄",
+    "stovyklavimo kede":"⛺","stovyklavimo stalas":"⛺","stovyklavimo virykle":"⛺","campingstuhl":"⛺","campingtisch":"⛺","krzesło campingowe":"⛺","camping chair":"⛺",
+    "aminorugsciai":"💊","aminoru":"💊","aminosäuren":"💊","aminokwasy":"💊","amino acids":"💊","bcaa":"💊","eaa":"💊",
   };
   for(const[k,v]of Object.entries(iconMap)){if(ql.includes(k))return v;}
   return"🔍";
