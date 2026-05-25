@@ -402,20 +402,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .fade-up{animation:fadeUp 0.3s ease both;}
 
 /* BACK BANNER */
-.back-banner{position:fixed;top:0;left:0;right:0;background:#22c55e;color:#052e16;padding:9px 14px;display:flex;align-items:center;gap:8px;z-index:450;font-size:13px;font-weight:600;transform:translateY(-100%);transition:transform 0.3s ease;flex-wrap:wrap;}
+.back-banner{position:fixed;top:0;left:0;right:0;background:#16a34a;color:#fff;padding:12px 14px 12px 16px;display:flex;align-items:center;gap:10px;z-index:450;font-size:14px;font-weight:700;transform:translateY(-100%);transition:transform 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.28);}
 .back-banner.show{transform:translateY(0);}
-.bb-btn{padding:4px 12px;border-radius:20px;border:2px solid #052e16;background:none;color:#052e16;font-weight:700;font-size:12px;cursor:pointer;font-family:var(--ff);flex-shrink:0;}
-.bb-btn.yes{background:#052e16;color:#22c55e;}
-.bb-close{background:none;border:none;font-size:18px;line-height:1;cursor:pointer;color:#052e16;font-weight:900;padding:0 2px;margin-left:auto;}
-
-/* BUY POPUP */
-.buy-popup{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(110%);width:100%;max-width:480px;background:var(--bg2);border-top:2px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 20px 28px;z-index:450;transition:transform 0.35s ease;text-align:center;}
-.buy-popup.show{transform:translateX(-50%) translateY(0);}
-.bp-q{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:14px;line-height:1.4;}
-.bp-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-.bp-btn{padding:10px 18px;border-radius:24px;border:1.5px solid var(--border2);background:var(--card2);color:var(--ink2);font-weight:600;font-size:14px;cursor:pointer;font-family:var(--ff);}
-.bp-btn.yes{background:var(--green);color:#052e16;border-color:var(--green);}
-.bp-btn.later{font-size:12px;color:var(--ink3);}
+.bb-arrow{font-size:20px;flex-shrink:0;}
+.bb-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bb-close{background:rgba(255,255,255,0.25);border:none;font-size:16px;line-height:1;cursor:pointer;color:#fff;font-weight:900;padding:4px 8px;border-radius:8px;flex-shrink:0;font-family:var(--ff);}
+.bb-close:active{background:rgba(255,255,255,0.4);}
 
 /* PULL TO REFRESH */
 .ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(39,224,138,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
@@ -748,13 +740,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="cam-prev-wrap" id="cp-wrap">
       <div class="cprev" id="cprev"></div>
     </div>
-    <div class="cam-upload">
-      <button class="upload-btn" onclick="document.getElementById('fu').click()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M5 6l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        Įkelti nuotrauką
-      </button>
-    </div>
-    <div class="cam-snap-wrap">
+    <div class="cam-snap-wrap" style="display:flex;gap:10px;align-items:center;justify-content:center;">
+      <button onclick="document.getElementById('fu').click()" style="flex-shrink:0;width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;" aria-label="Galerija" title="Iš galerijos">🖼️</button>
       <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
         <span>📷</span><span>Įjungti kamerą</span>
       </button>
@@ -768,23 +755,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
   <!-- BACK BANNER: shown when user returns from a shop tab -->
   <div class="back-banner" id="back-banner" role="alert" aria-live="assertive">
-    <span>← Grįžote iš <strong id="back-shop-name"></strong> | Ar radote pigiau?</span>
-    <button class="bb-btn yes" onclick="backBannerYes()">Taip ✓</button>
-    <button class="bb-btn" onclick="backBannerNo()">Ne, ieškoti dar</button>
-    <button class="bb-close" onclick="hideBackBanner()" aria-label="Uždaryti">×</button>
-  </div>
-
-  <!-- BUY POPUP backdrop -->
-  <div id="buy-popup-backdrop" onclick="buyPopupLater()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:449;backdrop-filter:blur(4px);"></div>
-
-  <!-- BUY POPUP: "Ar nusipirkai?" after 30s return -->
-  <div class="buy-popup" id="buy-popup" role="dialog" aria-modal="true" aria-labelledby="buy-popup-heading">
-    <div class="bp-q" id="buy-popup-heading">Ar nusipirkai <strong id="buy-popup-item"></strong>?</div>
-    <div class="bp-btns">
-      <button class="bp-btn yes" onclick="buyPopupYes()">Taip 🎉</button>
-      <button class="bp-btn" onclick="buyPopupNo()">Ne, ieškau dar</button>
-      <button class="bp-btn later" onclick="buyPopupLater()">Vėliau</button>
-    </div>
+    <span class="bb-arrow">←</span>
+    <span class="bb-text" id="back-banner-txt">Grįžote</span>
+    <button class="bb-close" onclick="hideBackBanner()" aria-label="Uždaryti">✕</button>
   </div>
 
   <!-- ONBOARDING (first visit only) -->
@@ -1487,7 +1460,7 @@ function trackClick(shop, q){
 }
 
 // ── RETURN FROM SHOP ──────────────────────────────────────
-let _returnTimer=null;
+let _qualityLoop=null,_qualityCount=0;
 
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState!=='visible')return;
@@ -1504,16 +1477,11 @@ document.addEventListener('visibilitychange',()=>{
 function showBackBanner(shop,q){
   const banner=document.getElementById('back-banner');
   if(!banner)return;
-  const _bf={"lt":"Grįžote iš","de":"Zurück von","pl":"Wróciłeś z"}[curLang]||"Back from";
-  const _bd={"lt":"| Ar radote pigiau?","de":"| Günstiger gefunden?","pl":"| Znalazłeś taniej?"}[curLang]||"| Find it cheaper?";
-  const _by={"lt":"Taip ✓","de":"Ja ✓","pl":"Tak ✓"}[curLang]||"Yes ✓";
-  const _bn={"lt":"Ne, ieškoti dar","de":"Nein, weitersuchen","pl":"Nie, szukaj dalej"}[curLang]||"No, keep searching";
-  const _bc={"lt":"Uždaryti","de":"Schließen","pl":"Zamknij"}[curLang]||"Close";
-  banner.innerHTML=`<span>← ${_bf} <strong>${escHtml(shop)}</strong> ${_bd}</span><button class="bb-btn yes" onclick="backBannerYes()">${_by}</button><button class="bb-btn" onclick="backBannerNo()">${_bn}</button><button class="bb-close" onclick="hideBackBanner()" aria-label="${_bc}">×</button>`;
+  const _bf={"lt":"Atgal · buvote","de":"Zurück · war bei","pl":"Powrót · byłeś w"}[curLang]||"Back from";
+  const txt=document.getElementById('back-banner-txt');
+  if(txt)txt.textContent=`${_bf} ${shop}`;
   banner.classList.add('show');
-  setTimeout(hideBackBanner,5000);
-  clearTimeout(_returnTimer);
-  _returnTimer=setTimeout(()=>showBuyPopup(q),30000);
+  // no auto-hide — stays until user closes it
 }
 
 function hideBackBanner(){
@@ -1522,54 +1490,15 @@ function hideBackBanner(){
 }
 
 function backBannerYes(){
-  clearTimeout(_returnTimer);
   hideBackBanner();
-  const q=(JSON.parse(sessionStorage.getItem('gy_lastClick')||'{}').q)||lastQ||'';
-  sessionStorage.removeItem('gy_lastClick');
-  showBuyPopup(q,true);
-}
-
-function backBannerNo(){
-  clearTimeout(_returnTimer);
-  sessionStorage.removeItem('gy_lastClick');
-  hideBackBanner();
-  const inp=document.getElementById('srch-inp');if(inp)inp.focus();
-}
-
-function showBuyPopup(q,immediate){
-  if(!q)q=lastQ||'';
-  const popup=document.getElementById('buy-popup');
-  const backdrop=document.getElementById('buy-popup-backdrop');
-  if(!popup)return;
-  const _bq={"lt":"Ar nusipirkai","de":"Hast du gekauft","pl":"Czy kupiłeś"}[curLang]||"Did you buy";
-  const _byes={"lt":"Taip 🎉","de":"Ja 🎉","pl":"Tak 🎉"}[curLang]||"Yes 🎉";
-  const _bno={"lt":"Ne, ieškau dar","de":"Nein, ich suche noch","pl":"Nie, szukam dalej"}[curLang]||"No, still looking";
-  const _bl={"lt":"Vėliau","de":"Später","pl":"Później"}[curLang]||"Later";
-  const h=document.getElementById('buy-popup-heading');if(h)h.innerHTML=`${_bq} <strong>${escHtml(q)}</strong>?`;
-  const btns=popup.querySelector('.bp-btns');
-  if(btns)btns.innerHTML=`<button class="bp-btn yes" onclick="buyPopupYes()">${_byes}</button><button class="bp-btn" onclick="buyPopupNo()">${_bno}</button><button class="bp-btn later" onclick="buyPopupLater()">${_bl}</button>`;
-  popup.classList.add('show');
-  if(backdrop)backdrop.style.display='block';
-}
-
-function hideBuyPopup(){
-  const p=document.getElementById('buy-popup');if(p)p.classList.remove('show');
-  const b=document.getElementById('buy-popup-backdrop');if(b)b.style.display='none';
-}
-
-function buyPopupYes(){
-  hideBuyPopup();hideBackBanner();
   sessionStorage.removeItem('gy_lastClick');
   toast('🎉 '+({"lt":"Sveikiname su pirkiniu!","de":"Viel Freude damit!","pl":"Gratulacje z zakupu!"}[curLang]||"Congrats on your purchase!"));
 }
 
-function buyPopupNo(){
-  hideBuyPopup();hideBackBanner();
+function backBannerNo(){
   sessionStorage.removeItem('gy_lastClick');
-  const inp=document.getElementById('srch-inp');if(inp)inp.focus();
+  hideBackBanner();
 }
-
-function buyPopupLater(){hideBuyPopup();}
 
 /* ── SEARCH ── */
 function _showSearchError(){
@@ -2201,12 +2130,42 @@ function closeCam(){
 function stopCam(){
   clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
   clearInterval(scanLoop);scanLoop=null;
+  clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
   document.getElementById("vf-wrap").style.display="none";
   const fr=document.querySelector(".vf-frame");if(fr){fr.style.display="none";fr.classList.remove("locked");}
   const bar=document.getElementById("bc-result-bar");if(bar)bar.classList.remove("show");
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   const flash=document.getElementById("green-flash");if(flash){flash.classList.remove("on");flash.classList.remove("off");}
+}
+function _getFrameSharpness(){
+  const v=document.getElementById("vf-video");
+  if(!v||v.readyState!==v.HAVE_ENOUGH_DATA)return 0;
+  const c=document.getElementById("vf-canvas");
+  const ctx=c.getContext("2d");
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  ctx.drawImage(v,0,0);
+  const sx=Math.floor(c.width*.25),sy=Math.floor(c.height*.25),sw=Math.floor(c.width*.5),sh=Math.floor(c.height*.5);
+  const d=ctx.getImageData(sx,sy,sw,sh).data;
+  let sum=0,sum2=0,n=d.length>>2;
+  for(let i=0;i<d.length;i+=4){const g=(d[i]*77+d[i+1]*150+d[i+2]*29)>>8;sum+=g;sum2+=g*g;}
+  const mean=sum/n;return Math.sqrt(Math.max(0,sum2/n-mean*mean));
+}
+function startQualityLoop(){
+  _qualityCount=0;
+  _qualityLoop=setInterval(()=>{
+    if(!camStream||camMode!=="price")return;
+    const sharp=_getFrameSharpness();
+    const btn=document.getElementById("c-snap");
+    if(sharp>38){
+      _qualityCount++;
+      if(btn&&_qualityCount<3){const rem=3-_qualityCount;if(btn)btn.innerHTML="<span>📷</span><span>Auto "+rem+"...</span>";}
+      if(_qualityCount>=3){clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;captureFrame();}
+    } else {
+      _qualityCount=0;
+      if(btn&&camStream)btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";
+    }
+  },600);
 }
 function switchCM(mode){
   camMode=mode;
@@ -2225,7 +2184,7 @@ function resetSnap(){
 async function snapOrSearch(){
   if(capturedB64){await runScan();return;}
   if(!camStream){await startCam();return;}
-  if(camMode==="price")captureFrame();
+  if(camMode==="price"){clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;captureFrame();}
 }
 async function startCam(){
   const btn=document.getElementById("c-snap");btn.disabled=true;
@@ -2238,7 +2197,7 @@ async function startCam(){
     await new Promise(r=>v.onloadedmetadata=r);
     btn.disabled=false;
     if(camMode==="barcode"){btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";btn.disabled=true;startBcLoop();}
-    else btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";
+    else{btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";startQualityLoop();}
   }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
 }
 function playBeep(){
