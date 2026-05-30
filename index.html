@@ -266,8 +266,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .rate-fill{height:100%;background:var(--green);border-radius:4px;transition:width 0.4s;}
 .rate-text{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--ink3);}
 
-/* ── NAV (floating glassmorphism) ── */
-.bottom-nav{position:absolute;left:14px;right:14px;bottom:max(14px,env(safe-area-inset-bottom));display:flex;background:rgba(14,20,32,0.78);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(255,255,255,0.06);border-radius:22px;padding:10px 6px;flex-shrink:0;z-index:80;box-shadow:0 10px 32px rgba(0,0,0,0.35),0 2px 6px rgba(0,0,0,0.25);}
+/* ── NAV (floating glassmorphism) — sits ABOVE the translate-bar so lang chip stays clickable ── */
+.bottom-nav{position:absolute;left:14px;right:14px;bottom:calc(46px + env(safe-area-inset-bottom));display:flex;background:rgba(14,20,32,0.78);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(255,255,255,0.06);border-radius:22px;padding:10px 6px;flex-shrink:0;z-index:80;box-shadow:0 10px 32px rgba(0,0,0,0.35),0 2px 6px rgba(0,0,0,0.25);}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;opacity:0.46;transition:opacity var(--dur),transform var(--dur);background:none;border:none;color:var(--ink);padding:6px 0;border-radius:14px;}
 .nav-btn:hover{opacity:0.72;}
 .nav-btn:active{transform:scale(0.92);}
@@ -277,8 +277,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .nav-btn.on .nav-lbl{color:var(--green);}
 .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--green);margin-top:1px;display:none;box-shadow:0 0 6px rgba(39,224,138,0.45);}
 .nav-btn.on .nav-dot{display:block;}
-/* leave room above floating nav so content doesn't get clipped */
-.page{padding-bottom:96px;}
+/* leave room above floating nav + translate-bar so content doesn't get clipped */
+.page{padding-bottom:140px;}
 
 
 .confetti-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:200;}
