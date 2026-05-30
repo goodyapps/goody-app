@@ -62,7 +62,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 /* Hero headline + subtitle (Perplexity-style) */
 .hero-head{padding:44px 22px 14px;display:flex;flex-direction:column;gap:8px;}
 .hero-headline{font-size:34px;font-weight:600;letter-spacing:-0.9px;color:var(--ink);line-height:1.08;margin:0;}
-.hero-subtitle{font-size:15px;color:rgba(255,255,255,0.50);font-weight:400;line-height:1.5;letter-spacing:-0.1px;margin:0;}
+.hero-subtitle{font-size:15px;color:rgba(255,255,255,0.58);font-weight:400;line-height:1.5;letter-spacing:-0.1px;margin:0;}
 
 /* legacy scan-hero kept for any leftover references but hidden on home */
 .scan-hero{display:none;}
@@ -97,11 +97,12 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 }
 .search-bar input::placeholder{color:rgba(255,255,255,0.42);font-weight:500;}
 .ai-search-divider{height:1px;background:rgba(255,255,255,0.06);margin:0 4px;}
-.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 4px 4px;}
+/* Scan is HERO action — 1.6× wider than voice + green tint */
+.ai-actions{display:grid;grid-template-columns:1.6fr 1fr;gap:8px;padding:8px 4px 4px;}
 .ai-action{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
   background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.06);
-  border-radius:14px;padding:13px 10px;min-height:50px;
+  border-radius:14px;padding:13px 10px;min-height:52px;
   color:rgba(255,255,255,0.88);font-family:var(--ff);font-size:13.5px;font-weight:600;letter-spacing:-0.15px;
   cursor:pointer;transition:background var(--dur), border-color var(--dur), color var(--dur), transform var(--dur);
 }
@@ -109,10 +110,17 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .ai-action svg{width:18px;height:18px;color:rgba(255,255,255,0.6);transition:color var(--dur);flex-shrink:0;}
 .ai-action:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.10);color:var(--ink);}
 .ai-action:hover svg{color:rgba(255,255,255,0.85);}
-.ai-action:active{transform:scale(0.97);}
+.ai-action:active{transform:scale(0.97);background:rgba(255,255,255,0.08);}
+/* Primary scan action — green-tinted, dominant */
+.ai-action-scan{
+  background:rgba(39,224,138,0.06);
+  border-color:rgba(39,224,138,0.18);
+  color:var(--ink);
+}
 .ai-action-scan svg{color:var(--green);}
-.ai-action-scan:hover{border-color:rgba(39,224,138,0.28);background:rgba(39,224,138,0.05);}
+.ai-action-scan:hover{border-color:rgba(39,224,138,0.32);background:rgba(39,224,138,0.09);color:var(--ink);}
 .ai-action-scan:hover svg{color:var(--green);}
+.ai-action-scan:active{background:rgba(39,224,138,0.12);}
 .ai-action.listening{color:var(--red);border-color:rgba(255,136,136,0.30);background:rgba(255,136,136,0.05);animation:pulse-r 1.2s ease infinite;}
 .ai-action.listening svg{color:var(--red);}
 
@@ -131,16 +139,17 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cat-ic{font-size:20px;opacity:0.88;}
 .cat-n{font-size:11px;font-weight:600;color:rgba(255,255,255,0.65);text-align:center;letter-spacing:0.01em;}
 
-/* Social proof — quiet trust list */
-.proof-list{display:flex;flex-direction:column;gap:10px;padding:14px 22px 32px;}
-.proof-row{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:-0.05px;}
+/* Social proof — quiet trust list with time-context qualifier */
+.proof-list{display:flex;flex-direction:column;gap:11px;padding:16px 22px 32px;}
+.proof-row{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:-0.05px;}
 .proof-check{
   width:20px;height:20px;border-radius:50%;
   background:rgba(39,224,138,0.10);color:var(--green);
   display:inline-flex;align-items:center;justify-content:center;
   font-size:11px;font-weight:900;flex-shrink:0;
 }
-.proof-row strong{color:rgba(255,255,255,0.85);font-weight:600;}
+.proof-row strong{color:rgba(255,255,255,0.88);font-weight:600;}
+.proof-when{color:rgba(255,255,255,0.32);font-size:12.5px;font-weight:400;margin-left:auto;letter-spacing:0;}
 
 .recent{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
 .rec-item{
@@ -573,6 +582,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 }
 .srch-clear:hover{color:var(--ink);background:rgba(255,255,255,0.05);}
 .srch-clear.vis{display:inline-flex;}
+/* Inline submit affordance — appears when input has text */
+.srch-submit{
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(39,224,138,0.12);border:1px solid rgba(39,224,138,0.22);
+  color:var(--green);cursor:pointer;
+  display:none;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background var(--dur),border-color var(--dur),transform var(--dur);
+}
+.srch-submit svg{width:16px;height:16px;}
+.srch-submit:hover{background:rgba(39,224,138,0.18);border-color:rgba(39,224,138,0.32);}
+.srch-submit:active{transform:scale(0.92);background:rgba(39,224,138,0.24);}
+.srch-submit.vis{display:inline-flex;}
 @keyframes pulse-r{0%,100%{opacity:1;}50%{opacity:0.5;}}
 
 /* ── COPY PRICE BUTTON ── */
@@ -659,9 +680,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="logo-mark">good<span>y</span></div>
         <div class="logo-sub" id="logo-sub" aria-hidden="true"></div>
       </div>
-      <button class="notif-btn" id="wl-shortcut-btn" onclick="navTo('saved')" aria-label="Saved items" style="position:relative;">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 15.5L3 9.5a3.5 3.5 0 015-4.9l1 1 1-1a3.5 3.5 0 015 4.9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        <span id="home-wl-badge" style="position:absolute;top:0;right:0;background:var(--green);color:#0A0F18;font-size:9px;font-weight:900;min-width:15px;height:15px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 2px;"></span>
+      <button class="notif-btn" id="wl-shortcut-btn" onclick="navTo('saved')" aria-label="Saved items" title="Saved" style="position:relative;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 16L2.7 9.7a3.6 3.6 0 015.1-5.1L9 5.8l1.2-1.2a3.6 3.6 0 115.1 5.1L9 16z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="none"/></svg>
+        <span id="home-wl-badge" style="position:absolute;top:-2px;right:-2px;background:var(--green);color:#0A0F18;font-size:9px;font-weight:900;min-width:15px;height:15px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 2px;"></span>
       </button>
     </div>
     <div id="home-stat" style="display:none;font-size:11px;color:var(--ink3);padding:2px 22px 0;font-weight:600;"></div>
@@ -678,12 +699,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
           <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
           <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
-        <input type="text" id="srch-inp" placeholder="Ieškok produktų, prekės ženklų ar nuorodų..." autocomplete="off"
+        <input type="text" id="srch-inp" placeholder="Ieškok produktų ar nuorodų..." autocomplete="off"
           onkeydown="_srchKeyDown(event)"
           oninput="onSrchInput(this)"
           onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
           aria-label="Search for a product">
         <button class="srch-clear" id="srch-clear" onclick="clearSearch()" aria-label="Clear search">✕</button>
+        <button class="srch-submit" id="srch-submit" onclick="doSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
       <div class="ai-search-divider"></div>
       <div class="ai-actions">
@@ -708,11 +735,11 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       </div>
     </div>
 
-    <!-- Quiet trust list -->
+    <!-- Quiet trust list with time-context qualifier -->
     <div class="proof-list" id="proof-list">
-      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-prices">1,2M kainų patikrinta</span></div>
-      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-saved">€247,000 sutaupė vartotojai</span></div>
-      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-shops">7 stebimos parduotuvės</span></div>
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-prices">1,2M kainų patikrinta</span><span class="proof-when" id="sp-prices-when">šį mėnesį</span></div>
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-saved">€247 000 sutaupė vartotojai</span><span class="proof-when" id="sp-saved-when">viso</span></div>
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-shops">7 stebimos parduotuvės</span><span class="proof-when" id="sp-shops-when">live</span></div>
     </div>
 
     <div class="sec-head" id="popular-head">
@@ -1124,13 +1151,19 @@ function buildCats(){
 }
 
 const POPULAR_FALLBACK = [
-  {ic:"📱", q:"iPhone 17 Pro", price:"from €1,199"},
-  {ic:"💻", q:"MacBook Air M4", price:"from €1,099"},
-  {ic:"🎧", q:"Sony WH-1000XM5", price:"from €279"},
-  {ic:"🧹", q:"Dyson V15 Detect", price:"from €549"},
-  {ic:"📺", q:"Samsung QLED 65", price:"from €799"},
-  {ic:"🤖", q:"Roborock S8", price:"from €399"},
+  {ic:"📱", q:"iPhone 17 Pro", priceN:1199},
+  {ic:"💻", q:"MacBook Air M4", priceN:1099},
+  {ic:"🎧", q:"Sony WH-1000XM5", priceN:279},
+  {ic:"🧹", q:"Dyson V15 Detect", priceN:549},
+  {ic:"📺", q:"Samsung QLED 65", priceN:799},
+  {ic:"🤖", q:"Roborock S8", priceN:399},
 ];
+
+function _formatLowest(n){
+  const t=LANGS[curLang]||LANGS.en;
+  const lbl=t.lowest_price||"Lowest";
+  return `${lbl} €${n.toLocaleString(curLang==='lt'?'lt-LT':curLang==='de'?'de-DE':curLang==='pl'?'pl-PL':'en-US')}`;
+}
 
 let _popularItems = [];
 function _renderPopular(items){
@@ -1140,7 +1173,10 @@ function _renderPopular(items){
   g.innerHTML="";
   items.forEach(p=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${escHtml(p.ic||"🔍")}</div><div><div class="rec-name">${escHtml(p.q)}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${escHtml(p.price||"")}</div>`;
+    let priceTxt="";
+    if(typeof p.priceN==='number')priceTxt=_formatLowest(p.priceN);
+    else if(p.price)priceTxt=String(p.price).replace(/^from\s+/i,(t.lowest_price||"Lowest")+" ");
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${escHtml(p.ic||"🔍")}</div><div><div class="rec-name">${escHtml(p.q)}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${escHtml(priceTxt)}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
@@ -1438,8 +1474,11 @@ window.addEventListener("popstate",()=>{
 
 /* ── SEARCH CLEAR + VOICE ── */
 function onSrchInput(el){
+  const has=el.value.trim().length>0;
   const clr=document.getElementById("srch-clear");
-  if(clr)clr.classList.toggle("vis",el.value.length>0);
+  if(clr)clr.classList.toggle("vis",has);
+  const sub=document.getElementById("srch-submit");
+  if(sub)sub.classList.toggle("vis",has);
   _showSuggestions(el.value);
 }
 let _sugTimeout=null, _sugIdx=-1;
@@ -1495,6 +1534,8 @@ function clearSearch(){
   inp.value="";inp.focus();
   const clr=document.getElementById("srch-clear");
   if(clr)clr.classList.remove("vis");
+  const sub=document.getElementById("srch-submit");
+  if(sub)sub.classList.remove("vis");
 }
 function _editSearch(){
   navTo("home");
@@ -2526,7 +2567,7 @@ const LANGS = {
     scan_price:"Scan price tag",
     scan_barcode:"Scan barcode",
     headline:"Never overpay again.",
-    subtagline:"Find the best price anywhere online.",
+    subtagline:"GOODY's AI scans 7 stores in seconds.",
     voice_search:"Voice Search",
     scan_product:"Scan Product",
     scan_btn_short:"Scan Product",
@@ -2535,10 +2576,15 @@ const LANGS = {
     sp_prices:"1.2M prices checked",
     sp_saved:"€247,000 saved by users",
     sp_shops:"7 stores monitored",
+    sp_when_month:"this month",
+    sp_when_total:"all-time",
+    sp_when_live:"live",
     sec_popular:"Popular Products",
     sec_categories:"Browse by Category",
     sec_recent:"Recent searches",
     no_history:"No recent searches yet",
+    lowest_price:"Lowest",
+    saved_short:"Saved",
   },
   lt: {
     scan_hint:"Nufotografuok kainą ir rask pigiau internete",
@@ -2578,7 +2624,7 @@ const LANGS = {
     scan_price:"Nuskaityti kainų etiketę",
     scan_barcode:"Nuskaityti barkodą",
     headline:"Niekada nepermokėk.",
-    subtagline:"Rask geriausią kainą bet kur internete.",
+    subtagline:"GOODY AI patikrina 7 parduotuves per sekundes.",
     voice_search:"Balso paieška",
     scan_product:"Skenuoti produktą",
     scan_btn_short:"Skenuoti",
@@ -2587,10 +2633,15 @@ const LANGS = {
     sp_prices:"1,2M kainų patikrinta",
     sp_saved:"€247 000 sutaupė vartotojai",
     sp_shops:"7 stebimos parduotuvės",
+    sp_when_month:"šį mėnesį",
+    sp_when_total:"viso",
+    sp_when_live:"live",
     sec_popular:"Populiariausi",
     sec_categories:"Naršyti pagal kategoriją",
     sec_recent:"Paskutinės paieškos",
     no_history:"Dar nėra paieškų istorijos",
+    lowest_price:"Pigiausia",
+    saved_short:"Išsaugota",
   },
   de: {
     scan_hint:"Kamera auf Preisschild richten — sofort den besten Preis finden",
@@ -2630,7 +2681,7 @@ const LANGS = {
     scan_price:"Preisschild scannen",
     scan_barcode:"Barcode scannen",
     headline:"Nie wieder zu viel zahlen.",
-    subtagline:"Finde online überall den besten Preis.",
+    subtagline:"GOODYs KI prüft 7 Shops in Sekunden.",
     voice_search:"Sprachsuche",
     scan_product:"Produkt scannen",
     scan_btn_short:"Scannen",
@@ -2639,10 +2690,15 @@ const LANGS = {
     sp_prices:"1,2 Mio. Preise geprüft",
     sp_saved:"€247.000 von Nutzern gespart",
     sp_shops:"7 Shops überwacht",
+    sp_when_month:"diesen Monat",
+    sp_when_total:"gesamt",
+    sp_when_live:"live",
     sec_popular:"Beliebte Produkte",
     sec_categories:"Nach Kategorie durchsuchen",
     sec_recent:"Letzte Suchen",
     no_history:"Noch keine Suchen",
+    lowest_price:"Bestpreis",
+    saved_short:"Gespeichert",
   },
   pl: {
     scan_hint:"Skieruj aparat na cenę — znajdź najlepszą ofertę od razu",
@@ -2682,7 +2738,7 @@ const LANGS = {
     scan_price:"Skanuj etykietę cenową",
     scan_barcode:"Skanuj kod kreskowy",
     headline:"Nigdy nie przepłacaj.",
-    subtagline:"Znajdź najlepszą cenę gdziekolwiek online.",
+    subtagline:"AI GOODY sprawdza 7 sklepów w sekundach.",
     voice_search:"Wyszukiwanie głosowe",
     scan_product:"Skanuj produkt",
     scan_btn_short:"Skanuj",
@@ -2691,10 +2747,15 @@ const LANGS = {
     sp_prices:"1,2 mln cen sprawdzonych",
     sp_saved:"€247 000 zaoszczędzili użytkownicy",
     sp_shops:"7 obserwowanych sklepów",
+    sp_when_month:"w tym miesiącu",
+    sp_when_total:"łącznie",
+    sp_when_live:"live",
     sec_popular:"Popularne produkty",
     sec_categories:"Przeglądaj według kategorii",
     sec_recent:"Ostatnie wyszukiwania",
     no_history:"Brak historii wyszukiwań",
+    lowest_price:"Najtaniej",
+    saved_short:"Zapisane",
   }
 };
 let curLang = localStorage.getItem("gy_lang") || (()=>{
@@ -2732,6 +2793,9 @@ function applyLang(){
   const sp1=document.getElementById("sp-prices");if(sp1)sp1.textContent=t.sp_prices||"1.2M prices checked";
   const sp2=document.getElementById("sp-saved");if(sp2)sp2.textContent=t.sp_saved||"€247,000 saved by users";
   const sp3=document.getElementById("sp-shops");if(sp3)sp3.textContent=t.sp_shops||"7 stores monitored";
+  const spw1=document.getElementById("sp-prices-when");if(spw1)spw1.textContent=t.sp_when_month||"this month";
+  const spw2=document.getElementById("sp-saved-when");if(spw2)spw2.textContent=t.sp_when_total||"all-time";
+  const spw3=document.getElementById("sp-shops-when");if(spw3)spw3.textContent=t.sp_when_live||"live";
   const vb=document.getElementById("voice-btn");if(vb)vb.setAttribute("aria-label",t.voice_search||"Voice search");
   const sg=document.getElementById("srch-go");if(sg)sg.setAttribute("aria-label",t.scan_product||"Scan product");
   const asl=document.getElementById("ai-scan-lbl");if(asl)asl.textContent=(t.scan_btn_short||t.scan_product||"Scan Product");
