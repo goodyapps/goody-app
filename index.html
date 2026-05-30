@@ -74,6 +74,56 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .scan-btn.scanning{animation:heartbeat 1.2s ease infinite;}
 @keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 
+/* ── Central Scan Hero (premium, inviting) ── */
+.hero-scan{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:18px 22px 22px;
+}
+.hero-scan-wrap{
+  position:relative;width:108px;height:108px;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-scan-ring{
+  position:absolute;width:108px;height:108px;border-radius:50%;
+  border:1.5px solid rgba(39,224,138,0.30);
+  opacity:0;pointer-events:none;
+  animation:hero-ripple 2.6s ease-out infinite;
+}
+.hero-scan-ring:nth-of-type(2){animation-delay:0.9s;}
+@keyframes hero-ripple{
+  0%{opacity:0.45;transform:scale(0.86);}
+  100%{opacity:0;transform:scale(1.32);}
+}
+.hero-scan-btn{
+  width:84px;height:84px;border-radius:50%;
+  background:linear-gradient(180deg,#33E89A 0%,#27E08A 100%);
+  border:none;cursor:pointer;position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:
+    0 10px 28px rgba(0,0,0,0.32),
+    0 4px 14px rgba(39,224,138,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.22);
+  animation:hero-breathe 3.4s ease-in-out infinite;
+  transition:transform 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+.hero-scan-btn svg{width:34px;height:34px;color:#0A0F18;}
+.hero-scan-btn:hover{transform:scale(1.03);}
+.hero-scan-btn:active{transform:scale(0.93);animation:none;}
+.hero-scan-btn:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(39,224,138,0.30), 0 10px 28px rgba(0,0,0,0.32);}
+@keyframes hero-breathe{
+  0%,100%{box-shadow:0 10px 28px rgba(0,0,0,0.32), 0 4px 14px rgba(39,224,138,0.22), inset 0 1px 0 rgba(255,255,255,0.22);}
+  50%{box-shadow:0 12px 34px rgba(0,0,0,0.38), 0 6px 22px rgba(39,224,138,0.30), inset 0 1px 0 rgba(255,255,255,0.24);}
+}
+.hero-scan-invite{
+  font-size:13.5px;color:rgba(255,255,255,0.62);font-weight:500;letter-spacing:-0.05px;
+  text-align:center;margin-top:2px;
+}
+.hero-scan-invite strong{color:rgba(255,255,255,0.86);font-weight:600;}
+@media(prefers-reduced-motion:reduce){
+  .hero-scan-btn{animation:none;}
+  .hero-scan-ring{display:none;}
+}
+
 /* ── Premium AI Search Card ── */
 .search-bar{
   margin:18px 18px 14px;
@@ -479,13 +529,33 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .fade-up{animation:fadeUp 0.3s ease both;}
 
-/* BACK BANNER */
-.back-banner{position:fixed;top:0;left:0;right:0;background:#16a34a;color:#fff;padding:12px 14px 12px 16px;display:flex;align-items:center;gap:10px;z-index:450;font-size:14px;font-weight:700;transform:translateY(-100%);transition:transform 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.28);}
-.back-banner.show{transform:translateY(0);}
-.bb-arrow{font-size:20px;flex-shrink:0;}
-.bb-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.bb-close{background:rgba(255,255,255,0.25);border:none;font-size:16px;line-height:1;cursor:pointer;color:#fff;font-weight:900;padding:4px 8px;border-radius:8px;flex-shrink:0;font-family:var(--ff);}
-.bb-close:active{background:rgba(255,255,255,0.4);}
+/* ── BACK-TO-GOODY PILL (top-left, fixed, 44×44 min) ── */
+.back-banner{
+  position:fixed;top:max(12px,env(safe-area-inset-top));left:12px;
+  background:linear-gradient(180deg,#33E89A 0%,#27E08A 100%);color:#0A0F18;
+  padding:10px 16px;display:inline-flex;align-items:center;gap:9px;
+  z-index:550;
+  font-size:14px;font-weight:700;font-family:var(--ff);letter-spacing:-0.1px;
+  min-height:44px;border:none;border-radius:14px;
+  transform:translateX(-130%);transition:transform 0.38s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 8px 24px rgba(0,0,0,0.35), 0 2px 8px rgba(39,224,138,0.25);
+  cursor:pointer;
+  max-width:calc(100% - 24px);
+}
+.back-banner:hover{transform:translateX(0) scale(1.02);}
+.back-banner:active{transform:translateX(0) scale(0.97);}
+.back-banner.show{transform:translateX(0);}
+.bb-arrow{font-size:18px;font-weight:900;flex-shrink:0;line-height:1;}
+.bb-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;}
+.bb-close{
+  background:rgba(0,0,0,0.18);border:none;font-size:13px;line-height:1;cursor:pointer;
+  color:#0A0F18;font-weight:900;width:24px;height:24px;border-radius:50%;
+  flex-shrink:0;font-family:var(--ff);
+  display:flex;align-items:center;justify-content:center;
+  margin-left:4px;
+}
+.bb-close:hover{background:rgba(0,0,0,0.28);}
+.bb-close:active{background:rgba(0,0,0,0.36);}
 
 /* PULL TO REFRESH */
 .ptr-indicator{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--green);box-shadow:0 4px 20px rgba(39,224,138,.4);opacity:0;transition:opacity .2s,top .2s;pointer-events:none;}
@@ -689,7 +759,27 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
     <div class="hero-head">
       <h1 class="hero-headline" id="hero-headline">Niekada nepermokėk.</h1>
-      <p class="hero-subtitle" id="hero-subtitle">Rask geriausią kainą bet kur internete.</p>
+      <p class="hero-subtitle" id="hero-subtitle">GOODY AI patikrina 7 parduotuves per sekundes.</p>
+    </div>
+
+    <!-- Central Scan Hero — inviting pulse, primary action -->
+    <div class="hero-scan">
+      <div class="hero-scan-wrap">
+        <div class="hero-scan-ring" aria-hidden="true"></div>
+        <div class="hero-scan-ring" aria-hidden="true"></div>
+        <button class="hero-scan-btn" id="hero-scan-btn" onclick="openCam('price')" aria-label="Scan price tag or product">
+          <svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <path d="M5 11V8a3 3 0 013-3h3" stroke="#0A0F18" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M31 11V8a3 3 0 00-3-3h-3" stroke="#0A0F18" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M5 25v3a3 3 0 003 3h3" stroke="#0A0F18" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M31 25v3a3 3 0 01-3 3h-3" stroke="#0A0F18" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="10" y="10" width="16" height="16" rx="2.5" stroke="#0A0F18" stroke-width="2"/>
+            <circle cx="18" cy="18" r="4" stroke="#0A0F18" stroke-width="2"/>
+            <circle cx="18" cy="18" r="1.5" fill="#0A0F18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="hero-scan-invite" id="hero-scan-invite">Nufotografuok ir rask pigiau</div>
     </div>
 
     <!-- Premium AI Search Card -->
@@ -861,11 +951,11 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <div class="save-toast" id="save-toast"></div>
   <div class="confetti-wrap" id="confetti-wrap"></div>
 
-  <!-- BACK BANNER: shown when user returns from a shop tab -->
-  <div class="back-banner" id="back-banner" role="alert" aria-live="assertive">
-    <span class="bb-arrow">←</span>
-    <span class="bb-text" id="back-banner-txt">Grįžote</span>
-    <button class="bb-close" onclick="hideBackBanner()" aria-label="Uždaryti">✕</button>
+  <!-- BACK-TO-GOODY PILL: shown when user returns from external shop tab -->
+  <div class="back-banner" id="back-banner" role="alert" aria-live="assertive" onclick="backBannerReturn(event)">
+    <span class="bb-arrow" aria-hidden="true">←</span>
+    <span class="bb-text" id="back-banner-txt">Atgal į Goody</span>
+    <button class="bb-close" onclick="event.stopPropagation();hideBackBanner()" aria-label="Close">✕</button>
   </div>
 
   <!-- ONBOARDING (first visit only) -->
@@ -1117,7 +1207,7 @@ function _checkWatchlistBackend(){
   const lastCheck=parseInt(localStorage.getItem("gy_watch_checked")||"0");
   if(Date.now()-lastCheck<6*3600*1000)return;
   const items=watches.map(w=>({name:w.name,price:w.price,target:w.target||null}));
-  fetch(`${API_BASE}/api/watchlist-check`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items})})
+  fetch(`${API_BASE}/api/watchlist-check`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items,language:curLang})})
     .then(r=>r.ok?r.json():null)
     .then(data=>{
       localStorage.setItem("gy_watch_checked",String(Date.now()));
@@ -1599,16 +1689,26 @@ document.addEventListener('visibilitychange',()=>{
 function showBackBanner(shop,q){
   const banner=document.getElementById('back-banner');
   if(!banner)return;
-  const _bf={"lt":"Atgal · buvote","de":"Zurück · war bei","pl":"Powrót · byłeś w"}[curLang]||"Back from";
+  const t=LANGS[curLang]||LANGS.en;
   const txt=document.getElementById('back-banner-txt');
-  if(txt)txt.textContent=`${_bf} ${shop}`;
+  if(txt)txt.textContent=t.back_to_goody||"Back to Goody";
+  // remember which shop the user came back from (for analytics if needed later)
+  try{banner.dataset.lastShop=shop||"";}catch(_){}
   banner.classList.add('show');
-  // no auto-hide — stays until user closes it
+  // no auto-hide — stays until user taps the pill or the ✕
 }
 
 function hideBackBanner(){
   const b=document.getElementById('back-banner');
   if(b)b.classList.remove('show');
+}
+
+function backBannerReturn(ev){
+  // Tapping the pill returns the user to the home screen and dismisses the banner.
+  try{if(ev&&ev.target&&ev.target.classList&&ev.target.classList.contains('bb-close'))return;}catch(_){}
+  try{sessionStorage.removeItem('gy_lastClick');}catch(_){}
+  hideBackBanner();
+  if(typeof navTo==='function')navTo('home');
 }
 
 /* ── SEARCH ── */
@@ -1646,7 +1746,7 @@ async function doSearch(){
   try{
     const resp=await fetch(`${API_BASE}/api/search-stream`,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({query:q}),signal:_ctrl.signal
+      body:JSON.stringify({query:q,language:curLang}),signal:_ctrl.signal
     });
     clearTimeout(_tid);
 
@@ -1717,7 +1817,7 @@ async function _doSearchFallback(q){
   const loadTimer=showLoading();
   try{
     const _ctrl=new AbortController();const _tid=setTimeout(()=>_ctrl.abort(),90000);
-    const r=await fetch(`${API_BASE}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q}),signal:_ctrl.signal});
+    const r=await fetch(`${API_BASE}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q,language:curLang}),signal:_ctrl.signal});
     clearTimeout(_tid);clearInterval(loadTimer);
     if(!r.ok){const e=await r.json().catch(()=>({}));if(r.status===429){clearInterval(loadTimer);_showRateLimitError(e);return;}throw new Error(e.message||"Server error");}
     const d=await r.json();lastData=d;addToHist(q,d);renderResults(d,q);
@@ -2456,7 +2556,7 @@ async function runScan(){
   },1200);
   try{
     const _sc=new AbortController();const _st=setTimeout(()=>_sc.abort(),90000);
-    const resp=await fetch(`${API_BASE}/api/scan-image`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:capturedB64}),signal:_sc.signal});
+    const resp=await fetch(`${API_BASE}/api/scan-image`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:capturedB64,language:curLang}),signal:_sc.signal});
     clearTimeout(_st);clearInterval(scanTimer);
     const data=await resp.json();
     // Jei produktas neatpažintas
@@ -2585,6 +2685,8 @@ const LANGS = {
     no_history:"No recent searches yet",
     lowest_price:"Lowest",
     saved_short:"Saved",
+    scan_invite:"Snap a photo — find it cheaper",
+    back_to_goody:"Back to Goody",
   },
   lt: {
     scan_hint:"Nufotografuok kainą ir rask pigiau internete",
@@ -2642,6 +2744,8 @@ const LANGS = {
     no_history:"Dar nėra paieškų istorijos",
     lowest_price:"Pigiausia",
     saved_short:"Išsaugota",
+    scan_invite:"Nufotografuok ir rask pigiau",
+    back_to_goody:"Atgal į Goody",
   },
   de: {
     scan_hint:"Kamera auf Preisschild richten — sofort den besten Preis finden",
@@ -2699,6 +2803,8 @@ const LANGS = {
     no_history:"Noch keine Suchen",
     lowest_price:"Bestpreis",
     saved_short:"Gespeichert",
+    scan_invite:"Foto machen — günstiger finden",
+    back_to_goody:"Zurück zu Goody",
   },
   pl: {
     scan_hint:"Skieruj aparat na cenę — znajdź najlepszą ofertę od razu",
@@ -2756,6 +2862,8 @@ const LANGS = {
     no_history:"Brak historii wyszukiwań",
     lowest_price:"Najtaniej",
     saved_short:"Zapisane",
+    scan_invite:"Zrób zdjęcie — znajdź taniej",
+    back_to_goody:"Wróć do Goody",
   }
 };
 let curLang = localStorage.getItem("gy_lang") || (()=>{
@@ -2796,6 +2904,7 @@ function applyLang(){
   const spw1=document.getElementById("sp-prices-when");if(spw1)spw1.textContent=t.sp_when_month||"this month";
   const spw2=document.getElementById("sp-saved-when");if(spw2)spw2.textContent=t.sp_when_total||"all-time";
   const spw3=document.getElementById("sp-shops-when");if(spw3)spw3.textContent=t.sp_when_live||"live";
+  const hsi=document.getElementById("hero-scan-invite");if(hsi)hsi.textContent=t.scan_invite||"Snap a photo — find it cheaper";
   const vb=document.getElementById("voice-btn");if(vb)vb.setAttribute("aria-label",t.voice_search||"Voice search");
   const sg=document.getElementById("srch-go");if(sg)sg.setAttribute("aria-label",t.scan_product||"Scan product");
   const asl=document.getElementById("ai-scan-lbl");if(asl)asl.textContent=(t.scan_btn_short||t.scan_product||"Scan Product");
