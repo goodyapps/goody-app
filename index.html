@@ -52,7 +52,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 /* ── HOME ── */
 .home-head{padding:30px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;}
-.logo-mark{font-size:36px;font-weight:800;letter-spacing:-1.1px;line-height:1;}
+.logo-mark{font-size:38px;font-weight:800;letter-spacing:-1.2px;line-height:1;}
 .logo-mark span{color:var(--green);}
 .logo-sub{display:none;}
 .notif-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.75);transition:background var(--dur),border-color var(--dur),transform var(--dur);}
@@ -61,7 +61,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 /* Hero headline + subtitle (Perplexity-style) */
 .hero-head{padding:44px 22px 14px;display:flex;flex-direction:column;gap:8px;}
-.hero-headline{font-size:34px;font-weight:600;letter-spacing:-0.9px;color:var(--ink);line-height:1.08;margin:0;}
+.hero-headline{font-size:38px;font-weight:600;letter-spacing:-1.1px;color:var(--ink);line-height:1.05;margin:0;}
 .hero-subtitle{font-size:15px;color:rgba(255,255,255,0.58);font-weight:400;line-height:1.5;letter-spacing:-0.1px;margin:0;}
 
 /* legacy scan-hero kept for any leftover references but hidden on home */
@@ -2378,17 +2378,19 @@ function _getFrameSharpness(){
 }
 function startQualityLoop(){
   _qualityCount=0;
+  // Manual capture only — no auto-snap. The loop is a passive sharpness hint:
+  // when the frame is sharp, the button label adds " ✓" to encourage pressing.
+  // Recognition + search start AFTER the user presses (or chooses gallery).
   _qualityLoop=setInterval(()=>{
     if(!camStream||camMode!=="price")return;
-    const sharp=_getFrameSharpness();
     const btn=document.getElementById("c-snap");
+    if(!btn)return;
+    const sharp=_getFrameSharpness();
+    const baseLbl={"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo";
     if(sharp>38){
-      _qualityCount++;
-      if(btn&&_qualityCount<3){const rem=3-_qualityCount;if(btn)btn.innerHTML="<span>📷</span><span>Auto "+rem+"...</span>";}
-      if(_qualityCount>=3){clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;captureFrame();}
+      btn.innerHTML=`<span>📷</span><span>${baseLbl} ✓</span>`;
     } else {
-      _qualityCount=0;
-      if(btn&&camStream)btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";
+      btn.innerHTML=`<span>📷</span><span>${baseLbl}</span>`;
     }
   },600);
 }
