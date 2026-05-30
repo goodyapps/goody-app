@@ -1489,17 +1489,6 @@ function hideBackBanner(){
   if(b)b.classList.remove('show');
 }
 
-function backBannerYes(){
-  hideBackBanner();
-  sessionStorage.removeItem('gy_lastClick');
-  toast('🎉 '+({"lt":"Sveikiname su pirkiniu!","de":"Viel Freude damit!","pl":"Gratulacje z zakupu!"}[curLang]||"Congrats on your purchase!"));
-}
-
-function backBannerNo(){
-  sessionStorage.removeItem('gy_lastClick');
-  hideBackBanner();
-}
-
 /* ── SEARCH ── */
 function _showSearchError(){
   const errMsg={"lt":"Nepavyko prisijungti prie serverio. Patikrink interneto ryšį ir bandyk dar kartą.","de":"Server nicht erreichbar. Bitte Internetverbindung prüfen.","pl":"Nie można połączyć się z serwerem. Sprawdź połączenie."}[curLang]||"Could not connect to the server. Check your internet connection and try again.";
