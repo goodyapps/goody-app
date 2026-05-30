@@ -15,8 +15,8 @@ for (const width of [375, 414]) {
     // Both icons inside the bar
     await expect(page.locator('#srch-go')).toBeVisible();
     await expect(page.locator('#voice-btn')).toBeVisible();
-    // Social proof present
-    await expect(page.locator('.social-proof')).toBeVisible();
+    // Social proof present (premium trust list)
+    await expect(page.locator('#proof-list')).toBeVisible();
     // Floating nav present
     const nav = page.locator('.bottom-nav');
     await expect(nav).toBeVisible();

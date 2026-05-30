@@ -51,18 +51,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .page.on{display:flex;flex-direction:column;}
 
 /* ── HOME ── */
-.home-head{padding:28px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+.home-head{padding:30px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;}
 .logo-mark{font-size:36px;font-weight:800;letter-spacing:-1.1px;line-height:1;}
 .logo-mark span{color:var(--green);}
 .logo-sub{display:none;}
-.notif-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink2);transition:background var(--dur),transform var(--dur);}
-.notif-btn:hover{background:rgba(255,255,255,0.07);}
+.notif-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.75);transition:background var(--dur),border-color var(--dur),transform var(--dur);}
+.notif-btn:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.10);}
 .notif-btn:active{transform:scale(0.94);}
 
-/* Hero headline */
-.hero-head{padding:36px 22px 8px;display:flex;flex-direction:column;gap:6px;}
-.hero-headline{font-size:30px;font-weight:600;letter-spacing:-0.7px;color:var(--ink);line-height:1.15;}
-.hero-subtitle{font-size:14px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.45;}
+/* Hero headline + subtitle (Perplexity-style) */
+.hero-head{padding:44px 22px 14px;display:flex;flex-direction:column;gap:8px;}
+.hero-headline{font-size:34px;font-weight:600;letter-spacing:-0.9px;color:var(--ink);line-height:1.08;margin:0;}
+.hero-subtitle{font-size:15px;color:rgba(255,255,255,0.50);font-weight:400;line-height:1.5;letter-spacing:-0.1px;margin:0;}
 
 /* legacy scan-hero kept for any leftover references but hidden on home */
 .scan-hero{display:none;}
@@ -74,40 +74,92 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .scan-btn.scanning{animation:heartbeat 1.2s ease infinite;}
 @keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 
-/* Premium hero search bar */
-.search-bar{margin:18px 22px 14px;position:relative;}
-.search-bar input{width:100%;height:60px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:18px;padding:0 110px 0 22px;color:var(--ink);font-family:var(--ff);font-size:16px;font-weight:500;outline:none;transition:border-color var(--dur),background var(--dur),box-shadow var(--dur);}
+/* ── Premium AI Search Card ── */
+.search-bar{
+  margin:18px 18px 14px;
+  position:relative;
+  background:linear-gradient(180deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:22px;
+  padding:6px 8px 8px;
+  box-shadow:0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 32px rgba(0,0,0,0.30);
+  transition:border-color var(--dur), box-shadow var(--dur);
+}
+.search-bar:focus-within{
+  border-color:rgba(39,224,138,0.28);
+  box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 14px 36px rgba(0,0,0,0.34), 0 0 0 4px rgba(39,224,138,0.05);
+}
+.ai-search-row{display:flex;align-items:center;gap:12px;padding:10px 12px 10px;}
+.ai-search-icon{width:20px;height:20px;color:rgba(255,255,255,0.42);flex-shrink:0;}
+.search-bar input{
+  flex:1;width:100%;height:36px;background:none;border:none;outline:none;padding:0;
+  color:var(--ink);font-family:var(--ff);font-size:16px;font-weight:500;letter-spacing:-0.1px;
+}
 .search-bar input::placeholder{color:rgba(255,255,255,0.42);font-weight:500;}
-.search-bar input:focus{border-color:rgba(39,224,138,0.40);background:rgba(255,255,255,0.06);box-shadow:0 0 0 4px rgba(39,224,138,0.06);}
-.search-go{position:absolute;right:60px;top:6px;height:48px;width:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.05);border:none;border-radius:14px;transition:background var(--dur),color var(--dur),transform var(--dur);}
-.search-go svg{width:22px;height:22px;}
-.search-go:hover{background:rgba(39,224,138,0.10);color:var(--green);}
-.search-go:active{transform:scale(0.92);}
+.ai-search-divider{height:1px;background:rgba(255,255,255,0.06);margin:0 4px;}
+.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 4px 4px;}
+.ai-action{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;padding:13px 10px;min-height:50px;
+  color:rgba(255,255,255,0.88);font-family:var(--ff);font-size:13.5px;font-weight:600;letter-spacing:-0.15px;
+  cursor:pointer;transition:background var(--dur), border-color var(--dur), color var(--dur), transform var(--dur);
+}
+.ai-action span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ai-action svg{width:18px;height:18px;color:rgba(255,255,255,0.6);transition:color var(--dur);flex-shrink:0;}
+.ai-action:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.10);color:var(--ink);}
+.ai-action:hover svg{color:rgba(255,255,255,0.85);}
+.ai-action:active{transform:scale(0.97);}
+.ai-action-scan svg{color:var(--green);}
+.ai-action-scan:hover{border-color:rgba(39,224,138,0.28);background:rgba(39,224,138,0.05);}
+.ai-action-scan:hover svg{color:var(--green);}
+.ai-action.listening{color:var(--red);border-color:rgba(255,136,136,0.30);background:rgba(255,136,136,0.05);animation:pulse-r 1.2s ease infinite;}
+.ai-action.listening svg{color:var(--red);}
 
-.sec-head{display:flex;justify-content:space-between;align-items:center;padding:0 22px;margin-bottom:14px;margin-top:8px;}
-.sec-title{font-size:11px;font-weight:700;letter-spacing:0.08em;color:rgba(255,255,255,0.42);text-transform:uppercase;}
-.sec-action{font-size:12px;color:var(--green);font-weight:600;cursor:pointer;}
+/* Section heads (premium minimal) */
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 22px;margin:8px 0 16px;}
+.sec-title{font-size:11px;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.42);text-transform:uppercase;}
+.sec-action{font-size:12px;color:rgba(255,255,255,0.55);font-weight:500;cursor:pointer;transition:color var(--dur);}
+.sec-action:hover{color:var(--ink);}
 
-.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 22px;margin-bottom:32px;}
-.cat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:18px 8px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:background var(--dur),border-color var(--dur),transform var(--dur);}
-.cat:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
-.cat:active{transform:scale(0.97);background:var(--green-l);border-color:rgba(39,224,138,0.25);}
-.cat-ic{font-size:22px;opacity:0.92;}
-.cat-n{font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);text-align:center;letter-spacing:0.01em;}
+/* Categories — minimal, moved below popular */
+.cats-wrap{padding:0 22px;margin-bottom:32px;}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cat{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:14px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:background var(--dur),border-color var(--dur),transform var(--dur);}
+.cat:hover{background:rgba(255,255,255,0.045);border-color:rgba(255,255,255,0.07);}
+.cat:active{transform:scale(0.97);}
+.cat-ic{font-size:20px;opacity:0.88;}
+.cat-n{font-size:11px;font-weight:600;color:rgba(255,255,255,0.65);text-align:center;letter-spacing:0.01em;}
 
-/* Social proof strip */
-.social-proof{display:flex;flex-wrap:wrap;gap:8px;padding:6px 22px 28px;justify-content:flex-start;}
-.sp-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:999px;padding:7px 12px;font-size:11.5px;color:rgba(255,255,255,0.6);font-weight:600;letter-spacing:0.01em;}
-.sp-chip .sp-check{color:var(--green);font-weight:900;font-size:12px;}
+/* Social proof — quiet trust list */
+.proof-list{display:flex;flex-direction:column;gap:10px;padding:14px 22px 32px;}
+.proof-row{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:-0.05px;}
+.proof-check{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(39,224,138,0.10);color:var(--green);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;flex-shrink:0;
+}
+.proof-row strong{color:rgba(255,255,255,0.85);font-weight:600;}
 
-.recent{padding:0 22px;display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
-.rec-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;cursor:pointer;transition:background var(--dur);}
-.rec-item:active{background:var(--card2);}
-.rec-left{display:flex;align-items:center;gap:12px;}
-.rec-ico{width:38px;height:38px;border-radius:10px;background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.rec-name{font-size:15px;font-weight:600;}
-.rec-meta{font-size:13px;color:var(--ink3);margin-top:2px;}
-.rec-price{font-size:15px;font-weight:800;color:var(--green);}
+.recent{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.rec-item{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;padding:16px 18px;cursor:pointer;
+  transition:background var(--dur),border-color var(--dur),transform var(--dur);
+}
+.rec-item:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+.rec-item:active{transform:scale(0.99);background:rgba(255,255,255,0.06);}
+.rec-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1;}
+.rec-ico{
+  width:46px;height:46px;border-radius:13px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.rec-name{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rec-meta{font-size:12px;color:rgba(255,255,255,0.42);margin-top:3px;font-weight:500;}
+.rec-price{font-size:14px;font-weight:700;color:rgba(255,255,255,0.78);letter-spacing:-0.15px;flex-shrink:0;margin-left:10px;}
 
 /* ── CAMERA SHEET ── */
 .cam-sheet{position:absolute;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.16,1,0.3,1);}
@@ -512,17 +564,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 /* ── PRICE CARD RATING ROW (shown below badges when both exist) ── */
 .pc-rating-extra{display:flex;align-items:center;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 
-/* ── SEARCH CLEAR + VOICE ── */
-.search-bar{position:relative;}
-.srch-clear{position:absolute;right:116px;top:0;height:60px;width:30px;display:none;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);background:none;border:none;font-size:14px;transition:color var(--dur);}
-.srch-clear:hover{color:var(--ink);}
-.srch-clear.vis{display:flex;}
-.voice-btn{position:absolute;right:6px;top:6px;height:48px;width:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.05);border:none;border-radius:14px;transition:color var(--dur),background var(--dur),transform var(--dur);}
-.voice-btn:hover{color:var(--green);background:rgba(39,224,138,0.10);}
-.voice-btn:active{transform:scale(0.92);}
-.voice-btn svg{width:20px;height:20px;}
-.voice-btn.listening{color:var(--red);animation:pulse-r 1s ease infinite;}
-@keyframes pulse-r{0%,100%{opacity:1;}50%{opacity:0.4;}}
+/* ── SEARCH CLEAR (inline) ── */
+.srch-clear{
+  background:none;border:none;color:rgba(255,255,255,0.42);cursor:pointer;
+  padding:6px 8px;border-radius:8px;font-size:13px;
+  display:none;align-items:center;justify-content:center;
+  transition:color var(--dur),background var(--dur);flex-shrink:0;
+}
+.srch-clear:hover{color:var(--ink);background:rgba(255,255,255,0.05);}
+.srch-clear.vis{display:inline-flex;}
+@keyframes pulse-r{0%,100%{opacity:1;}50%{opacity:0.5;}}
 
 /* ── COPY PRICE BUTTON ── */
 .copy-price-btn{background:none;border:none;cursor:pointer;color:var(--ink4);padding:4px;border-radius:6px;transition:color var(--dur),background var(--dur);display:inline-flex;align-items:center;}
@@ -616,45 +667,53 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div id="home-stat" style="display:none;font-size:11px;color:var(--ink3);padding:2px 22px 0;font-weight:600;"></div>
 
     <div class="hero-head">
-      <h1 class="hero-headline" id="hero-headline">Niekada nepermokėk</h1>
-      <p class="hero-subtitle" id="hero-subtitle">Nufotografuok kainą — rask pigiau internete.</p>
+      <h1 class="hero-headline" id="hero-headline">Niekada nepermokėk.</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Rask geriausią kainą bet kur internete.</p>
     </div>
 
-    <div class="search-bar">
-      <input type="text" id="srch-inp" placeholder="Ieškok bet kokio produkto..." autocomplete="off"
-        onkeydown="_srchKeyDown(event)"
-        oninput="onSrchInput(this)"
-        onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
-        aria-label="Search for a product">
-      <button class="srch-clear" id="srch-clear" onclick="clearSearch()" aria-label="Clear search">✕</button>
-      <button class="search-go" id="srch-go" onclick="openCam('price')" aria-label="Scan product">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 8V6a2 2 0 012-2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M20 8V6a2 2 0 00-2-2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M4 16v2a2 2 0 002 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M20 16v2a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="12" cy="12" r="3.4" stroke="currentColor" stroke-width="1.8"/>
+    <!-- Premium AI Search Card -->
+    <div class="search-bar" id="ai-search-card" role="search">
+      <div class="ai-search-row">
+        <svg class="ai-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
-      </button>
-      <button class="voice-btn" id="voice-btn" onclick="startVoice()" aria-label="Voice search">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <rect x="9" y="2.5" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M5 12a7 7 0 0014 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M12 19v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
+        <input type="text" id="srch-inp" placeholder="Ieškok produktų, prekės ženklų ar nuorodų..." autocomplete="off"
+          onkeydown="_srchKeyDown(event)"
+          oninput="onSrchInput(this)"
+          onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
+          aria-label="Search for a product">
+        <button class="srch-clear" id="srch-clear" onclick="clearSearch()" aria-label="Clear search">✕</button>
+      </div>
+      <div class="ai-search-divider"></div>
+      <div class="ai-actions">
+        <button class="ai-action ai-action-scan" id="srch-go" onclick="openCam('price')" aria-label="Scan product">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 8V6a2 2 0 012-2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M20 8V6a2 2 0 00-2-2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M4 16v2a2 2 0 002 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M20 16v2a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="3.4" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+          <span id="ai-scan-lbl">Skenuoti produktą</span>
+        </button>
+        <button class="ai-action" id="voice-btn" onclick="startVoice()" aria-label="Voice search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="9" y="2.5" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M5 12a7 7 0 0014 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 19v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span id="ai-voice-lbl">Balso paieška</span>
+        </button>
+      </div>
     </div>
 
-    <div class="social-proof" id="social-proof">
-      <span class="sp-chip"><span class="sp-check">✓</span><span id="sp-prices">1.2M kainų patikrinta</span></span>
-      <span class="sp-chip"><span class="sp-check">✓</span><span id="sp-saved">€247,000 sutaupė vartotojai</span></span>
-      <span class="sp-chip"><span class="sp-check">✓</span><span id="sp-shops">7 stebimos parduotuvės</span></span>
+    <!-- Quiet trust list -->
+    <div class="proof-list" id="proof-list">
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-prices">1,2M kainų patikrinta</span></div>
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-saved">€247,000 sutaupė vartotojai</span></div>
+      <div class="proof-row"><span class="proof-check">✓</span><span id="sp-shops">7 stebimos parduotuvės</span></div>
     </div>
-
-    <div class="sec-head">
-      <div class="sec-title" id="cats-title">Kategorijos</div>
-    </div>
-    <div class="cats" id="cats-grid"></div>
 
     <div class="sec-head" id="popular-head">
       <div class="sec-title" id="popular-title">Populiariausi</div>
@@ -662,11 +721,16 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="recent" id="popular-list"></div>
 
     <div class="sec-head">
+      <div class="sec-title" id="cats-title">Naršyti pagal kategoriją</div>
+    </div>
+    <div class="cats-wrap"><div class="cats" id="cats-grid"></div></div>
+
+    <div class="sec-head">
       <div class="sec-title" id="recent-title">Paskutinės paieškos</div>
       <div class="sec-action" id="clear-hist-btn" onclick="clearHistory()">Išvalyti</div>
     </div>
     <div class="recent" id="recent-list">
-      <div style="padding:20px 0;text-align:center;color:var(--ink3);font-size:13px;">Dar nėra paieškų istorijos</div>
+      <div style="padding:20px 0;text-align:center;color:rgba(255,255,255,0.42);font-size:13px;">Dar nėra paieškų istorijos</div>
     </div>
   </div>
 
@@ -2461,13 +2525,20 @@ const LANGS = {
     clear_data:"Clear all data",
     scan_price:"Scan price tag",
     scan_barcode:"Scan barcode",
-    headline:"Never overpay again",
-    subtagline:"Scan a price tag — find it cheaper online.",
-    voice_search:"Voice search",
-    scan_product:"Scan product",
+    headline:"Never overpay again.",
+    subtagline:"Find the best price anywhere online.",
+    voice_search:"Voice Search",
+    scan_product:"Scan Product",
+    scan_btn_short:"Scan Product",
+    voice_btn_short:"Voice Search",
+    search_placeholder_ai:"Search products, brands or paste a link...",
     sp_prices:"1.2M prices checked",
     sp_saved:"€247,000 saved by users",
-    sp_shops:"7 shops monitored",
+    sp_shops:"7 stores monitored",
+    sec_popular:"Popular Products",
+    sec_categories:"Browse by Category",
+    sec_recent:"Recent searches",
+    no_history:"No recent searches yet",
   },
   lt: {
     scan_hint:"Nufotografuok kainą ir rask pigiau internete",
@@ -2506,13 +2577,20 @@ const LANGS = {
     clear_data:"Ištrinti visus duomenis",
     scan_price:"Nuskaityti kainų etiketę",
     scan_barcode:"Nuskaityti barkodą",
-    headline:"Niekada nepermokėk",
-    subtagline:"Nufotografuok kainą — rask pigiau internete.",
+    headline:"Niekada nepermokėk.",
+    subtagline:"Rask geriausią kainą bet kur internete.",
     voice_search:"Balso paieška",
     scan_product:"Skenuoti produktą",
+    scan_btn_short:"Skenuoti",
+    voice_btn_short:"Balsu",
+    search_placeholder_ai:"Ieškok produktų ar nuorodų...",
     sp_prices:"1,2M kainų patikrinta",
-    sp_saved:"€247,000 sutaupė vartotojai",
+    sp_saved:"€247 000 sutaupė vartotojai",
     sp_shops:"7 stebimos parduotuvės",
+    sec_popular:"Populiariausi",
+    sec_categories:"Naršyti pagal kategoriją",
+    sec_recent:"Paskutinės paieškos",
+    no_history:"Dar nėra paieškų istorijos",
   },
   de: {
     scan_hint:"Kamera auf Preisschild richten — sofort den besten Preis finden",
@@ -2551,13 +2629,20 @@ const LANGS = {
     clear_data:"Alle Daten löschen",
     scan_price:"Preisschild scannen",
     scan_barcode:"Barcode scannen",
-    headline:"Nie wieder zu viel zahlen",
-    subtagline:"Preisschild scannen — günstiger online finden.",
+    headline:"Nie wieder zu viel zahlen.",
+    subtagline:"Finde online überall den besten Preis.",
     voice_search:"Sprachsuche",
     scan_product:"Produkt scannen",
+    scan_btn_short:"Scannen",
+    voice_btn_short:"Sprachsuche",
+    search_placeholder_ai:"Produkte oder Link einfügen...",
     sp_prices:"1,2 Mio. Preise geprüft",
     sp_saved:"€247.000 von Nutzern gespart",
     sp_shops:"7 Shops überwacht",
+    sec_popular:"Beliebte Produkte",
+    sec_categories:"Nach Kategorie durchsuchen",
+    sec_recent:"Letzte Suchen",
+    no_history:"Noch keine Suchen",
   },
   pl: {
     scan_hint:"Skieruj aparat na cenę — znajdź najlepszą ofertę od razu",
@@ -2596,13 +2681,20 @@ const LANGS = {
     clear_data:"Wyczyść wszystkie dane",
     scan_price:"Skanuj etykietę cenową",
     scan_barcode:"Skanuj kod kreskowy",
-    headline:"Nigdy nie przepłacaj",
-    subtagline:"Zeskanuj cenę — znajdź taniej online.",
+    headline:"Nigdy nie przepłacaj.",
+    subtagline:"Znajdź najlepszą cenę gdziekolwiek online.",
     voice_search:"Wyszukiwanie głosowe",
     scan_product:"Skanuj produkt",
+    scan_btn_short:"Skanuj",
+    voice_btn_short:"Głosem",
+    search_placeholder_ai:"Szukaj produktów lub linków...",
     sp_prices:"1,2 mln cen sprawdzonych",
     sp_saved:"€247 000 zaoszczędzili użytkownicy",
     sp_shops:"7 obserwowanych sklepów",
+    sec_popular:"Popularne produkty",
+    sec_categories:"Przeglądaj według kategorii",
+    sec_recent:"Ostatnie wyszukiwania",
+    no_history:"Brak historii wyszukiwań",
   }
 };
 let curLang = localStorage.getItem("gy_lang") || (()=>{
@@ -2629,22 +2721,24 @@ function toggleLangBar(){
 function applyLang(){
   const t=LANGS[curLang]||LANGS.en;
   const sh=document.querySelector(".scan-hint");if(sh)sh.textContent=t.scan_hint;
-  const si=document.getElementById("srch-inp");if(si)si.placeholder=t.search_placeholder;
+  const si=document.getElementById("srch-inp");if(si)si.placeholder=(t.search_placeholder_ai||t.search_placeholder);
   document.querySelectorAll(".nav-lbl").forEach((el,i)=>{
     const lbls=[t.home,t.scan,t.saved,t.settings];
     if(lbls[i])el.textContent=lbls[i];
   });
   const ls=document.getElementById("logo-sub");if(ls)ls.textContent=t.tagline||"Never overpay again.";
-  const hh=document.getElementById("hero-headline");if(hh)hh.textContent=t.headline||"Never overpay again";
-  const hs=document.getElementById("hero-subtitle");if(hs)hs.textContent=t.subtagline||"Scan a price tag — find it cheaper online.";
+  const hh=document.getElementById("hero-headline");if(hh)hh.textContent=t.headline||"Never overpay again.";
+  const hs=document.getElementById("hero-subtitle");if(hs)hs.textContent=t.subtagline||"Find the best price anywhere online.";
   const sp1=document.getElementById("sp-prices");if(sp1)sp1.textContent=t.sp_prices||"1.2M prices checked";
   const sp2=document.getElementById("sp-saved");if(sp2)sp2.textContent=t.sp_saved||"€247,000 saved by users";
-  const sp3=document.getElementById("sp-shops");if(sp3)sp3.textContent=t.sp_shops||"7 shops monitored";
+  const sp3=document.getElementById("sp-shops");if(sp3)sp3.textContent=t.sp_shops||"7 stores monitored";
   const vb=document.getElementById("voice-btn");if(vb)vb.setAttribute("aria-label",t.voice_search||"Voice search");
   const sg=document.getElementById("srch-go");if(sg)sg.setAttribute("aria-label",t.scan_product||"Scan product");
-  const ct=document.getElementById("cats-title");if(ct)ct.textContent=t.categories;
-  const pt=document.getElementById("popular-title");if(pt)pt.textContent=t.popular||"Popular";
-  const rt=document.getElementById("recent-title");if(rt)rt.textContent=t.recent_scans||"Recent searches";
+  const asl=document.getElementById("ai-scan-lbl");if(asl)asl.textContent=(t.scan_btn_short||t.scan_product||"Scan Product");
+  const avl=document.getElementById("ai-voice-lbl");if(avl)avl.textContent=(t.voice_btn_short||t.voice_search||"Voice Search");
+  const pop=document.getElementById("popular-title");if(pop)pop.textContent=t.sec_popular||t.popular||"Popular Products";
+  const catT=document.getElementById("cats-title");if(catT)catT.textContent=t.sec_categories||t.categories||"Browse by Category";
+  const recT=document.getElementById("recent-title");if(recT)recT.textContent=t.sec_recent||t.recent_scans||"Recent searches";
   const cb=document.getElementById("clear-hist-btn");if(cb)cb.textContent=t.clear||"Clear all";
   const rl=document.getElementById("rate-label");if(rl)rl.textContent=t.daily_searches||"Daily searches used";
   // Settings page translations

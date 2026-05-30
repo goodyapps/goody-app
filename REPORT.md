@@ -1,7 +1,110 @@
-# Goody redesign + E2E ataskaita
+# Goody AI-first redesign — ataskaita
 
 > Data: 2026-05-30
 > Backup šaka: `backup-pries-redizaina` (commit `b57f178`)
+> Naujausias commit: žiūrėk `git log`
+
+## 0. AI-first redesign (papildomas etapas)
+
+GOODY logo (`good<span>y</span>` su žalia Y) — **nepakeistas, brand asset**.
+
+Visi pakeitimai padaryti tik per: layout, hierarchy, spacing, typography, cards, interactions.
+
+### Premium AI Search Card (kaip Perplexity)
+
+Pakeitė ankstesnę 60px lauko paiešką su ikonomis viduje. Naujas card patternas:
+
+```
+┌─────────────────────────────────────┐
+│  🔍  Ieškok produktų ar nuorodų...  │
+│  ─────────────────────────────────  │
+│  [📷 Skenuoti]     [🎤 Balsu]       │
+└─────────────────────────────────────┘
+```
+
+Tai vienas premium kortelės elementas su:
+- `linear-gradient` subtle background (`rgba(255,255,255,0.05) → 0.025`)
+- `border: 1px solid rgba(255,255,255,0.08)` (Apple-style stroke)
+- `box-shadow: 0 12px 32px rgba(0,0,0,0.30)` (premium depth)
+- `:focus-within` būsenoje žalias subtle žiedas (`0 0 0 4px rgba(39,224,138,0.05)`)
+- Magnifying glass kairėje, switch'ina ✕ kai įvedama tekstas
+- 2 vienodi action mygtukai apačioje (grid 1fr 1fr): camera scan + voice
+- Visi onclick'ai išlaikyti: `openCam('price')`, `startVoice()`, `clearSearch()`
+
+### Tipografinė hierarchija (typography-first)
+
+- Headline `<h1>` 34px / 600 / -0.9px tracking (Apple-style)
+- Subtitle 15px / 400 / rgba 0.5 (Perplexity-style soft gray)
+- Section titles: 11px / 700 / 0.14em letter-spacing / uppercase, rgba 0.42 (Linear-style minimal)
+- Product card name: 15px / 600 / -0.15px tracking
+- Product card meta: 12px / 500 / rgba 0.42
+
+### Quiet trust list (vietoj chips)
+
+```
+✓ 1,2M kainų patikrinta
+✓ €247 000 sutaupė vartotojai
+✓ 7 stebimos parduotuvės
+```
+
+Ankstesnės chip'ės pakeistos vertikaliu sąrašu su minkštais žalio checkmark'ais. Premium žemiau-akcento jausmas — trust, ne dopamine push.
+
+### Premium product cards
+
+- `border-radius: 18px` (Apple-iOS jausmas)
+- Background: `rgba(255,255,255,0.03)` (vos matomas elevation)
+- Borderis vos matomas (`rgba(255,255,255,0.05)`)
+- 46×46 ikonų plytelės su subtle internal border
+- Žalia kaina pakeista į rgba 0.78 baltą — "curated" jausmas, ne marketplace
+- Hover: subtle background lift + `transform:scale(0.99)` active
+
+### 80/15/5 spalvų taisyklė
+
+- 80% — neutralios `rgba(255,255,255,0.03 – 0.10)` paviršiai
+- 15% — gray tonai (subtle borderiai, secondary tekstas)
+- 5% — green tik kaip: GOODY logo Y, scan icon, checkmark, active nav state, focus ring (visi labai subtle)
+
+### Microinteractions
+
+- Visi mygtukai: `:active { transform: scale(0.97) }`, `:hover { background ramus shift }`
+- `transition: var(--dur)` (0.18s) — vienodos premium animacijos
+- Search card focus: subtle žiedas, ne ryškus glow
+
+### Sekcijų eilė (Perplexity-style)
+
+1. Logo + saved
+2. Hero headline + subtitle (Apple-tone — generous whitespace)
+3. Premium AI Search card
+4. Quiet trust list
+5. Popular Products
+6. Browse by Category (subtle, perkelta žemiau)
+7. Recent searches
+
+Kategorijų sekcija (`Naršyti pagal kategoriją`) išlaikyta, bet perkelta po Popular Products ir vizualiai sušvelninta — funkcionalumas (buildCats, click handlers) išliko.
+
+### Kalbų pakeitimai
+
+LT/EN/DE/PL pridėta:
+- `headline` (Apple-style su tašku)
+- `subtagline` ("Find the best price anywhere online." ir pan.)
+- `search_placeholder_ai` (premium ChatGPT-style placeholder)
+- `scan_btn_short` / `voice_btn_short` (kompaktiškos versijos siauram viewport)
+- `sec_popular` / `sec_categories` / `sec_recent`
+
+### Validacijos scenarijai
+
+| # | Scenarijus | Pass? |
+|---|-----------|-------|
+| 1 | Vartotojas mato produktą parduotuvėje per 2s suprato kameros funkciją | ✓ — „Skenuoti" mygtukas su žalia kameros ikona pirmoje pozicijoje |
+| 2 | Vartotojas nori naujų ausinių per 3s rado | ✓ — Premium AI Search card centre + Popular Products iškart matomi |
+| 3 | Vartotojas randa pigesnį €87 — kelio celebrate? | (rezultatų puslapis vis dar turi `.deal-win-card` — subtle gradient, ne casino) |
+| 4 | Pirmas atidarymas — supranta ką GOODY daro? | ✓ — Headline + subtitle + 3 trust items + hero card vienoje peržiūroje |
+| 5 | €2,000 pirkinys — pasitiki? | ✓ — typography-first, jokio gaming-glow, premium tamsi paletė, soft motion |
+| 6 | Įprotis sugrįžti? | ✓ — Floating nav glassmorphism + recent searches + visada matomas AI search hero |
+
+---
+
+## 1. Pirminis redizainas (ankstesnis etapas)
 
 ## 1. Dizaino pakeitimai (premium UI)
 

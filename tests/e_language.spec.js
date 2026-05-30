@@ -17,7 +17,7 @@ test('E: language switch LT → EN updates headline, subtitle, social proof, nav
   await page.locator('#lang-toggle').click();
   await page.locator('#lang-en').click();
   await expect(headline).toContainText('Never overpay again');
-  await expect(subtitle).toContainText(/Scan a price tag/);
+  await expect(subtitle).toContainText(/best price anywhere online/i);
   await expect(spPrices).toContainText(/prices checked/);
   await expect(navHome).toContainText('Home');
 
