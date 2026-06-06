@@ -283,6 +283,26 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .snap-btn:active{transform:scale(0.97);}
 .snap-btn:disabled{opacity:0.5;cursor:not-allowed;}
 
+/* ── CONFIRM PANEL (after identify-product) ── */
+.cam-confirm{display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0 20px 32px;}
+.ccf-thumb{width:100%;max-height:190px;object-fit:contain;border-radius:16px;background:#000;display:block;margin:14px 0 16px;}
+.ccf-shimmer-wrap{padding:4px 0 8px;}
+.ccf-shimmer{height:18px;border-radius:8px;background:linear-gradient(90deg,var(--card) 25%,rgba(255,255,255,0.07) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer-slide 1.4s infinite;margin-bottom:10px;}
+@keyframes shimmer-slide{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.ccf-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;}
+.ccf-name{font-size:18px;font-weight:800;color:var(--ink);line-height:1.25;margin-bottom:5px;}
+.ccf-details{font-size:13px;color:var(--ink3);margin-bottom:16px;font-weight:500;}
+.ccf-warn{background:var(--amber-l);border:1px solid rgba(255,184,48,0.22);border-radius:14px;padding:13px 14px;margin-bottom:14px;}
+.ccf-warn-txt{font-size:13px;color:var(--amber);font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:flex-start;}
+.ccf-edit{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--ink);font-family:var(--ff);font-size:15px;font-weight:600;outline:none;-webkit-appearance:none;}
+.ccf-edit:focus{border-color:rgba(39,224,138,0.4);}
+.ccf-btn-search{width:100%;padding:16px;background:var(--green);color:#0E1420;border:none;border-radius:var(--r);font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px;transition:transform var(--dur),box-shadow var(--dur);letter-spacing:-0.1px;}
+.ccf-btn-search:active{transform:scale(0.97);}
+.ccf-btn-retake{width:100%;padding:13px;background:none;border:1.5px solid var(--border2);border-radius:var(--r);font-family:var(--ff);font-size:14px;font-weight:700;color:var(--ink2);cursor:pointer;transition:border-color var(--dur),background var(--dur);}
+.ccf-btn-retake:hover{border-color:rgba(255,255,255,0.18);background:rgba(255,255,255,0.03);}
+.ccf-hint-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:14px;}
+.ccf-hint-row{font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;align-items:flex-start;}
+
 /* ── RESULTS ── */
 .res-head{padding:16px 22px 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .back-btn{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
@@ -957,6 +977,43 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
         <span>📷</span><span>Įjungti kamerą</span>
       </button>
+    </div>
+
+    <!-- CONFIRM PANEL: shown after identify-product -->
+    <div class="cam-confirm" id="cam-confirm">
+      <img class="ccf-thumb" id="ccf-thumb" src="" alt="Product photo">
+      <div id="ccf-loading">
+        <div class="ccf-shimmer-wrap">
+          <div class="ccf-shimmer" style="width:55%;"></div>
+          <div class="ccf-shimmer" style="width:38%;"></div>
+          <div class="ccf-shimmer" style="width:68%;margin-top:16px;height:14px;"></div>
+          <div class="ccf-shimmer" style="width:45%;height:14px;"></div>
+        </div>
+      </div>
+      <div id="ccf-result" style="display:none;">
+        <div class="ccf-label" id="ccf-found-lbl">Atpažinau</div>
+        <div class="ccf-name" id="ccf-name"></div>
+        <div class="ccf-details" id="ccf-details"></div>
+        <div class="ccf-warn" id="ccf-warn" style="display:none;">
+          <div class="ccf-warn-txt">⚠️ <span id="ccf-warn-txt"></span></div>
+          <input class="ccf-edit" id="ccf-edit" type="text" placeholder="Pakeisk produkto pavadinimą...">
+        </div>
+        <button class="ccf-btn-search" id="ccf-search-btn" onclick="confirmSearch()">✓ <span id="ccf-search-lbl">Ieškoti pigiau</span></button>
+        <button class="ccf-btn-retake" onclick="retakePhoto()">↻ <span id="ccf-retake-lbl">Fotografuoti iš naujo</span></button>
+      </div>
+      <div id="ccf-error" style="display:none;">
+        <div style="text-align:center;padding:20px 0 16px;">
+          <div style="font-size:40px;margin-bottom:12px;">🔍</div>
+          <div id="ccf-err-title" style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;"></div>
+          <div id="ccf-err-sub" style="font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.5;"></div>
+        </div>
+        <div class="ccf-hint-box">
+          <div class="ccf-hint-row">💡 <span id="ccf-h1"></span></div>
+          <div class="ccf-hint-row">🔆 <span id="ccf-h2"></span></div>
+          <div class="ccf-hint-row">✏️ <span id="ccf-h3"></span></div>
+        </div>
+        <button class="ccf-btn-retake" onclick="retakePhoto()" style="margin-top:16px;">↻ <span id="ccf-err-retake-lbl">Fotografuoti iš naujo</span></button>
+      </div>
     </div>
   </div>
 
@@ -1649,25 +1706,47 @@ function _editSearch(){
 let _voiceActive=false;
 function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){toast({"lt":"Balso paieška nepalaikoma šioje naršyklėje","de":"Sprachsuche in diesem Browser nicht unterstützt","pl":"Wyszukiwanie głosowe nie jest obsługiwane w tej przeglądarce"}[curLang]||"Voice search not supported in this browser");return;}
-  if(_voiceActive)return;
-  _voiceActive=true;
+  if(!SR){
+    toast({"lt":"Balso paieška nepalaikoma — naudokite Chrome","en":"Voice search not supported — use Chrome","ru":"Голосовой поиск не поддерживается — используйте Chrome","pl":"Wyszukiwanie głosowe nieobsługiwane — użyj Chrome","de":"Sprachsuche nicht unterstützt — Chrome verwenden"}[curLang]||"Voice search not supported — use Chrome");
+    return;
+  }
   const btn=document.getElementById("voice-btn");
+  if(_voiceActive){
+    _voiceActive=false;
+    if(btn)btn.classList.remove("listening");
+    return;
+  }
+  _voiceActive=true;
   if(btn)btn.classList.add("listening");
   const rec=new SR();
-  rec.lang={"lt":"lt-LT","de":"de-DE","pl":"pl-PL"}[curLang]||"en-US";
-  rec.interimResults=false;rec.maxAlternatives=1;
+  rec.lang={"lt":"lt-LT","en":"en-US","ru":"ru-RU","pl":"pl-PL","de":"de-DE"}[curLang]||"lt-LT";
+  rec.interimResults=false;rec.maxAlternatives=1;rec.continuous=false;
   rec.onresult=e=>{
-    const q=e.results[0][0].transcript;
-    document.getElementById("srch-inp").value=q;
-    onSrchInput(document.getElementById("srch-inp"));
-    doSearch();
+    const q=(e.results[0][0].transcript||"").trim();
+    if(!q)return;
+    const inp=document.getElementById("srch-inp");
+    inp.value=q;onSrchInput(inp);
+    setTimeout(doSearch,120);
   };
-  rec.onerror=()=>{_voiceActive=false;if(btn)btn.classList.remove("listening");toast({"lt":"Balsas neatpažintas — bandykite dar kartą","de":"Sprache nicht erkannt — erneut versuchen","pl":"Nie rozpoznano głosu — spróbuj ponownie"}[curLang]||"Voice not recognized — try again");};
+  rec.onerror=ev=>{
+    _voiceActive=false;if(btn)btn.classList.remove("listening");
+    const err=ev.error||"";
+    if(err==="not-allowed"||err==="permission-denied"){
+      toast({"lt":"Mikrofonas užblokuotas — leisk prieigą naršyklės nustatymuose","en":"Microphone blocked — allow access in browser settings","ru":"Микрофон заблокирован — разрешите доступ в настройках","pl":"Mikrofon zablokowany — zezwól w ustawieniach","de":"Mikrofon gesperrt — Zugriff in den Browsereinstellungen erlauben"}[curLang]||"Microphone blocked — allow in browser settings");
+    } else if(err==="no-speech"){
+      toast({"lt":"Nieko negirdėjau — bandykite dar kartą","en":"No speech detected — try again","ru":"Ничего не слышу — попробуйте снова","pl":"Brak mowy — spróbuj ponownie","de":"Keine Sprache erkannt — erneut versuchen"}[curLang]||"No speech detected");
+    } else {
+      toast({"lt":"Balsas neatpažintas — bandykite dar kartą","en":"Voice not recognized — try again","ru":"Голос не распознан — попробуйте снова","pl":"Nie rozpoznano głosu — spróbuj ponownie","de":"Sprache nicht erkannt — erneut versuchen"}[curLang]||"Voice not recognized");
+    }
+  };
   rec.onend=()=>{_voiceActive=false;if(btn)btn.classList.remove("listening");};
-  rec.start();
-  const voiceLbl={"lt":"Klausomasi...","de":"Höre zu...","pl":"Słucham..."}[curLang]||"Listening...";
-  toast(voiceLbl);
+  try{
+    rec.start();
+    toast({"lt":"Klausomasi...","en":"Listening...","ru":"Слушаю...","pl":"Słucham...","de":"Höre zu..."}[curLang]||"Listening...");
+  }catch(startErr){
+    _voiceActive=false;if(btn)btn.classList.remove("listening");
+    toast({"lt":"Nepavyko paleisti balso paieškos","en":"Could not start voice search","ru":"Не удалось запустить голосовой поиск","pl":"Nie udało się uruchomić wyszukiwania głosowego","de":"Sprachsuche konnte nicht gestartet werden"}[curLang]||"Could not start voice search");
+  }
 }
 
 function addGoodyUtm(url){
@@ -2332,7 +2411,8 @@ function updateRateUI(d){
 /* ── CAMERA ── */
 function openCam(mode){
   if(typeof ZXing==="undefined"){toast({"lt":"Skeneris dar kraunamas, palaukite...","de":"Scanner lädt noch...","pl":"Skaner ładuje się..."}[curLang]||"Scanner loading...");return;}
-  camMode=mode; capturedB64=null;
+  camMode=mode; capturedB64=null; _identifyResult=null;
+  _hideConfirmPanel();
   switchCM(mode);
   document.getElementById("cp-wrap").style.display="none";
   document.getElementById("vf-wrap").style.display="none";
@@ -2344,6 +2424,8 @@ function openCam(mode){
 function closeCam(){
   document.getElementById("cam-sheet").classList.remove("open");
   stopCam();
+  _hideConfirmPanel();
+  capturedB64=null;_identifyResult=null;
   const activePage=document.querySelector(".page.on");
   if(activePage){
     const pgId=activePage.id.replace("pg-","");
@@ -2401,7 +2483,7 @@ function switchCM(mode){
   const lt2=getLang();document.getElementById("cam-title").textContent=mode==="barcode"?(lt2.scan_barcode||"Nuskaityti barkodą"):(lt2.scan_price||"Nuskaityti kainų etiketę");
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
-  capturedB64=null;document.getElementById("cp-wrap").style.display="none";resetSnap();
+  capturedB64=null;_identifyResult=null;_hideConfirmPanel();document.getElementById("cp-wrap").style.display="none";resetSnap();
 }
 function resetSnap(){
   const btn=document.getElementById("c-snap");btn.disabled=false;btn.style.background="var(--green)";
@@ -2409,7 +2491,6 @@ function resetSnap(){
   btn.onclick=()=>snapOrSearch();
 }
 async function snapOrSearch(){
-  if(capturedB64){await runScan();return;}
   if(!camStream){await startCam();return;}
   if(camMode==="price"){clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;captureFrame();}
 }
@@ -2423,8 +2504,16 @@ async function startCam(){
     document.querySelector(".vf-frame").style.display="block";
     await new Promise(r=>v.onloadedmetadata=r);
     btn.disabled=false;
-    if(camMode==="barcode"){btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";btn.disabled=true;startBcLoop();}
-    else{btn.innerHTML="<span>📷</span><span>"+( {"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")+"</span>";startQualityLoop();}
+    const hint=document.getElementById("bc-hint");
+    if(camMode==="barcode"){
+      btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";
+      btn.disabled=true;startBcLoop();
+    } else {
+      const capLbl={"lt":"Fotografuoti","en":"Take photo","ru":"Сфотографировать","pl":"Zrób zdjęcie","de":"Foto aufnehmen"}[curLang]||"Take photo";
+      btn.innerHTML=`<span>📷</span><span>${capLbl}</span>`;
+      if(hint){hint.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","ru":"Наведите на товар и нажмите","pl":"Skieruj na produkt i naciśnij","de":"Auf Produkt richten und drücken"}[curLang]||"Point at product and press";hint.style.display="block";}
+      startQualityLoop();
+    }
   }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
 }
 function playBeep(){
@@ -2499,9 +2588,12 @@ function onBcFound(code){
 function captureFrame(){
   const v=document.getElementById("vf-video");const c=document.createElement("canvas");
   c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
-  capturedB64=c.toDataURL("image/jpeg",.85).split(",")[1];
-  stopCam();closeCam();
-  runScan();
+  const dataUrl=c.toDataURL("image/jpeg",.85);
+  capturedB64=dataUrl.split(",")[1];
+  if(navigator.vibrate)navigator.vibrate(50);
+  stopCam();
+  _showConfirmLoading(dataUrl);
+  runIdentify();
 }
 function setPrevImage(b64,src){
   capturedB64=b64;
@@ -2520,13 +2612,133 @@ function handleUpload(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
-    const b64=ev.target.result.split(",")[1];
+    const dataUrl=ev.target.result;
+    const b64=dataUrl.split(",")[1];
     if(camStream)stopCam();
-    if(camMode==="barcode")tryDecImg(ev.target.result,b64);
-    else setPrevImage(b64,"upload");
+    if(camMode==="barcode"){tryDecImg(dataUrl,b64);}
+    else{capturedB64=b64;_showConfirmLoading(dataUrl);runIdentify();}
   };
   reader.readAsDataURL(file);e.target.value="";
 }
+// ── NEW SCAN FLOW: identify → confirm → search ────────────────
+let _identifyResult=null;
+
+function _showConfirmLoading(thumbDataUrl){
+  const t=getLang();
+  document.getElementById("cam-modes").style.display="none";
+  document.getElementById("vf-wrap").style.display="none";
+  document.getElementById("cp-wrap").style.display="none";
+  document.querySelector(".cam-snap-wrap").style.display="none";
+  document.getElementById("cam-title").textContent={"lt":"Atpažįstu produktą...","en":"Identifying product...","ru":"Определяю продукт...","pl":"Rozpoznaję produkt...","de":"Erkenne Produkt..."}[curLang]||"Identifying product...";
+  const conf=document.getElementById("cam-confirm");
+  conf.style.display="flex";
+  document.getElementById("ccf-thumb").src=thumbDataUrl||"";
+  document.getElementById("ccf-loading").style.display="block";
+  document.getElementById("ccf-result").style.display="none";
+  document.getElementById("ccf-error").style.display="none";
+}
+
+async function runIdentify(){
+  try{
+    const _sc=new AbortController();
+    const _st=setTimeout(()=>_sc.abort(),30000);
+    const resp=await fetch(`${API_BASE}/api/identify-product`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({image:capturedB64,language:curLang}),
+      signal:_sc.signal
+    });
+    clearTimeout(_st);
+    const data=await resp.json();
+    if(data.error||!data.product_name){
+      _showConfirmError();
+    } else {
+      _identifyResult=data;
+      _showConfirmResult(data);
+    }
+  }catch(e){
+    _showConfirmError();
+  }
+}
+
+function _showConfirmResult(data){
+  document.getElementById("ccf-loading").style.display="none";
+  document.getElementById("ccf-error").style.display="none";
+  const res=document.getElementById("ccf-result");
+  res.style.display="block";
+  const lt=getLang();
+  document.getElementById("cam-title").textContent={"lt":"Patvirtink produktą","en":"Confirm product","ru":"Подтвердите продукт","pl":"Potwierdź produkt","de":"Produkt bestätigen"}[curLang]||"Confirm product";
+  const foundLbl={"lt":"Atpažinau","en":"Identified","ru":"Найдено","pl":"Rozpoznano","de":"Erkannt"};
+  document.getElementById("ccf-found-lbl").textContent=foundLbl[curLang]||"Identified";
+  document.getElementById("ccf-name").textContent=data.product_name||"";
+  document.getElementById("ccf-details").textContent=data.details||"";
+  const searchLbl={"lt":"Ieškoti pigiau","en":"Find cheaper","ru":"Найти дешевле","pl":"Znajdź taniej","de":"Günstiger finden"};
+  document.getElementById("ccf-search-lbl").textContent=searchLbl[curLang]||"Find cheaper";
+  const retakeLbl={"lt":"Fotografuoti iš naujo","en":"Retake photo","ru":"Сфотографировать заново","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"};
+  document.getElementById("ccf-retake-lbl").textContent=retakeLbl[curLang]||"Retake photo";
+  const warn=document.getElementById("ccf-warn");
+  const edit=document.getElementById("ccf-edit");
+  if(data.confidence==="low"){
+    warn.style.display="block";
+    const warnTxt={"lt":"Nesu tikras — patikrink ar teisingas pavadinimas","en":"Not sure — please check the name","ru":"Не уверен — проверьте название","pl":"Nie jestem pewny — sprawdź nazwę","de":"Unsicher — bitte Namen prüfen"};
+    document.getElementById("ccf-warn-txt").textContent=warnTxt[curLang]||"Not sure — please check";
+    edit.value=data.product_name||"";
+    edit.placeholder={"lt":"Patikrink arba pakeisk pavadinimą...","en":"Check or edit name...","ru":"Проверьте или исправьте название...","pl":"Sprawdź lub edytuj nazwę..."}[curLang]||"Check or edit name...";
+  } else {
+    warn.style.display="none";
+    edit.value=data.product_name||"";
+  }
+}
+
+function _showConfirmError(){
+  document.getElementById("ccf-loading").style.display="none";
+  document.getElementById("ccf-result").style.display="none";
+  document.getElementById("ccf-error").style.display="block";
+  document.getElementById("cam-title").textContent={"lt":"Neatpažinta","en":"Not recognized","ru":"Не распознано","pl":"Nie rozpoznano","de":"Nicht erkannt"}[curLang]||"Not recognized";
+  document.getElementById("ccf-err-title").textContent={"lt":"Produktas neatpažintas","en":"Product not recognized","ru":"Продукт не распознан","pl":"Produkt nie rozpoznany","de":"Produkt nicht erkannt"}[curLang]||"Product not recognized";
+  document.getElementById("ccf-err-sub").textContent={"lt":"Nepavyko atpažinti produkto iš nuotraukos","en":"Could not identify the product from your photo","ru":"Не удалось определить продукт по фото","pl":"Nie udało się rozpoznać produktu ze zdjęcia","de":"Produkt konnte aus dem Foto nicht erkannt werden"}[curLang]||"Could not identify product";
+  document.getElementById("ccf-h1").textContent={"lt":"Įsitikink, kad produkto pavadinimas aiškiai matomas","en":"Make sure the product name is clearly visible","ru":"Убедитесь, что название продукта хорошо видно","pl":"Upewnij się, że nazwa produktu jest wyraźnie widoczna"}[curLang]||"Make sure product label is visible";
+  document.getElementById("ccf-h2").textContent={"lt":"Pabandyk geresnį apšvietimą arba priartink","en":"Try better lighting or a closer shot","ru":"Попробуйте лучшее освещение или снимите ближе","pl":"Spróbuj lepszego oświetlenia lub zbliż aparat"}[curLang]||"Try better lighting or closer";
+  document.getElementById("ccf-h3").textContent={"lt":"Arba įvesk produkto pavadinimą rankiniu būdu","en":"Or just type the product name manually","ru":"Или введите название продукта вручную","pl":"Albo wpisz nazwę produktu ręcznie"}[curLang]||"Or type product name manually";
+  const rl={"lt":"Fotografuoti iš naujo","en":"Retake photo","ru":"Сфотографировать заново","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"}[curLang]||"Retake photo";
+  document.getElementById("ccf-err-retake-lbl").textContent=rl;
+}
+
+function _hideConfirmPanel(){
+  const conf=document.getElementById("cam-confirm");
+  if(conf)conf.style.display="none";
+  const modes=document.getElementById("cam-modes");
+  if(modes)modes.style.display="";
+  const snapWrap=document.querySelector(".cam-snap-wrap");
+  if(snapWrap)snapWrap.style.display="flex";
+}
+
+function confirmSearch(){
+  const data=_identifyResult;
+  if(!data)return;
+  const editEl=document.getElementById("ccf-edit");
+  const q=(editEl&&editEl.value.trim())||(data.search_query||data.product_name||"");
+  if(!q)return;
+  if(navigator.vibrate)navigator.vibrate([40,30,40]);
+  closeCam();
+  _hideConfirmPanel();
+  document.getElementById("srch-inp").value=q;
+  doSearch();
+}
+
+function retakePhoto(){
+  capturedB64=null;_identifyResult=null;
+  _hideConfirmPanel();
+  stopCam();
+  const lt=getLang();
+  document.getElementById("cam-title").textContent=camMode==="barcode"?(lt.scan_barcode||"Nuskaityti barkodą"):(lt.scan_price||"Nuskaityti kainų etiketę");
+  document.getElementById("cp-wrap").style.display="none";
+  document.getElementById("vf-wrap").style.display="none";
+  resetSnap();
+  startCam();
+}
+// ── END NEW SCAN FLOW ─────────────────────────────────────────
+
 function tryDecImg(dataUrl,b64){
   if(typeof ZXing==="undefined"){setPrevImage(b64,"upload");return;}
   const img=new Image();
@@ -2539,7 +2751,7 @@ function tryDecImg(dataUrl,b64){
       const r=new ZXing.MultiFormatReader();r.setHints(hints);
       const res=r.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(id.data,c.width,c.height))));
       onBcFound(res.getText());
-    }catch(e){setPrevImage(b64,"upload");}
+    }catch(e){capturedB64=b64;_showConfirmLoading(dataUrl);runIdentify();}
   };img.src=dataUrl;
 }
 async function runScan(){
