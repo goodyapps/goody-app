@@ -237,7 +237,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 /* ── CAMERA SHEET ── */
 .cam-sheet{position:absolute;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.16,1,0.3,1);}
 .cam-sheet.open{transform:translateY(0);}
-.cam-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;flex-shrink:0;}
+.cam-head{display:flex;align-items:center;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 20px 14px;flex-shrink:0;}
 .cam-title{font-size:16px;font-weight:700;}
 .cam-close{width:44px;height:44px;border-radius:50%;background:var(--card2);border:none;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .cam-modes{display:flex;gap:8px;padding:0 20px 14px;flex-shrink:0;}
@@ -278,10 +278,15 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cprev-s{font-size:12px;color:var(--ink3);margin-top:2px;}
 .cam-upload{display:flex;justify-content:center;padding:8px 20px;flex-shrink:0;}
 .upload-btn{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 20px;color:var(--ink3);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;}
-.cam-snap-wrap{padding:14px 20px 32px;flex-shrink:0;}
+.cam-snap-wrap{padding:10px 20px 32px;flex-shrink:0;}
 .snap-btn{width:100%;height:54px;border-radius:var(--r);background:var(--green);border:none;color:#121A24;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform var(--dur),background var(--dur);}
 .snap-btn:active{transform:scale(0.97);}
 .snap-btn:disabled{opacity:0.5;cursor:not-allowed;}
+/* ── SHUTTER BUTTON (photo mode) ── */
+.shutter-circle{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,0.42);box-shadow:0 0 0 3px rgba(39,224,138,0.65),0 4px 22px rgba(0,0,0,0.42);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.12s,box-shadow 0.12s;}
+.shutter-circle:active{transform:scale(0.91);box-shadow:0 0 0 4px rgba(39,224,138,1),0 4px 22px rgba(0,0,0,0.42);}
+.shutter-circle:disabled{opacity:0.4;cursor:not-allowed;}
+.shutter-inner{width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.05);border:2px solid rgba(0,0,0,0.10);}
 
 /* ── CONFIRM PANEL (after identify-product) ── */
 .cam-confirm{display:none;flex-direction:column;flex:1;overflow-y:auto;padding:0 20px 32px;}
@@ -972,11 +977,15 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="cam-prev-wrap" id="cp-wrap">
       <div class="cprev" id="cprev"></div>
     </div>
-    <div class="cam-snap-wrap" style="display:flex;gap:10px;align-items:center;justify-content:center;">
-      <button onclick="document.getElementById('fu').click()" style="flex-shrink:0;width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;" aria-label="Galerija" title="Iš galerijos">🖼️</button>
-      <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
-        <span>📷</span><span>Įjungti kamerą</span>
-      </button>
+    <div class="cam-snap-wrap" id="cam-snap-wrap">
+      <div id="shutter-hint-bar" style="display:none;text-align:center;margin-bottom:10px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);letter-spacing:0.04em;"></div>
+      <div id="snap-inner" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <button onclick="document.getElementById('fu').click()" id="gallery-btn" style="flex-shrink:0;width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;" aria-label="Galerija" title="Iš galerijos">🖼️</button>
+        <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
+          <span>📷</span><span>Įjungti kamerą</span>
+        </button>
+        <div id="snap-spacer" style="display:none;width:52px;flex-shrink:0;"></div>
+      </div>
     </div>
 
     <!-- CONFIRM PANEL: shown after identify-product -->
@@ -2478,11 +2487,12 @@ function startQualityLoop(){
     const btn=document.getElementById("c-snap");
     if(!btn)return;
     const sharp=_getFrameSharpness();
-    const baseLbl={"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo";
-    if(sharp>38){
-      btn.innerHTML=`<span>📷</span><span>${baseLbl} ✓</span>`;
+    if(btn.className!=="shutter-circle"){
+      const baseLbl={"lt":"Fotografuoti","en":"Take photo","ru":"Сфотографировать","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo";
+      btn.innerHTML=sharp>38?`<span>📷</span><span>${baseLbl} ✓</span>`:`<span>📷</span><span>${baseLbl}</span>`;
     } else {
-      btn.innerHTML=`<span>📷</span><span>${baseLbl}</span>`;
+      // For circular shutter: subtle glow when sharp
+      btn.style.boxShadow=sharp>38?"0 0 0 4px rgba(39,224,138,0.9),0 4px 22px rgba(0,0,0,0.42)":"0 0 0 3px rgba(39,224,138,0.65),0 4px 22px rgba(0,0,0,0.42)";
     }
   },600);
 }
@@ -2490,6 +2500,7 @@ function switchCM(mode){
   camMode=mode;
   // Stop barcode scanner if switching away from barcode mode
   clearInterval(scanLoop);scanLoop=null;
+  clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
   // Always clear barcode result bar when switching modes
   const _bcBar=document.getElementById("bc-result-bar");if(_bcBar)_bcBar.classList.remove("show");
   const _frame=document.querySelector(".vf-frame");if(_frame)_frame.classList.remove("locked");
@@ -2501,9 +2512,33 @@ function switchCM(mode){
   capturedB64=null;_identifyResult=null;_hideConfirmPanel();document.getElementById("cp-wrap").style.display="none";resetSnap();
 }
 function resetSnap(){
-  const btn=document.getElementById("c-snap");btn.disabled=false;btn.style.background="var(--green)";
-  btn.innerHTML=`<span>📷</span><span>${camStream?(camMode==="barcode"?({"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning..."):({"lt":"Fotografuoti","de":"Foto aufnehmen","pl":"Zrób zdjęcie"}[curLang]||"Take photo")):({"lt":"Įjungti kamerą","de":"Kamera aktivieren","pl":"Włącz kamerę"}[curLang]||"Enable camera")}</span>`;
+  const btn=document.getElementById("c-snap");
+  const hBar=document.getElementById("shutter-hint-bar");
+  const sInner=document.getElementById("snap-inner");
+  const spacer=document.getElementById("snap-spacer");
   btn.onclick=()=>snapOrSearch();
+  if(camStream&&camMode==="price"){
+    // ── Photo mode: big circular shutter button ──
+    btn.disabled=false;btn.className="shutter-circle";btn.removeAttribute("style");
+    btn.innerHTML='<div class="shutter-inner"></div>';
+    if(sInner)sInner.style.justifyContent="space-between";
+    if(spacer)spacer.style.display="flex";
+    if(hBar){hBar.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","ru":"Наведите на товар и нажмите","pl":"Skieruj na produkt i naciśnij","de":"Auf Produkt richten und drücken"}[curLang]||"Point at product and press";hBar.style.display="block";}
+  }else if(camStream&&camMode==="barcode"){
+    // ── Barcode mode: disabled scanning indicator ──
+    btn.disabled=true;btn.className="snap-btn";btn.style.background="var(--green)";
+    btn.innerHTML=`<span>▦</span><span>${{"lt":"Skenuojama...","en":"Scanning...","ru":"Сканирование...","pl":"Skanowanie...","de":"Scannt..."}[curLang]||"Scanning..."}</span>`;
+    if(sInner)sInner.style.justifyContent="center";
+    if(spacer)spacer.style.display="none";
+    if(hBar)hBar.style.display="none";
+  }else{
+    // ── No camera: start button ──
+    btn.disabled=false;btn.className="snap-btn";btn.style.background="var(--green)";
+    btn.innerHTML=`<span>📷</span><span>${{"lt":"Įjungti kamerą","en":"Enable camera","ru":"Включить камеру","pl":"Włącz kamerę","de":"Kamera aktivieren"}[curLang]||"Enable camera"}</span>`;
+    if(sInner)sInner.style.justifyContent="center";
+    if(spacer)spacer.style.display="none";
+    if(hBar)hBar.style.display="none";
+  }
 }
 async function snapOrSearch(){
   if(!camStream){await startCam();return;}
@@ -2518,14 +2553,11 @@ async function startCam(){
     document.getElementById("vf-wrap").style.display="block";
     document.querySelector(".vf-frame").style.display="block";
     await new Promise(r=>v.onloadedmetadata=r);
-    btn.disabled=false;
-    const hint=document.getElementById("bc-hint");
+    resetSnap();  // sets correct button style (shutter circle for photo, indicator for barcode)
     if(camMode==="barcode"){
-      btn.innerHTML="<span>▦</span><span>"+( {"lt":"Skenuojama...","de":"Scannt...","pl":"Skanowanie..."}[curLang]||"Scanning...")+"</span>";
-      btn.disabled=true;startBcLoop();
+      startBcLoop();
     } else {
-      const capLbl={"lt":"Fotografuoti","en":"Take photo","ru":"Сфотографировать","pl":"Zrób zdjęcie","de":"Foto aufnehmen"}[curLang]||"Take photo";
-      btn.innerHTML=`<span>📷</span><span>${capLbl}</span>`;
+      const hint=document.getElementById("bc-hint");
       if(hint){hint.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","ru":"Наведите на товар и нажмите","pl":"Skieruj na produkt i naciśnij","de":"Auf Produkt richten und drücken"}[curLang]||"Point at product and press";hint.style.display="block";}
       startQualityLoop();
     }
@@ -2543,6 +2575,7 @@ function playBeep(){
   }catch(e){}
 }
 function startBcLoop(){
+  if(camMode!=="barcode")return;  // strict guard: never run barcode scanner in photo mode
   if(typeof ZXing==="undefined"){_bcLoopTimer=setTimeout(startBcLoop,800);return;}
   // Show "point at barcode" hint
   const hint=document.getElementById("bc-hint");
@@ -2563,6 +2596,7 @@ function startBcLoop(){
   },200);
 }
 function onBcFound(code){
+  if(camMode!=="barcode")return;  // strict guard: never trigger in photo mode
   clearInterval(scanLoop);scanLoop=null;
 
   // 1. Vibrate
