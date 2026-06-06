@@ -129,10 +129,68 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   }
 }
 .hero-scan-invite{
-  font-size:13.5px;color:rgba(255,255,255,0.62);font-weight:500;letter-spacing:-0.05px;
-  text-align:center;margin-top:2px;
+  font-size:20px;color:rgba(255,255,255,0.92);font-weight:800;letter-spacing:-0.4px;
+  text-align:center;margin-top:6px;line-height:1.1;
 }
-.hero-scan-invite strong{color:rgba(255,255,255,0.86);font-weight:600;}
+.hero-scan-invite strong{color:var(--green);font-weight:900;}
+.hero-scan-invite-sub{
+  font-size:13px;color:rgba(255,255,255,0.48);font-weight:400;
+  text-align:center;margin-top:5px;letter-spacing:-0.05px;
+}
+
+/* ── HERO DEMO CARD (looping 3-phase animation) ── */
+.hero-demo{padding:0 18px 6px;pointer-events:none;user-select:none;}
+.hd-card{
+  background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.07);
+  border-radius:20px;height:88px;position:relative;overflow:hidden;
+}
+.hd-phase{
+  position:absolute;inset:0;padding:14px 16px;
+  display:flex;flex-direction:column;justify-content:center;
+  opacity:0;
+}
+.hd-p1{animation:hd-cycle 7s 0s infinite;}
+.hd-p2{animation:hd-cycle 7s calc(-7s/3) infinite;}
+.hd-p3{animation:hd-cycle 7s calc(-14s/3) infinite;}
+@keyframes hd-cycle{
+  0%{opacity:0;transform:translateY(5px);}
+  7%{opacity:1;transform:translateY(0);}
+  27%{opacity:1;transform:translateY(0);}
+  34%{opacity:0;transform:translateY(-4px);}
+  100%{opacity:0;}
+}
+.hd-row1{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.hd-icon-sm{font-size:22px;line-height:1;flex-shrink:0;}
+.hd-scan-wrap{flex:1;}
+.hd-scan-lbl{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.hd-scan-track{height:2.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;position:relative;}
+.hd-scan-beam{position:absolute;top:0;left:-60%;bottom:0;width:60%;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:hd-beam 1.4s linear infinite;}
+@keyframes hd-beam{0%{left:-60%;}100%{left:110%;}}
+.hd-scan-sub{font-size:11px;color:var(--ink3);margin-top:4px;}
+.hd-found-row{display:flex;align-items:center;gap:10px;}
+.hd-found-ic{width:34px;height:34px;border-radius:50%;background:rgba(39,224,138,0.14);border:1.5px solid rgba(39,224,138,0.38);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hd-found-ic svg{width:16px;height:16px;color:var(--green);}
+.hd-found-name{font-size:14px;font-weight:800;color:var(--ink);line-height:1.2;}
+.hd-found-tag{font-size:11px;color:var(--green);font-weight:600;margin-top:2px;}
+.hd-prices{display:flex;flex-direction:column;gap:3px;width:100%;}
+.hd-pr{display:flex;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hd-pr:last-child{border:none;}
+.hd-pr-shop{font-size:11.5px;color:var(--ink3);flex:1;font-weight:500;}
+.hd-pr-price{font-size:13px;font-weight:800;color:var(--ink);margin-right:6px;}
+.hd-pr-tag{font-size:10px;font-weight:700;color:var(--green);background:rgba(39,224,138,0.1);padding:1px 6px;border-radius:10px;}
+.hd-pr.best .hd-pr-shop{color:var(--ink2);}
+.hd-pr.best .hd-pr-price{color:var(--green);}
+
+/* ── VOICE BUTTON inside search row ── */
+.srch-voice{width:36px;height:36px;border-radius:10px;background:none;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.46);transition:color var(--dur),background var(--dur);flex-shrink:0;}
+.srch-voice:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.04);}
+.srch-voice:active{transform:scale(0.94);}
+.srch-voice.listening{color:var(--red);animation:pulse-r 1.2s ease infinite;}
+.srch-voice svg{width:17px;height:17px;}
+
+/* ── CONFIRM "AHA" animation ── */
+@keyframes ccf-pop{0%{transform:scale(0) rotate(-10deg);opacity:0;}60%{transform:scale(1.18) rotate(4deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+.ccf-anim-pop{animation:ccf-pop 0.5s cubic-bezier(0.16,1,0.3,1) both;}
 @media(prefers-reduced-motion:reduce){
   .hero-scan-btn{animation:none;}
   .hero-scan-ring{display:none;}
@@ -797,11 +855,58 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div id="home-stat" style="display:none;font-size:11px;color:var(--ink3);padding:2px 22px 0;font-weight:600;"></div>
 
     <div class="hero-head">
-      <h1 class="hero-headline" id="hero-headline">Niekada nepermokėk.</h1>
-      <p class="hero-subtitle" id="hero-subtitle">GOODY AI patikrina 7 parduotuves per sekundes.</p>
+      <h1 class="hero-headline" id="hero-headline">Fotografuok. Taupyk.</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Nufotografuok bet ką → GOODY randa pigiausią kainą.</p>
     </div>
 
-    <!-- Central Scan Hero — inviting pulse, primary action -->
+    <!-- Demo card: looping 3-phase preview of what GOODY does -->
+    <div class="hero-demo" id="hero-demo" aria-hidden="true">
+      <div class="hd-card">
+        <!-- Phase 1: Scanning -->
+        <div class="hd-phase hd-p1">
+          <div class="hd-row1">
+            <div class="hd-icon-sm">📦</div>
+            <div class="hd-scan-wrap">
+              <div class="hd-scan-lbl" id="hd-lbl1">Nufotografuok produktą</div>
+              <div class="hd-scan-track"><div class="hd-scan-beam"></div></div>
+              <div class="hd-scan-sub" id="hd-sub1">GOODY AI atpažįsta iš nuotraukos</div>
+            </div>
+          </div>
+        </div>
+        <!-- Phase 2: Recognized -->
+        <div class="hd-phase hd-p2">
+          <div class="hd-found-row">
+            <div class="hd-found-ic">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="hd-found-name" id="hd-found-name">Dyson V15 Detect</div>
+              <div class="hd-found-tag" id="hd-found-tag">Atpažinta iš nuotraukos</div>
+            </div>
+          </div>
+        </div>
+        <!-- Phase 3: Prices -->
+        <div class="hd-phase hd-p3">
+          <div class="hd-prices">
+            <div class="hd-pr best">
+              <span class="hd-pr-shop">Amazon.DE</span>
+              <span class="hd-pr-price">€499</span>
+              <span class="hd-pr-tag" id="hd-save-tag">taupai €100</span>
+            </div>
+            <div class="hd-pr">
+              <span class="hd-pr-shop">Elesen.lt</span>
+              <span class="hd-pr-price">€559</span>
+            </div>
+            <div class="hd-pr">
+              <span class="hd-pr-shop">Varle.lt</span>
+              <span class="hd-pr-price">€599</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Central Scan Hero — primary action -->
     <div class="hero-scan">
       <div class="hero-scan-wrap">
         <div class="hero-scan-ring" aria-hidden="true"></div>
@@ -818,7 +923,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
           </svg>
         </button>
       </div>
-      <div class="hero-scan-invite" id="hero-scan-invite">Nufotografuok ir rask pigiau</div>
+      <div class="hero-scan-invite" id="hero-scan-invite">📷 Fotografuok</div>
+      <div class="hero-scan-invite-sub" id="hero-scan-invite-sub">rask pigiausią kainą</div>
     </div>
 
     <!-- Premium AI Search Card -->
@@ -834,32 +940,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
           onfocus="setTimeout(()=>this.scrollIntoView({behavior:'smooth',block:'center'}),300)"
           aria-label="Search for a product">
         <button class="srch-clear" id="srch-clear" onclick="clearSearch()" aria-label="Clear search">✕</button>
-        <button class="srch-submit" id="srch-submit" onclick="doSearch()" aria-label="Search">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
-      <div class="ai-search-divider"></div>
-      <div class="ai-actions">
-        <button class="ai-action ai-action-scan" id="srch-go" onclick="openCam('price')" aria-label="Scan product">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 8V6a2 2 0 012-2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M20 8V6a2 2 0 00-2-2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M4 16v2a2 2 0 002 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M20 16v2a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <circle cx="12" cy="12" r="3.4" stroke="currentColor" stroke-width="1.8"/>
-          </svg>
-          <span id="ai-scan-lbl">Skenuoti produktą</span>
-        </button>
-        <button class="ai-action" id="voice-btn" onclick="startVoice()" aria-label="Voice search">
+        <button class="srch-voice" id="voice-btn" onclick="startVoice()" aria-label="Voice search">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="9" y="2.5" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.8"/>
             <path d="M5 12a7 7 0 0014 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M12 19v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <span id="ai-voice-lbl">Balso paieška</span>
+        </button>
+        <button class="srch-submit" id="srch-submit" onclick="doSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
       </div>
     </div>
@@ -1962,6 +2054,11 @@ function escHtml(s){
 }
 
 function renderResults(d,q,opts){opts=opts||{};
+  // Trigger confetti on real savings (not partial, not scan-only results)
+  if(!opts._partial&&!opts.sort&&d.price_min&&d.price_max){
+    const _savings=d.price_max-d.price_min;
+    if(_savings>=10&&d.reliable_count>=2){setTimeout(()=>fireConfetti(_savings.toFixed(2)),800);}
+  }
   let results=d.results||[];
   // Apply sort
   const _sm=opts.sort||_curSort||'cheapest';
@@ -2717,8 +2814,10 @@ function _showConfirmResult(data){
   res.style.display="block";
   const lt=getLang();
   document.getElementById("cam-title").textContent={"lt":"Patvirtink produktą","en":"Confirm product","ru":"Подтвердите продукт","pl":"Potwierdź produkt","de":"Produkt bestätigen"}[curLang]||"Confirm product";
-  const foundLbl={"lt":"Atpažinau","en":"Identified","ru":"Найдено","pl":"Rozpoznano","de":"Erkannt"};
-  document.getElementById("ccf-found-lbl").textContent=foundLbl[curLang]||"Identified";
+  const foundLbl={"lt":"✅ Atpažinau!","en":"✅ Identified!","ru":"✅ Найдено!","pl":"✅ Rozpoznano!","de":"✅ Erkannt!"};
+  const foundEl=document.getElementById("ccf-found-lbl");
+  foundEl.textContent=foundLbl[curLang]||"✅ Identified!";
+  foundEl.className="ccf-label ccf-anim-pop";
   document.getElementById("ccf-name").textContent=data.product_name||"";
   document.getElementById("ccf-details").textContent=data.details||"";
   const searchLbl={"lt":"Ieškoti pigiau","en":"Find cheaper","ru":"Найти дешевле","pl":"Znajdź taniej","de":"Günstiger finden"};
@@ -2943,8 +3042,8 @@ const LANGS = {
     clear_data:"Clear all data",
     scan_price:"Scan price tag",
     scan_barcode:"Scan barcode",
-    headline:"Never overpay again.",
-    subtagline:"GOODY's AI scans 7 stores in seconds.",
+    headline:"Photograph. Save instantly.",
+    subtagline:"Point at any product → GOODY finds the cheapest price.",
     voice_search:"Voice Search",
     scan_product:"Scan Product",
     scan_btn_short:"Scan Product",
@@ -2962,7 +3061,7 @@ const LANGS = {
     no_history:"No recent searches yet",
     lowest_price:"Lowest",
     saved_short:"Saved",
-    scan_invite:"Snap a photo — find it cheaper",
+    scan_invite:"📷 Photograph",
     back_to_goody:"Back to Goody",
   },
   lt: {
@@ -3002,8 +3101,8 @@ const LANGS = {
     clear_data:"Ištrinti visus duomenis",
     scan_price:"Nuskaityti kainų etiketę",
     scan_barcode:"Nuskaityti barkodą",
-    headline:"Niekada nepermokėk.",
-    subtagline:"GOODY AI patikrina 7 parduotuves per sekundes.",
+    headline:"Fotografuok. Taupyk.",
+    subtagline:"Nufotografuok bet ką → GOODY randa pigiausią kainą.",
     voice_search:"Balso paieška",
     scan_product:"Skenuoti produktą",
     scan_btn_short:"Skenuoti",
@@ -3021,7 +3120,7 @@ const LANGS = {
     no_history:"Dar nėra paieškų istorijos",
     lowest_price:"Pigiausia",
     saved_short:"Išsaugota",
-    scan_invite:"Nufotografuok ir rask pigiau",
+    scan_invite:"📷 Fotografuok",
     back_to_goody:"Atgal į Goody",
   },
   de: {
@@ -3061,8 +3160,8 @@ const LANGS = {
     clear_data:"Alle Daten löschen",
     scan_price:"Preisschild scannen",
     scan_barcode:"Barcode scannen",
-    headline:"Nie wieder zu viel zahlen.",
-    subtagline:"GOODYs KI prüft 7 Shops in Sekunden.",
+    headline:"Fotografiere. Spare sofort.",
+    subtagline:"Fotografiere ein Produkt → GOODY findet den günstigsten Preis.",
     voice_search:"Sprachsuche",
     scan_product:"Produkt scannen",
     scan_btn_short:"Scannen",
@@ -3080,7 +3179,7 @@ const LANGS = {
     no_history:"Noch keine Suchen",
     lowest_price:"Bestpreis",
     saved_short:"Gespeichert",
-    scan_invite:"Foto machen — günstiger finden",
+    scan_invite:"📷 Fotografieren",
     back_to_goody:"Zurück zu Goody",
   },
   pl: {
@@ -3120,8 +3219,8 @@ const LANGS = {
     clear_data:"Wyczyść wszystkie dane",
     scan_price:"Skanuj etykietę cenową",
     scan_barcode:"Skanuj kod kreskowy",
-    headline:"Nigdy nie przepłacaj.",
-    subtagline:"AI GOODY sprawdza 7 sklepów w sekundach.",
+    headline:"Fotografuj. Oszczędzaj.",
+    subtagline:"Sfotografuj cokolwiek → GOODY znajdzie najtańszą cenę.",
     voice_search:"Wyszukiwanie głosowe",
     scan_product:"Skanuj produkt",
     scan_btn_short:"Skanuj",
@@ -3139,7 +3238,7 @@ const LANGS = {
     no_history:"Brak historii wyszukiwań",
     lowest_price:"Najtaniej",
     saved_short:"Zapisane",
-    scan_invite:"Zrób zdjęcie — znajdź taniej",
+    scan_invite:"📷 Fotografuj",
     back_to_goody:"Wróć do Goody",
   }
 };
@@ -3181,11 +3280,14 @@ function applyLang(){
   const spw1=document.getElementById("sp-prices-when");if(spw1)spw1.textContent=t.sp_when_month||"this month";
   const spw2=document.getElementById("sp-saved-when");if(spw2)spw2.textContent=t.sp_when_total||"all-time";
   const spw3=document.getElementById("sp-shops-when");if(spw3)spw3.textContent=t.sp_when_live||"live";
-  const hsi=document.getElementById("hero-scan-invite");if(hsi)hsi.textContent=t.scan_invite||"Snap a photo — find it cheaper";
+  const hsi=document.getElementById("hero-scan-invite");if(hsi)hsi.textContent=t.scan_invite||"📷 Photograph";
+  const hsis=document.getElementById("hero-scan-invite-sub");if(hsis)hsis.textContent={"lt":"rask pigiausią kainą","en":"find the cheapest price","ru":"найдите самую низкую цену","pl":"znajdź najtańszą cenę","de":"günstigsten Preis finden"}[curLang]||"find the cheapest price";
+  // Demo card texts
+  const hd1=document.getElementById("hd-lbl1");if(hd1)hd1.textContent={"lt":"Nufotografuok produktą","en":"Photograph a product","ru":"Сфотографируйте товар","pl":"Sfotografuj produkt","de":"Produkt fotografieren"}[curLang]||"Photograph a product";
+  const hd1s=document.getElementById("hd-sub1");if(hd1s)hd1s.textContent={"lt":"GOODY AI atpažįsta iš nuotraukos","en":"GOODY AI recognizes from photo","ru":"GOODY AI распознаёт по фото","pl":"GOODY AI rozpoznaje ze zdjęcia","de":"GOODY AI erkennt aus Foto"}[curLang]||"GOODY AI recognizes from photo";
+  const hdf=document.getElementById("hd-found-tag");if(hdf)hdf.textContent={"lt":"Atpažinta iš nuotraukos","en":"Recognized from photo","ru":"Распознано по фото","pl":"Rozpoznano ze zdjęcia","de":"Aus Foto erkannt"}[curLang]||"Recognized from photo";
+  const hds=document.getElementById("hd-save-tag");if(hds)hds.textContent={"lt":"taupai €100","en":"save €100","ru":"экономия €100","pl":"oszczędzasz €100","de":"spare €100"}[curLang]||"save €100";
   const vb=document.getElementById("voice-btn");if(vb)vb.setAttribute("aria-label",t.voice_search||"Voice search");
-  const sg=document.getElementById("srch-go");if(sg)sg.setAttribute("aria-label",t.scan_product||"Scan product");
-  const asl=document.getElementById("ai-scan-lbl");if(asl)asl.textContent=(t.scan_btn_short||t.scan_product||"Scan Product");
-  const avl=document.getElementById("ai-voice-lbl");if(avl)avl.textContent=(t.voice_btn_short||t.voice_search||"Voice Search");
   const pop=document.getElementById("popular-title");if(pop)pop.textContent=t.sec_popular||t.popular||"Popular Products";
   const catT=document.getElementById("cats-title");if(catT)catT.textContent=t.sec_categories||t.categories||"Browse by Category";
   const recT=document.getElementById("recent-title");if(recT)recT.textContent=t.sec_recent||t.recent_scans||"Recent searches";
@@ -3236,6 +3338,8 @@ const _LOADING_SHOPS=[
   {name:"Elesen.lt",flag:"🇱🇹"},
   {name:"Pigu.lt",flag:"🇱🇹"},
   {name:"Topo centras",flag:"🇱🇹"},
+  {name:"Senukai.lt",flag:"🇱🇹"},
+  {name:"1a.lt",flag:"🇱🇹"},
   {name:"Amazon.DE",flag:"🇩🇪"},
   {name:"Amazon.PL",flag:"🇵🇱"},
 ];
