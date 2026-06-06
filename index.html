@@ -2488,6 +2488,11 @@ function startQualityLoop(){
 }
 function switchCM(mode){
   camMode=mode;
+  // Stop barcode scanner if switching away from barcode mode
+  clearInterval(scanLoop);scanLoop=null;
+  // Always clear barcode result bar when switching modes
+  const _bcBar=document.getElementById("bc-result-bar");if(_bcBar)_bcBar.classList.remove("show");
+  const _frame=document.querySelector(".vf-frame");if(_frame)_frame.classList.remove("locked");
   document.getElementById("cm-bc").classList.toggle("on",mode==="barcode");
   document.getElementById("cm-pr").classList.toggle("on",mode==="price");
   const lt2=getLang();document.getElementById("cam-title").textContent=mode==="barcode"?(lt2.scan_barcode||"Nuskaityti barkodą"):(lt2.scan_price||"Nuskaityti kainų etiketę");
