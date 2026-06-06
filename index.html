@@ -344,8 +344,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .p-card.best{background:rgba(39,224,138,0.06);border-color:rgba(39,224,138,0.3);border-width:1.5px;}
 .p-card-shimmer{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(39,224,138,0.06) 40%,rgba(39,224,138,0.09) 50%,rgba(39,224,138,0.06) 60%,transparent 100%);animation:sh 3.5s infinite;will-change:transform;}
 .save-ribbon{position:absolute;top:10px;right:-1px;background:var(--green);color:#121A24;font-size:10px;font-weight:900;padding:3px 10px 3px 8px;border-radius:6px 0 0 6px;letter-spacing:.04em;text-transform:uppercase;}
-.pct-delta{font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:2px;display:inline-block;}
-.pct-delta.expensive{background:rgba(255,90,90,0.12);color:var(--red);}
+.pct-delta{font-size:10px;font-weight:600;padding:1px 5px;border-radius:8px;margin-top:2px;display:inline-block;opacity:0.72;}
+.pct-delta.expensive{background:rgba(255,90,90,0.08);color:var(--red);}
 .winner-crown{position:absolute;top:-1px;left:14px;font-size:11px;font-weight:900;color:var(--green);letter-spacing:.05em;text-transform:uppercase;background:var(--green-l);border:1px solid var(--green-m);padding:2px 8px;border-radius:0 0 8px 8px;}
 @keyframes sh{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
@@ -565,7 +565,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 /* ── BACK-TO-GOODY PILL (top-left, fixed, 44×44 min) ── */
 .back-banner{
-  position:fixed;top:max(12px,env(safe-area-inset-top));left:12px;
+  position:fixed;top:max(52px,calc(env(safe-area-inset-top) + 44px));left:12px;
   background:linear-gradient(180deg,#33E89A 0%,#27E08A 100%);color:#0A0F18;
   padding:10px 16px;display:inline-flex;align-items:center;gap:9px;
   z-index:550;
@@ -2027,20 +2027,23 @@ function renderResults(d,q,opts){opts=opts||{};
 
   // ── INSTANT VERDICT BAR (Eglė — visible without scrolling) ──
   if(onlineResults.length>=1 && !scannedPrice){
-    const maxOnline=Math.max(...onlineResults.map(r=>r.price));
-    const savings=maxOnline>bestOnline.price?maxOnline-bestOnline.price:0;
-    const saveTxt=savings>=1?` · <span style="color:var(--green);">${{"lt":"taupai","de":"sparen","pl":"oszczędzasz"}[lang]||"save"} ${money(savings)}</span>`:"";
-    const shopCount=onlineResults.length;
-    const shopWord={"lt":"parduotuvė","de":"Shop","pl":"sklep"}[lang]||"shop";
-    const shopsWord={"lt":"parduotuvių","de":"Shops","pl":"sklepów"}[lang]||"shops";
-    const shopsLabel=shopCount===1?`1 ${shopWord}`:`${shopCount} ${shopsWord}`;
-    const bestLbl={"lt":"Pigiausia kaina","de":"Günstigster Preis","pl":"Najlepsza cena"}[lang]||"Best price";
-    // deal_score pill
+    // Only count reliable (non-suspicious/accessory) results for savings display
+    const _reliableBar=onlineResults.filter(r=>!r.is_suspicious&&!r.ai_filtered);
+    const _hasRealComparison=_reliableBar.length>=2;
+    const savings=_hasRealComparison&&d.price_max>bestOnline.price?d.price_max-bestOnline.price:0;
+    const saveTxt=savings>=1?` · <span style="color:var(--green);">${{"lt":"taupai","en":"save","ru":"экономия","de":"sparen","pl":"oszczędzasz"}[lang]||"save"} ${money(savings)}</span>`:"";
+    const shopCount=_reliableBar.length||onlineResults.length;
+    const shopWord={"lt":"patikimas pasiūlymas","en":"verified offer","ru":"предложение","de":"gepr. Angebot","pl":"oferta"}[lang]||"verified offer";
+    const shopsWord={"lt":"patikimi pasiūlymai","en":"verified offers","ru":"предложения","de":"gepr. Angebote","pl":"oferty"}[lang]||"verified offers";
+    const shopsLabel=_reliableBar.length===1?`1 ${shopWord}`:_reliableBar.length>1?`${_reliableBar.length} ${shopsWord}`:`${onlineResults.length} ${{"lt":"parduotuvių","en":"shops","ru":"магазинов","de":"Shops","pl":"sklepów"}[lang]||"shops"}`;
+    const bestLbl={"lt":"Pigiausia kaina","en":"Best price","ru":"Луčшая цена","de":"Günstigster Preis","pl":"Najlepsza cena"}[lang]||"Best price";
     const ds=Number(d.deal_score||0);
     let dsPill="";
-    if(ds>=82)dsPill=`<span class="deal-score-pill dsp-high">🔥 ${ds}/100</span>`;
-    else if(ds>=60)dsPill=`<span class="deal-score-pill dsp-mid">⭐ ${ds}/100</span>`;
-    else if(ds>0)dsPill=`<span class="deal-score-pill dsp-low">⚠️ ${ds}/100</span>`;
+    if(_hasRealComparison){
+      if(ds>=82)dsPill=`<span class="deal-score-pill dsp-high">🔥 ${ds}/100</span>`;
+      else if(ds>=60)dsPill=`<span class="deal-score-pill dsp-mid">⭐ ${ds}/100</span>`;
+      else if(ds>0)dsPill=`<span class="deal-score-pill dsp-low">${ds}/100</span>`;
+    }
     html+=`<div id="verdict-bar" style="background:linear-gradient(135deg,rgba(39,224,138,0.12),rgba(39,224,138,0.04));border:1.5px solid rgba(39,224,138,0.28);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;" class="fade-up">
       <div>
         <div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${bestLbl}</div>
@@ -2052,9 +2055,8 @@ function renderResults(d,q,opts){opts=opts||{};
         ${dsPill}
       </div>
     </div>`;
-    // Low coverage note: only 1 shop found, deal score less reliable
-    if(shopCount===1&&!d._partial){
-      const coverageNote={"lt":"Rastas tik 1 pardavėjas — palyginti negalime","de":"Nur 1 Händler gefunden — kein Preisvergleich möglich","pl":"Znaleziono tylko 1 sprzedawcę — brak porównania cen"}[lang]||"Only 1 seller found — price comparison unavailable";
+    if(!_hasRealComparison&&!d._partial){
+      const coverageNote={"lt":"1 patikimas pasiūlymas — kitos kainos gali būti priedai","en":"1 verified offer — other prices may be accessories","ru":"1 проверенное предложение","de":"1 gepr. Angebot — andere könnten Zubehör sein","pl":"1 zweryfikowana oferta — inne ceny mogą być akcesoriami"}[lang]||"1 verified offer found";
       html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-sm);margin-bottom:10px;font-size:11px;color:var(--ink3);">ℹ️ ${coverageNote}</div>`;
     }
   }
@@ -2228,11 +2230,18 @@ function renderResults(d,q,opts){opts=opts||{};
     if(scan){
       badges+=`<span class="badge b-gray">${{"lt":"Kaina nuotraukoje","de":"Foto-Preis","pl":"Cena ze zdjęcia"}[lang]||"Photo price"}</span>`;
     }else{
-      if(r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geriausia internete","de":"Bestes Online","pl":"Najlepsza online"}[lang]||"Best online"}</span>`;
-      if(r.is_best_value&&!r.is_cheapest)badges+=`<span class="badge b-green">${{"lt":"Geras pasiūlymas","de":"Gutes Angebot","pl":"Dobra oferta"}[lang]||"Good deal"}</span>`;
-      if(r.is_top_rated)badges+=`<span class="badge b-amber">${{"lt":"Top reitingas","de":"Top bewertet","pl":"Najwyżej oceniony"}[lang]||"Top rated"}</span>`;
-      // Fake discount detector: claimed discount > 40% is suspicious
-      if(r.original_price>0&&r.price>0){
+      if(r.is_suspicious||r.ai_filtered){
+        const suspLbl={"lt":"⚠️ Galimai priedas","en":"⚠️ Possibly accessory","ru":"⚠️ Возможно аксессуар","pl":"⚠️ Możliwe akcesorium","de":"⚠️ Mögl. Zubehör"}[lang]||"⚠️ Possibly accessory";
+        const suspTitle=r.match_warning||({"lt":"Kaina įtartinai žema — galimai priedas, ne pats produktas","en":"Suspiciously low price — may be an accessory, not the main product","pl":"Podejrzanie niska cena — może być akcesoria","de":"Verdächtig niedriger Preis — möglicherweise Zubehör"}[lang]||"Possibly accessory/part");
+        badges+=`<span class="badge b-amber" title="${escHtml(suspTitle)}">${suspLbl}</span>`;
+      } else if(r.is_cheapest){
+        badges+=`<span class="badge b-green">${{"lt":"Pigiausia kaina","en":"Lowest price","ru":"Самая низкая цена","pl":"Najniższa cena","de":"Günstigster Preis"}[lang]||"Lowest price"}</span>`;
+      } else if(r.is_best_value&&!r.is_cheapest){
+        badges+=`<span class="badge b-green">${{"lt":"Geras pasiūlymas","en":"Good deal","ru":"Хорошее предложение","pl":"Dobra oferta","de":"Gutes Angebot"}[lang]||"Good deal"}</span>`;
+      }
+      if(r.is_top_rated)badges+=`<span class="badge b-amber">${{"lt":"Top reitingas","en":"Top rated","ru":"Высокий рейтинг","pl":"Najwyżej oceniony","de":"Top bewertet"}[lang]||"Top rated"}</span>`;
+      // Fake discount detector: only on non-cheapest items to avoid contradictory warnings
+      if(!r.is_cheapest&&r.original_price>0&&r.price>0){
         const claimedDisc=(r.original_price-r.price)/r.original_price;
         if(claimedDisc>0.4){
           const fakeDiscLbl={"lt":"⚠️ Patikrink nuolaidą","de":"⚠️ Rabatt prüfen","pl":"⚠️ Sprawdź rabat"}[lang]||"⚠️ Check discount";
@@ -2285,16 +2294,17 @@ function renderResults(d,q,opts){opts=opts||{};
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 10H2a1 1 0 01-1-1V2a1 1 0 011-1h7a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.3"/></svg>
     </button>`:"";
 
-    // Savings ribbon: show €X saved vs most expensive online (only on cheapest, non-scan card)
+    // Savings ribbon: only when >= 2 reliable results exist (no suspicious/accessory items)
+    const reliableOnline=onlineResults.filter(r=>!r.is_suspicious&&!r.ai_filtered);
     let saveRibbon="";
-    if(r.is_cheapest&&!scan&&bestOnline&&onlineResults.length>=2){
+    if(r.is_cheapest&&!r.is_suspicious&&!r.ai_filtered&&!scan&&reliableOnline.length>=2){
       const savings=d.price_max-r.price;
       if(savings>=1){
-        const saveLbl={"lt":`Taupai ${money(savings)}`,"de":`${money(savings)} gespart`,"pl":`Oszczędzasz ${money(savings)}`}[lang]||`Save ${money(savings)}`;
+        const saveLbl={"lt":`Taupai ${money(savings)}`,"en":`Save ${money(savings)}`,"ru":`Экономия ${money(savings)}`,"de":`${money(savings)} gespart`,"pl":`Oszczędzasz ${money(savings)}`}[lang]||`Save ${money(savings)}`;
         saveRibbon=`<div class="save-ribbon">${saveLbl}</div>`;
       }
     }
-    const winnerCrown=r.is_cheapest&&!scan&&onlineResults.length>=2?`<div class="winner-crown">${{"lt":"🏆 Geriausias","de":"🏆 Bestes","pl":"🏆 Najlepsze"}[lang]||"🏆 Best deal"}</div>`:"";
+    const winnerCrown=r.is_cheapest&&!r.is_suspicious&&!r.ai_filtered&&!scan&&reliableOnline.length>=2?`<div class="winner-crown">${{"lt":"🏆 Geriausias","en":"🏆 Best deal","ru":"🏆 Лучшее","de":"🏆 Bestes","pl":"🏆 Najlepsze"}[lang]||"🏆 Best deal"}</div>`:"";
 
     const overBudget=_budgetMax>0&&r.price>_budgetMax&&!scan;
     html+=`<div class="p-card${best&&!scan?" best":""}${overBudget?" over-budget":""} fade-up" style="animation-delay:${i*0.06}s">
