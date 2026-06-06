@@ -929,7 +929,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="set-row"><div class="sr-n">App</div><div class="sr-v">Goody</div></div>
         <div class="set-row"><div class="sr-n" id="set-version-lbl">Versija</div><div class="sr-v" id="app-version">—</div></div>
         <div class="set-row"><div class="sr-n">Backend</div><div class="sr-v" id="be-url" style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div></div>
-        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Parduotuvės</div><div class="sr-v" style="font-size:11px;">Varle · Elesen · Pigu · Topo · a.de · a.pl</div></div>
+        <div class="set-row"><div class="sr-n" id="set-shops-lbl">Parduotuvės</div><div class="sr-v" style="font-size:11px;">Varle · Elesen · Pigu · Topo · Senukai · 1a · a.de · a.pl</div></div>
         <div class="set-row"><div class="sr-n" id="set-status-lbl">Būklė</div><div class="sr-v" style="display:flex;align-items:center;gap:6px;"><span id="api-status-dot2" style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span><span id="api-status-txt2">—</span></div></div>
       </div>
     </div>
@@ -2778,7 +2778,7 @@ async function runScan(){
   navTo("results");
   document.getElementById("res-title").textContent={"lt":"Nuskenuojama nuotrauka...","de":"Foto wird gescannt...","pl":"Skanowanie zdjęcia..."}[curLang]||"Scanning photo...";
   document.getElementById("res-meta").textContent={"lt":"AI atpažįsta produktą...","de":"KI erkennt Produkt...","pl":"AI rozpoznaje produkt..."}[curLang]||"AI identifying product";
-  const scanShops=["Varle.lt","Elesen.lt","Pigu.lt","Topo centras","Amazon.DE","Amazon.PL"];
+  const scanShops=["Varle.lt","Elesen.lt","Pigu.lt","Topo centras","Senukai.lt","1a.lt","Amazon.DE","Amazon.PL"];
   let scanIdx=0;
   const skels=[1,2,3].map(()=>`<div class="skel-card"><div class="skel-row"><div class="skel-circle skeleton"></div><div class="skel-lines"><div class="skel-line skeleton" style="width:60%"></div><div class="skel-line skeleton" style="width:40%"></div></div><div class="skel-price skeleton"></div></div></div>`).join("");
   const _analyzeTitle={"lt":"Analizuojama nuotrauka","de":"Foto wird analysiert","pl":"Analizowanie zdjęcia"}[curLang]||"Analyzing photo";
