@@ -2566,9 +2566,10 @@ function _getFrameSharpness(){
   if(!v||v.readyState!==v.HAVE_ENOUGH_DATA)return 0;
   const c=document.getElementById("vf-canvas");
   const ctx=c.getContext("2d");
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  ctx.drawImage(v,0,0);
-  const sx=Math.floor(c.width*.25),sy=Math.floor(c.height*.25),sw=Math.floor(c.width*.5),sh=Math.floor(c.height*.5);
+  const W=320,H=180;
+  if(c.width!==W)c.width=W;if(c.height!==H)c.height=H;
+  ctx.drawImage(v,0,0,W,H);
+  const sx=80,sy=45,sw=160,sh=90;
   const d=ctx.getImageData(sx,sy,sw,sh).data;
   let sum=0,sum2=0,n=d.length>>2;
   for(let i=0;i<d.length;i+=4){const g=(d[i]*77+d[i+1]*150+d[i+2]*29)>>8;sum+=g;sum2+=g*g;}
@@ -2595,10 +2596,9 @@ function startQualityLoop(){
 }
 function switchCM(mode){
   camMode=mode;
-  // Stop barcode scanner if switching away from barcode mode
   clearInterval(scanLoop);scanLoop=null;
   clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
-  // Always clear barcode result bar when switching modes
+  clearInterval(_qualityLoop);_qualityLoop=null;
   const _bcBar=document.getElementById("bc-result-bar");if(_bcBar)_bcBar.classList.remove("show");
   const _frame=document.querySelector(".vf-frame");if(_frame)_frame.classList.remove("locked");
   document.getElementById("cm-bc").classList.toggle("on",mode==="barcode");
@@ -2607,6 +2607,10 @@ function switchCM(mode){
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   capturedB64=null;_identifyResult=null;_hideConfirmPanel();document.getElementById("cp-wrap").style.display="none";resetSnap();
+  if(camStream){
+    if(mode==="barcode")startBcLoop();
+    else startQualityLoop();
+  }
 }
 function resetSnap(){
   const btn=document.getElementById("c-snap");
@@ -2645,7 +2649,7 @@ async function startCam(){
   const btn=document.getElementById("c-snap");btn.disabled=true;
   btn.innerHTML="<span>⏳</span><span>"+( {"lt":"Jungiamasi...","de":"Verbinde...","pl":"Łączę..."}[curLang]||"Connecting...")+"</span>";
   try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
     const v=document.getElementById("vf-video");v.srcObject=camStream;
     document.getElementById("vf-wrap").style.display="block";
     document.querySelector(".vf-frame").style.display="block";
@@ -2682,12 +2686,14 @@ function startBcLoop(){
   hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
   const reader=new ZXing.MultiFormatReader();reader.setHints(hints);
   const v=document.getElementById("vf-video"),c=document.getElementById("vf-canvas"),ctx=c.getContext("2d");
+  const BC_W=640,BC_H=360;
+  c.width=BC_W;c.height=BC_H;
   scanLoop=setInterval(()=>{
     if(v.readyState!==v.HAVE_ENOUGH_DATA)return;
-    c.width=v.videoWidth;c.height=v.videoHeight;ctx.drawImage(v,0,0);
+    ctx.drawImage(v,0,0,BC_W,BC_H);
     try{
-      const id=ctx.getImageData(0,0,c.width,c.height);
-      const res=reader.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(id.data,c.width,c.height))));
+      const id=ctx.getImageData(0,0,BC_W,BC_H);
+      const res=reader.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(id.data,BC_W,BC_H))));
       if(res)onBcFound(res.getText());
     }catch(e){}
   },200);
