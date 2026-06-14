@@ -302,8 +302,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cam-mode{flex:1;padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--card);font-family:var(--ff);font-size:13px;font-weight:700;color:var(--ink3);cursor:pointer;text-align:center;transition:all var(--dur);}
 .cam-mode.on{border-color:var(--green);background:var(--green-l);color:var(--green);}
 .vf-wrap{position:relative;width:100%;background:#000;display:none;flex-shrink:0;}
-.vf-video{width:100%;max-height:260px;object-fit:cover;display:block;}
-.vf-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.vf-video{width:100%;max-height:min(58vh,420px);object-fit:cover;display:block;}
+.vf-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;}
 .vf-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 .vf-frame{position:relative;width:210px;height:130px;display:none;}
 .vfc{position:absolute;width:22px;height:22px;border-color:var(--green);border-style:solid;}
@@ -341,10 +341,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .snap-btn:active{transform:scale(0.97);}
 .snap-btn:disabled{opacity:0.5;cursor:not-allowed;}
 /* ── SHUTTER BUTTON (photo mode) ── */
-.shutter-circle{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,0.42);box-shadow:0 0 0 3px rgba(39,224,138,0.65),0 4px 22px rgba(0,0,0,0.42);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.12s,box-shadow 0.12s;}
-.shutter-circle:active{transform:scale(0.91);box-shadow:0 0 0 4px rgba(39,224,138,1),0 4px 22px rgba(0,0,0,0.42);}
+.shutter-circle{width:84px;height:84px;border-radius:50%;background:#fff;border:6px solid rgba(255,255,255,0.5);box-shadow:0 0 0 4px rgba(39,224,138,0.8),0 6px 28px rgba(0,0,0,0.55);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.12s,box-shadow 0.12s;}
+.shutter-circle:active{transform:scale(0.88);box-shadow:0 0 0 5px rgba(39,224,138,1),0 4px 18px rgba(0,0,0,0.4);}
 .shutter-circle:disabled{opacity:0.4;cursor:not-allowed;}
-.shutter-inner{width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.05);border:2px solid rgba(0,0,0,0.10);}
+.shutter-inner{width:62px;height:62px;border-radius:50%;background:rgba(0,0,0,0.06);border:2.5px solid rgba(0,0,0,0.12);}
 /* ── NATIVE PHOTO CAPTURE UI ── */
 #photo-capture-ui{display:none;flex-direction:column;align-items:center;gap:14px;padding:24px 16px 10px;}
 .photo-cam-btn{width:100%;max-width:360px;padding:18px 20px;border-radius:var(--r);background:var(--green);border:none;color:#121A24;font-family:var(--ff);font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:0.01em;transition:transform 0.12s,box-shadow 0.12s;box-shadow:0 4px 18px rgba(39,224,138,0.35);}
@@ -2564,6 +2564,7 @@ function stopCam(){
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
   document.getElementById("vf-wrap").style.display="none";
   const fr=document.querySelector(".vf-frame");if(fr){fr.style.display="none";fr.classList.remove("locked");}
+  const cv=document.getElementById("vf-canvas");if(cv)cv.style.display="none";
   const bar=document.getElementById("bc-result-bar");if(bar)bar.classList.remove("show");
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   const flash=document.getElementById("green-flash");if(flash){flash.classList.remove("on");flash.classList.remove("off");}
@@ -2654,15 +2655,25 @@ async function startCam(){
     camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
     const v=document.getElementById("vf-video");v.srcObject=camStream;
     document.getElementById("vf-wrap").style.display="block";
-    document.querySelector(".vf-frame").style.display="block";
-    await new Promise(r=>v.onloadedmetadata=r);
+    // hide barcode-only elements in photo mode
+    const frame=document.querySelector(".vf-frame");
+    const canvas=document.getElementById("vf-canvas");
+    const bar=document.getElementById("bc-result-bar");
+    const hint=document.getElementById("bc-hint");
+    if(camMode==="barcode"){
+      if(frame)frame.style.display="block";
+      if(canvas)canvas.style.display="block";
+    } else {
+      if(frame)frame.style.display="none";
+      if(canvas)canvas.style.display="none";
+      if(bar)bar.classList.remove("show");
+      if(hint)hint.style.display="none";
+    }
+    await new Promise(r=>{v.onloadedmetadata=r;});
+    // extra wait for videoWidth on iOS
+    if(!v.videoWidth){await new Promise(r=>setTimeout(r,300));}
     resetSnap();
     if(camMode==="barcode"){startBcLoop();}
-    else{
-      const hint=document.getElementById("bc-hint");
-      if(hint){hint.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","de":"Auf Produkt richten und drücken","pl":"Skieruj na produkt i naciśnij"}[curLang]||"Point at product and press";hint.style.display="block";}
-      startQualityLoop();
-    }
   }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
 }
 function playBeep(){
@@ -2687,6 +2698,7 @@ function startBcLoop(){
   hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
   const reader=new ZXing.MultiFormatReader();reader.setHints(hints);
   const v=document.getElementById("vf-video"),c=document.getElementById("vf-canvas"),ctx=c.getContext("2d");
+  c.style.display="block";
   const BC_W=640,BC_H=360;
   c.width=BC_W;c.height=BC_H;
   scanLoop=setInterval(()=>{
@@ -2739,8 +2751,11 @@ function onBcFound(code){
   },600);
 }
 function captureFrame(){
-  const v=document.getElementById("vf-video");const c=document.createElement("canvas");
-  c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
+  const v=document.getElementById("vf-video");
+  if(!v||!v.videoWidth||v.readyState<2){toast({"lt":"Kamera dar kraunama...","en":"Camera loading..."}[curLang]||"Camera loading...");return;}
+  const c=document.createElement("canvas");
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext("2d").drawImage(v,0,0);
   const dataUrl=c.toDataURL("image/jpeg",.85);
   capturedB64=dataUrl.split(",")[1];
   if(navigator.vibrate)navigator.vibrate(50);
