@@ -314,6 +314,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .vf-scanline{position:absolute;top:2px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#ff3b3b 20%,#fff 50%,#ff3b3b 80%,transparent);box-shadow:0 0 8px rgba(255,59,59,0.9),0 0 18px rgba(255,59,59,0.4);animation:scanLine 1.6s ease-in-out infinite;display:none;will-change:transform;}
 @keyframes scanLine{0%{transform:translateY(0);}50%{transform:translateY(124px);}100%{transform:translateY(0);}}
 
+/* Price mode: barcode UI elements are always hidden (CSS-enforced, prevents race conditions) */
+.cam-sheet[data-mode="price"] #bc-result-bar,
+.cam-sheet[data-mode="price"] .vf-frame,
+.cam-sheet[data-mode="price"] #bc-hint{display:none!important;}
 /* ── BARCODE UX ── */
 .vf-frame.locked{animation:bcLock 0.35s cubic-bezier(0.16,1,0.3,1) both;}
 @keyframes bcLock{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1.04);}}
@@ -2537,6 +2541,7 @@ function openCam(mode){
   if(mode==="barcode"&&typeof ZXing==="undefined"){toast({"lt":"Skeneris dar kraunamas, palaukite...","de":"Scanner lädt noch...","pl":"Skaner ładuje się..."}[curLang]||"Scanner loading...");return;}
   camMode=mode; capturedB64=null; _identifyResult=null;
   _hideConfirmPanel();
+  document.getElementById("cam-sheet").dataset.mode=mode;
   switchCM(mode);
   document.getElementById("cp-wrap").style.display="none";
   document.getElementById("vf-wrap").style.display="none";
@@ -2604,6 +2609,7 @@ function startQualityLoop(){
 }
 function switchCM(mode){
   camMode=mode;
+  document.getElementById("cam-sheet").dataset.mode=mode;
   clearInterval(scanLoop);scanLoop=null;
   clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
   clearInterval(_qualityLoop);_qualityLoop=null;
@@ -2669,9 +2675,14 @@ async function startCam(){
       if(bar)bar.classList.remove("show");
       if(hint)hint.style.display="none";
     }
-    await new Promise(r=>{v.onloadedmetadata=r;});
-    // extra wait for videoWidth on iOS
-    if(!v.videoWidth){await new Promise(r=>setTimeout(r,300));}
+    // iOS needs explicit play() even with autoplay+muted+playsinline
+    try{await v.play();}catch(e){}
+    // Wait until video has a real frame (HAVE_CURRENT_DATA = readyState 2)
+    await new Promise(r=>{
+      if(v.readyState>=2){r();return;}
+      v.oncanplay=r;
+      setTimeout(r,1500);
+    });
     resetSnap();
     if(camMode==="barcode"){startBcLoop();}
   }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
@@ -2752,9 +2763,10 @@ function onBcFound(code){
 }
 function captureFrame(){
   const v=document.getElementById("vf-video");
-  if(!v||!v.videoWidth||v.readyState<2){toast({"lt":"Kamera dar kraunama...","en":"Camera loading..."}[curLang]||"Camera loading...");return;}
+  if(!v||v.readyState<2){toast({"lt":"Kamera dar kraunama...","en":"Camera loading..."}[curLang]||"Camera loading...");return;}
+  const W=v.videoWidth||1280,H=v.videoHeight||720;
   const c=document.createElement("canvas");
-  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.width=W;c.height=H;
   c.getContext("2d").drawImage(v,0,0);
   const dataUrl=c.toDataURL("image/jpeg",.85);
   capturedB64=dataUrl.split(",")[1];

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'goody-v2';
+const CACHE_NAME = 'goody-v3';
 const APP_SHELL = [
   '/',
   '/index.html',
