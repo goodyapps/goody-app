@@ -28,17 +28,31 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // App shell — stale-while-revalidate
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request).then(resp => {
+  // HTML — network-first so updates are immediate; fall back to cache offline
+  if (url.pathname === '/' || url.pathname.endsWith('.html')) {
+    e.respondWith(
+      fetch(e.request).then(resp => {
         if (resp.ok) {
           const clone = resp.clone();
           caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         }
         return resp;
-      }).catch(() => cached);
-      return cached || network;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Other assets (fonts, icons) — cache-first
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(resp => {
+        if (resp.ok) {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+        }
+        return resp;
+      });
     })
   );
 });
