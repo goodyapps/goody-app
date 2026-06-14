@@ -2587,7 +2587,7 @@ function stopCam(){
   clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
   clearInterval(scanLoop);scanLoop=null;
   clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  // Keep stream alive — reusing it avoids iOS Safari permission prompt on every open
   document.getElementById("vf-wrap").style.display="none";
   const fr=document.querySelector(".vf-frame");if(fr){fr.style.display="none";fr.classList.remove("locked");}
   const cv=document.getElementById("vf-canvas");if(cv)cv.style.display="none";
@@ -2595,6 +2595,11 @@ function stopCam(){
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   const flash=document.getElementById("green-flash");if(flash){flash.classList.remove("on");flash.classList.remove("off");}
 }
+function _releaseCam(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+}
+window.addEventListener("pagehide",_releaseCam);
+window.addEventListener("beforeunload",_releaseCam);
 function _getFrameSharpness(){
   const v=document.getElementById("vf-video");
   if(!v||v.readyState!==v.HAVE_ENOUGH_DATA)return 0;
@@ -2656,9 +2661,13 @@ function _setShutterReady(){
 async function startCam(){
   const ld=document.getElementById("cam-loading");
   try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
+    // Reuse existing live stream — avoids iOS permission prompt on every camera open
+    const liveTrack=camStream&&camStream.getVideoTracks()[0];
+    if(!liveTrack||liveTrack.readyState==="ended"){
+      camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
+    }
     const v=document.getElementById("vf-video");
-    v.srcObject=camStream;
+    if(v.srcObject!==camStream)v.srcObject=camStream;
     // Hide barcode-only UI in photo mode
     const frame=document.querySelector(".vf-frame");
     const canvas=document.getElementById("vf-canvas");
@@ -2762,8 +2771,8 @@ function onBcFound(code){
     setTimeout(()=>flash.classList.remove("off"),620);
   }
 
-  // 5. Stop camera stream
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  // 5. Hide camera UI (keep stream alive for next open)
+  stopCam();
 
   // 6. Show result bar with code, then update with product name
   document.getElementById("bc-res-code").textContent=code;
