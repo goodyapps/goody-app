@@ -2780,11 +2780,35 @@ function handlePhotoCapture(e){
   const file=e.target.files[0];if(!file)return;
   e.target.value="";
   const reader=new FileReader();
+  reader.onerror=()=>toast({"lt":"Klaida skaitant nuotrauką","en":"Photo read error"}[curLang]||"Photo read error");
   reader.onload=ev=>{
     const dataUrl=ev.target.result;
-    capturedB64=dataUrl.split(",")[1];
-    _showConfirmLoading(dataUrl);
-    runIdentify();
+    const img=new Image();
+    img.onerror=()=>{
+      // fallback: send original (may be large but better than nothing)
+      capturedB64=dataUrl.split(",")[1];
+      _showConfirmLoading(dataUrl);
+      runIdentify();
+    };
+    img.onload=()=>{
+      try{
+        // Resize to max 1280px — native camera photos are 12MP+, Claude only needs ~1MP
+        const MAX=1280;
+        let w=img.naturalWidth,h=img.naturalHeight;
+        if(w>MAX||h>MAX){if(w>=h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+        const c=document.createElement("canvas");c.width=w;c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        const resized=c.toDataURL("image/jpeg",0.85);
+        capturedB64=resized.split(",")[1];
+        _showConfirmLoading(resized);
+        runIdentify();
+      }catch(_){
+        capturedB64=dataUrl.split(",")[1];
+        _showConfirmLoading(dataUrl);
+        runIdentify();
+      }
+    };
+    img.src=dataUrl;
   };
   reader.readAsDataURL(file);
 }
