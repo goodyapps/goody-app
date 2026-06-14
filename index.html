@@ -510,8 +510,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .translate-label{font-size:12px;color:var(--ink3);font-weight:600;}
 .lang-toggle{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:background var(--dur);white-space:nowrap;}
 .lang-toggle:hover,.lang-toggle:focus{background:var(--card2);outline:none;}
-.lang-options{display:none;align-items:center;gap:6px;}
-.translate-bar.open .lang-options{display:flex;}
+.lang-options{display:flex;align-items:center;gap:6px;}
 .lang-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--ink2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--dur);}
 .lang-btn.on{background:var(--green-l);border-color:var(--green);color:var(--green);}
 .last-checked{font-size:11px;color:var(--ink3);text-align:center;padding:6px 0 2px;}
@@ -1108,14 +1107,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <div class="ccf-label" id="ccf-found-lbl">✅ Produktas atpažintas!</div>
         <div class="ccf-name" id="ccf-name"></div>
         <div class="ccf-details" id="ccf-details"></div>
-        <div id="ccf-searching" style="display:none;text-align:center;padding:14px 0 4px;">
-          <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:6px;" id="ccf-search-status">🔍 Ieškome geriausios kainos...</div>
-          <div style="height:3px;background:var(--card2);border-radius:2px;overflow:hidden;"><div id="ccf-prog-bar" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 2s linear;"></div></div>
-        </div>
         <div class="ccf-warn" id="ccf-warn" style="display:none;">
           <div class="ccf-warn-txt">⚠️ <span id="ccf-warn-txt"></span></div>
-          <input class="ccf-edit" id="ccf-edit" type="text" placeholder="Pakeisk produkto pavadinimą...">
         </div>
+        <div style="margin:4px 0 14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;" id="ccf-search-lbl">Ieškoti pagal</div>
+          <input class="ccf-edit" id="ccf-edit" type="text" placeholder="Produkto pavadinimas...">
+        </div>
+        <button class="ccf-btn-search" id="ccf-search-btn" onclick="confirmSearch()">🔍 <span id="ccf-search-btn-lbl">Ieškoti</span></button>
         <button class="ccf-btn-retake" onclick="retakePhoto()" id="ccf-retake-btn">↻ <span id="ccf-retake-lbl">Fotografuoti iš naujo</span></button>
       </div>
       <div id="ccf-error" style="display:none;">
@@ -1164,10 +1163,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 
   <div class="translate-bar" id="translate-bar">
-    <button class="lang-toggle" id="lang-toggle" onclick="toggleLangBar()" aria-label="Keisti kalbą">🌐 <span id="lang-current">LT</span></button>
+    <span style="font-size:12px;color:var(--ink3);font-weight:600;">🌐</span>
     <div class="lang-options" id="lang-options">
+      <button class="lang-btn" id="lang-lt" onclick="setLang('lt')">LT</button>
       <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn on" id="lang-lt" onclick="setLang('lt')">LT</button>
       <button class="lang-btn" id="lang-de" onclick="setLang('de')">DE</button>
       <button class="lang-btn" id="lang-pl" onclick="setLang('pl')">PL</button>
     </div>
@@ -2917,26 +2916,20 @@ function _showConfirmResult(data){
   document.getElementById("ccf-details").textContent=data.details||"";
   const retakeLbl={"lt":"Fotografuoti iš naujo","en":"Retake photo","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"};
   document.getElementById("ccf-retake-lbl").textContent=retakeLbl[curLang]||"Retake photo";
-  const warn=document.getElementById("ccf-warn");
+  const searchLbl=document.getElementById("ccf-search-lbl");
+  if(searchLbl)searchLbl.textContent={"lt":"Ieškoti pagal","en":"Search for","de":"Suchen nach","pl":"Szukaj dla"}[curLang]||"Search for";
+  const searchBtnLbl=document.getElementById("ccf-search-btn-lbl");
+  if(searchBtnLbl)searchBtnLbl.textContent={"lt":"Ieškoti","en":"Search","de":"Suchen","pl":"Szukaj"}[curLang]||"Search";
+  // Always show the search query in edit field — user can review/fix before confirming
   const edit=document.getElementById("ccf-edit");
+  edit.value=(data.search_query||data.product_name||"");
+  const warn=document.getElementById("ccf-warn");
   if(data.confidence==="low"){
     warn.style.display="block";
-    document.getElementById("ccf-warn-txt").textContent={"lt":"Nesu tikras — patikrink pavadinimą","en":"Not sure — please check the name","pl":"Nie jestem pewny — sprawdź nazwę","de":"Unsicher — bitte Namen prüfen"}[curLang]||"Not sure — please check";
-    edit.value=data.product_name||"";
+    document.getElementById("ccf-warn-txt").textContent={"lt":"Nesu tikras — patikrink paieškos frazę","en":"Not sure — please check the search query","pl":"Nie jestem pewny — sprawdź zapytanie","de":"Unsicher — bitte Suchanfrage prüfen"}[curLang]||"Not sure — please check";
   }else{
     warn.style.display="none";
-    edit.value=data.product_name||"";
   }
-  // Auto-search after 2s — show progress bar
-  const searching=document.getElementById("ccf-searching");
-  const prog=document.getElementById("ccf-prog-bar");
-  const statusEl=document.getElementById("ccf-search-status");
-  if(searching){
-    searching.style.display="block";
-    if(statusEl)statusEl.textContent={"lt":"🔍 Ieškome geriausios kainos...","en":"🔍 Searching best price...","pl":"🔍 Szukamy najlepszej ceny...","de":"🔍 Suche besten Preis..."}[curLang]||"🔍 Searching best price...";
-    setTimeout(()=>{if(prog)prog.style.width="100%";},50);
-  }
-  setTimeout(()=>confirmSearch(),2200);
 }
 
 function _showConfirmError(){
