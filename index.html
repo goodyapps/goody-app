@@ -2794,7 +2794,7 @@ function captureFrame(){
     const W=v.videoWidth||1280,H=v.videoHeight||720;
     const c=document.createElement("canvas");c.width=W;c.height=H;
     c.getContext("2d").drawImage(v,0,0);
-    const dataUrl=c.toDataURL("image/jpeg",.85);
+    const dataUrl=c.toDataURL("image/jpeg",.92);
     capturedB64=dataUrl.split(",")[1];
     if(navigator.vibrate)navigator.vibrate(50);
     stopCam();
@@ -2924,11 +2924,18 @@ function _showConfirmResult(data){
   const edit=document.getElementById("ccf-edit");
   edit.value=(data.search_query||data.product_name||"");
   const warn=document.getElementById("ccf-warn");
-  if(data.confidence==="low"){
+  const noBrand=!data.brand||data.brand.trim()==="";
+  if(data.confidence==="low"||noBrand){
     warn.style.display="block";
-    document.getElementById("ccf-warn-txt").textContent={"lt":"Nesu tikras — patikrink paieškos frazę","en":"Not sure — please check the search query","pl":"Nie jestem pewny — sprawdź zapytanie","de":"Unsicher — bitte Suchanfrage prüfen"}[curLang]||"Not sure — please check";
+    const warnTxt=noBrand
+      ?{"lt":"Prekės ženklas neatpažintas — patikrink ir pridėk pavadinimą","en":"Brand not detected — check and add the product name","de":"Marke nicht erkannt — bitte Namen prüfen","pl":"Marka nie wykryta — sprawdź i popraw nazwę"}[curLang]||"Brand not detected — please check"
+      :{"lt":"Nesu tikras — patikrink paieškos frazę","en":"Not sure — please check the search query","pl":"Nie jestem pewny — sprawdź zapytanie","de":"Unsicher — bitte Suchanfrage prüfen"}[curLang]||"Not sure — please check";
+    document.getElementById("ccf-warn-txt").textContent=warnTxt;
+    edit.style.borderColor="rgba(255,184,48,0.5)";
+    edit.focus();
   }else{
     warn.style.display="none";
+    edit.style.borderColor="";
   }
 }
 
