@@ -293,7 +293,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .rec-price{font-size:14px;font-weight:700;color:rgba(255,255,255,0.78);letter-spacing:-0.15px;flex-shrink:0;margin-left:10px;}
 
 /* ── CAMERA SHEET ── */
-.cam-sheet{position:absolute;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.16,1,0.3,1);}
+.cam-sheet{position:fixed;inset:0;background:var(--bg);z-index:110;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.16,1,0.3,1);}
 .cam-sheet.open{transform:translateY(0);}
 .cam-head{display:flex;align-items:center;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 20px 14px;flex-shrink:0;}
 .cam-title{font-size:16px;font-weight:700;}
@@ -301,8 +301,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cam-modes{display:flex;gap:8px;padding:0 20px 14px;flex-shrink:0;}
 .cam-mode{flex:1;padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--card);font-family:var(--ff);font-size:13px;font-weight:700;color:var(--ink3);cursor:pointer;text-align:center;transition:all var(--dur);}
 .cam-mode.on{border-color:var(--green);background:var(--green-l);color:var(--green);}
-.vf-wrap{position:relative;width:100%;background:#000;display:none;flex-shrink:0;}
-.vf-video{width:100%;max-height:min(58vh,420px);object-fit:cover;display:block;}
+.vf-wrap{position:relative;width:100%;background:#000;display:none;flex:1;min-height:0;}
+.vf-video{width:100%;height:100%;object-fit:cover;display:block;}
 .vf-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;}
 .vf-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 .vf-frame{position:relative;width:210px;height:130px;display:none;}
@@ -336,7 +336,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cprev-s{font-size:12px;color:var(--ink3);margin-top:2px;}
 .cam-upload{display:flex;justify-content:center;padding:8px 20px;flex-shrink:0;}
 .upload-btn{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 20px;color:var(--ink3);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;}
-.cam-snap-wrap{padding:10px 20px 32px;flex-shrink:0;}
+.cam-snap-wrap{padding:14px 24px calc(20px + env(safe-area-inset-bottom));flex-shrink:0;background:var(--bg);}
 .snap-btn{width:100%;height:54px;border-radius:var(--r);background:var(--green);border:none;color:#121A24;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform var(--dur),background var(--dur);}
 .snap-btn:active{transform:scale(0.97);}
 .snap-btn:disabled{opacity:0.5;cursor:not-allowed;}
