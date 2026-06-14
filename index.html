@@ -2398,7 +2398,7 @@ function renderResults(d,q,opts){opts=opts||{};
     const btnClass=best&&!scan?"buy-link":"view-link";
     const noLinkLbl={"lt":"Nėra nuorodos","de":"Kein Link","pl":"Brak linku"}[lang]||"No link";
     const btnHtml=hasLink
-      ?`<a class="${btnClass}" href="${escHtml(link)}" target="_blank" rel="noopener" onclick="trackClick(${escHtml(JSON.stringify(r.shop))},${escHtml(JSON.stringify(lastQ||q||''))})">${btnLabel}</a>`
+      ?`<a class="${btnClass}" href="${escHtml(link)}" rel="noopener" onclick="trackClick(${escHtml(JSON.stringify(r.shop))},${escHtml(JSON.stringify(lastQ||q||''))})">${btnLabel}</a>`
       :`<span style="font-size:12px;color:var(--ink3);padding:4px 8px;">${noLinkLbl}</span>`;
     const origPriceHtml=r.original_price?(()=>{
       const sym=r.original_currency==="PLN"?"zł":r.original_currency;
