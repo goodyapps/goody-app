@@ -1077,8 +1077,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
     <div class="cam-snap-wrap" id="cam-snap-wrap">
       <!-- Photo mode: native iOS/Android capture (no getUserMedia) -->
       <div id="photo-capture-ui" style="display:none;">
-        <button class="photo-cam-btn" onclick="document.getElementById('fu-camera').click()">📷 <span id="photo-cam-lbl">Fotografuoti kainą</span></button>
-        <button class="photo-gallery-link" onclick="document.getElementById('fu-gallery-photo').click()">🖼️ <span id="photo-gallery-lbl">Pasirinkti iš galerijos</span></button>
+        <button class="photo-cam-btn" onclick="document.getElementById('fu-photo').click()">📷 <span id="photo-cam-lbl">Fotografuoti kainą</span></button>
+        <button class="photo-gallery-link" onclick="document.getElementById('fu-photo').click()">🖼️ <span id="photo-gallery-lbl">Pasirinkti iš galerijos</span></button>
       </div>
       <!-- Barcode mode: live camera controls -->
       <div id="snap-inner" style="display:flex;align-items:center;justify-content:center;gap:10px;">
@@ -1129,8 +1129,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   </div>
 
   <input type="file" id="fu" accept="image/*" onchange="handleUpload(event)" style="display:none">
-  <input type="file" id="fu-camera" accept="image/*" capture="environment" onchange="handlePhotoCapture(event)" style="display:none">
-  <input type="file" id="fu-gallery-photo" accept="image/*" onchange="handlePhotoCapture(event)" style="display:none">
+  <!-- No capture attribute: iOS shows native "Take Photo / Photo Library" sheet which fires change reliably -->
+  <input type="file" id="fu-photo" accept="image/*" onchange="handlePhotoCapture(event)" style="position:absolute;left:-9999px;opacity:0;width:1px;height:1px;">
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="save-toast" id="save-toast"></div>
   <div class="confetti-wrap" id="confetti-wrap"></div>
