@@ -1075,12 +1075,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="cprev" id="cprev"></div>
     </div>
     <div class="cam-snap-wrap" id="cam-snap-wrap">
-      <!-- Photo mode: native iOS/Android capture (no getUserMedia) -->
-      <div id="photo-capture-ui" style="display:none;">
-        <button class="photo-cam-btn" onclick="document.getElementById('fu-photo').click()">📷 <span id="photo-cam-lbl">Fotografuoti kainą</span></button>
-        <button class="photo-gallery-link" onclick="document.getElementById('fu-photo').click()">🖼️ <span id="photo-gallery-lbl">Pasirinkti iš galerijos</span></button>
-      </div>
-      <!-- Barcode mode: live camera controls -->
+      <div id="shutter-hint-bar" style="display:none;text-align:center;margin-bottom:10px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);letter-spacing:0.04em;"></div>
       <div id="snap-inner" style="display:flex;align-items:center;justify-content:center;gap:10px;">
         <button onclick="document.getElementById('fu').click()" id="gallery-btn" style="flex-shrink:0;width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;" aria-label="Galerija" title="Iš galerijos">🖼️</button>
         <button class="snap-btn" id="c-snap" onclick="snapOrSearch()">
@@ -1102,15 +1097,18 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         </div>
       </div>
       <div id="ccf-result" style="display:none;">
-        <div class="ccf-label" id="ccf-found-lbl">Atpažinau</div>
+        <div class="ccf-label" id="ccf-found-lbl">✅ Produktas atpažintas!</div>
         <div class="ccf-name" id="ccf-name"></div>
         <div class="ccf-details" id="ccf-details"></div>
+        <div id="ccf-searching" style="display:none;text-align:center;padding:14px 0 4px;">
+          <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:6px;" id="ccf-search-status">🔍 Ieškome geriausios kainos...</div>
+          <div style="height:3px;background:var(--card2);border-radius:2px;overflow:hidden;"><div id="ccf-prog-bar" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 2s linear;"></div></div>
+        </div>
         <div class="ccf-warn" id="ccf-warn" style="display:none;">
           <div class="ccf-warn-txt">⚠️ <span id="ccf-warn-txt"></span></div>
           <input class="ccf-edit" id="ccf-edit" type="text" placeholder="Pakeisk produkto pavadinimą...">
         </div>
-        <button class="ccf-btn-search" id="ccf-search-btn" onclick="confirmSearch()">✓ <span id="ccf-search-lbl">Ieškoti pigiau</span></button>
-        <button class="ccf-btn-retake" onclick="retakePhoto()">↻ <span id="ccf-retake-lbl">Fotografuoti iš naujo</span></button>
+        <button class="ccf-btn-retake" onclick="retakePhoto()" id="ccf-retake-btn">↻ <span id="ccf-retake-lbl">Fotografuoti iš naujo</span></button>
       </div>
       <div id="ccf-error" style="display:none;">
         <div style="text-align:center;padding:20px 0 16px;">
@@ -1129,8 +1127,6 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   </div>
 
   <input type="file" id="fu" accept="image/*" onchange="handleUpload(event)" style="display:none">
-  <!-- No capture attribute: iOS shows native "Take Photo / Photo Library" sheet which fires change reliably -->
-  <input type="file" id="fu-photo" accept="image/*" onchange="handlePhotoCapture(event)" style="position:absolute;left:-9999px;opacity:0;width:1px;height:1px;">
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="save-toast" id="save-toast"></div>
   <div class="confetti-wrap" id="confetti-wrap"></div>
@@ -2610,8 +2606,7 @@ function switchCM(mode){
   clearInterval(scanLoop);scanLoop=null;
   clearTimeout(_bcLoopTimer);_bcLoopTimer=null;
   clearInterval(_qualityLoop);_qualityLoop=null;
-  // Photo mode uses native file input — stop any camera stream
-  if(mode==="price"&&camStream){stopCam();}
+  if(camStream){stopCam();}
   const _bcBar=document.getElementById("bc-result-bar");if(_bcBar)_bcBar.classList.remove("show");
   const _frame=document.querySelector(".vf-frame");if(_frame)_frame.classList.remove("locked");
   document.getElementById("cm-bc").classList.toggle("on",mode==="barcode");
@@ -2620,42 +2615,39 @@ function switchCM(mode){
   document.getElementById("vf-sl").style.display=mode==="barcode"?"block":"none";
   const hint=document.getElementById("bc-hint");if(hint)hint.style.display="none";
   capturedB64=null;_identifyResult=null;_hideConfirmPanel();document.getElementById("cp-wrap").style.display="none";
-  const photoUI=document.getElementById("photo-capture-ui");
-  const snapInner=document.getElementById("snap-inner");
-  if(mode==="price"){
-    if(photoUI)photoUI.style.display="flex";
-    if(snapInner)snapInner.style.display="none";
-  } else {
-    if(photoUI)photoUI.style.display="none";
-    if(snapInner)snapInner.style.display="flex";
-    resetSnap();
-    if(camStream)startBcLoop();
-  }
+  resetSnap();
 }
 function resetSnap(){
-  // Only handles barcode mode controls (photo mode uses native file input)
-  if(camMode==="price")return;
   const btn=document.getElementById("c-snap");if(!btn)return;
-  btn.onclick=()=>snapOrSearch();
+  const hBar=document.getElementById("shutter-hint-bar");
   const sInner=document.getElementById("snap-inner");
-  if(camStream){
+  const spacer=document.getElementById("snap-spacer");
+  btn.onclick=()=>snapOrSearch();
+  if(camStream&&camMode==="price"){
+    btn.disabled=false;btn.className="shutter-circle";btn.removeAttribute("style");
+    btn.innerHTML='<div class="shutter-inner"></div>';
+    if(sInner)sInner.style.justifyContent="space-between";
+    if(spacer)spacer.style.display="flex";
+    if(hBar){hBar.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","de":"Auf Produkt richten und drücken","pl":"Skieruj na produkt i naciśnij"}[curLang]||"Point at product and press";hBar.style.display="block";}
+  }else if(camStream&&camMode==="barcode"){
     btn.disabled=true;btn.className="snap-btn";btn.style.background="var(--green)";
-    btn.innerHTML=`<span>▦</span><span>${{"lt":"Skenuojama...","en":"Scanning...","ru":"Сканирование...","pl":"Skanowanie...","de":"Scannt..."}[curLang]||"Scanning..."}</span>`;
+    btn.innerHTML=`<span>▦</span><span>${{"lt":"Skenuojama...","en":"Scanning...","pl":"Skanowanie...","de":"Scannt..."}[curLang]||"Scanning..."}</span>`;
     if(sInner)sInner.style.justifyContent="center";
+    if(spacer)spacer.style.display="none";
+    if(hBar)hBar.style.display="none";
   }else{
     btn.disabled=false;btn.className="snap-btn";btn.style.background="var(--green)";
-    btn.innerHTML=`<span>📷</span><span>${{"lt":"Įjungti kamerą","en":"Enable camera","ru":"Включить камеру","pl":"Włącz kamerę","de":"Kamera aktivieren"}[curLang]||"Enable camera"}</span>`;
+    btn.innerHTML=`<span>📷</span><span>${{"lt":"Įjungti kamerą","en":"Enable camera","pl":"Włącz kamerę","de":"Kamera aktivieren"}[curLang]||"Enable camera"}</span>`;
     if(sInner)sInner.style.justifyContent="center";
+    if(spacer)spacer.style.display="none";
+    if(hBar)hBar.style.display="none";
   }
 }
 async function snapOrSearch(){
-  // Only used by barcode mode — photo mode uses native file input
-  if(camMode!=="barcode")return;
-  if(!camStream)await startCam();
+  if(!camStream){await startCam();return;}
+  if(camMode==="price"){clearInterval(_qualityLoop);_qualityLoop=null;_qualityCount=0;captureFrame();}
 }
 async function startCam(){
-  // Only for barcode mode — photo mode uses native file input
-  if(camMode!=="barcode")return;
   const btn=document.getElementById("c-snap");btn.disabled=true;
   btn.innerHTML="<span>⏳</span><span>"+( {"lt":"Jungiamasi...","de":"Verbinde...","pl":"Łączę..."}[curLang]||"Connecting...")+"</span>";
   try{
@@ -2665,7 +2657,12 @@ async function startCam(){
     document.querySelector(".vf-frame").style.display="block";
     await new Promise(r=>v.onloadedmetadata=r);
     resetSnap();
-    startBcLoop();
+    if(camMode==="barcode"){startBcLoop();}
+    else{
+      const hint=document.getElementById("bc-hint");
+      if(hint){hint.textContent={"lt":"Nutaikyk produktą ir paspausk","en":"Point at product and press","de":"Auf Produkt richten und drücken","pl":"Skieruj na produkt i naciśnij"}[curLang]||"Point at product and press";hint.style.display="block";}
+      startQualityLoop();
+    }
   }catch(e){btn.disabled=false;resetSnap();toast(({"lt":"Klaida: ","de":"Fehler: ","pl":"Błąd: "}[curLang]||"Camera: ")+e.message);}
 }
 function playBeep(){
@@ -2858,30 +2855,34 @@ function _showConfirmResult(data){
   document.getElementById("ccf-error").style.display="none";
   const res=document.getElementById("ccf-result");
   res.style.display="block";
-  const lt=getLang();
-  document.getElementById("cam-title").textContent={"lt":"Patvirtink produktą","en":"Confirm product","ru":"Подтвердите продукт","pl":"Potwierdź produkt","de":"Produkt bestätigen"}[curLang]||"Confirm product";
-  const foundLbl={"lt":"✅ Atpažinau!","en":"✅ Identified!","ru":"✅ Найдено!","pl":"✅ Rozpoznano!","de":"✅ Erkannt!"};
+  document.getElementById("cam-title").textContent={"lt":"Produktas atpažintas","en":"Product identified","pl":"Produkt rozpoznany","de":"Produkt erkannt"}[curLang]||"Product identified";
   const foundEl=document.getElementById("ccf-found-lbl");
-  foundEl.textContent=foundLbl[curLang]||"✅ Identified!";
+  foundEl.textContent={"lt":"✅ Produktas atpažintas!","en":"✅ Product identified!","pl":"✅ Produkt rozpoznany!","de":"✅ Produkt erkannt!"}[curLang]||"✅ Product identified!";
   foundEl.className="ccf-label ccf-anim-pop";
   document.getElementById("ccf-name").textContent=data.product_name||"";
   document.getElementById("ccf-details").textContent=data.details||"";
-  const searchLbl={"lt":"Ieškoti pigiau","en":"Find cheaper","ru":"Найти дешевле","pl":"Znajdź taniej","de":"Günstiger finden"};
-  document.getElementById("ccf-search-lbl").textContent=searchLbl[curLang]||"Find cheaper";
-  const retakeLbl={"lt":"Fotografuoti iš naujo","en":"Retake photo","ru":"Сфотографировать заново","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"};
+  const retakeLbl={"lt":"Fotografuoti iš naujo","en":"Retake photo","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"};
   document.getElementById("ccf-retake-lbl").textContent=retakeLbl[curLang]||"Retake photo";
   const warn=document.getElementById("ccf-warn");
   const edit=document.getElementById("ccf-edit");
   if(data.confidence==="low"){
     warn.style.display="block";
-    const warnTxt={"lt":"Nesu tikras — patikrink ar teisingas pavadinimas","en":"Not sure — please check the name","ru":"Не уверен — проверьте название","pl":"Nie jestem pewny — sprawdź nazwę","de":"Unsicher — bitte Namen prüfen"};
-    document.getElementById("ccf-warn-txt").textContent=warnTxt[curLang]||"Not sure — please check";
+    document.getElementById("ccf-warn-txt").textContent={"lt":"Nesu tikras — patikrink pavadinimą","en":"Not sure — please check the name","pl":"Nie jestem pewny — sprawdź nazwę","de":"Unsicher — bitte Namen prüfen"}[curLang]||"Not sure — please check";
     edit.value=data.product_name||"";
-    edit.placeholder={"lt":"Patikrink arba pakeisk pavadinimą...","en":"Check or edit name...","ru":"Проверьте или исправьте название...","pl":"Sprawdź lub edytuj nazwę..."}[curLang]||"Check or edit name...";
-  } else {
+  }else{
     warn.style.display="none";
     edit.value=data.product_name||"";
   }
+  // Auto-search after 2s — show progress bar
+  const searching=document.getElementById("ccf-searching");
+  const prog=document.getElementById("ccf-prog-bar");
+  const statusEl=document.getElementById("ccf-search-status");
+  if(searching){
+    searching.style.display="block";
+    if(statusEl)statusEl.textContent={"lt":"🔍 Ieškome geriausios kainos...","en":"🔍 Searching best price...","pl":"🔍 Szukamy najlepszej ceny...","de":"🔍 Suche besten Preis..."}[curLang]||"🔍 Searching best price...";
+    setTimeout(()=>{if(prog)prog.style.width="100%";},50);
+  }
+  setTimeout(()=>confirmSearch(),2200);
 }
 
 function _showConfirmError(){
@@ -2905,15 +2906,6 @@ function _hideConfirmPanel(){
   if(modes)modes.style.display="";
   const snapWrap=document.querySelector(".cam-snap-wrap");
   if(snapWrap)snapWrap.style.display="flex";
-  const photoUI=document.getElementById("photo-capture-ui");
-  const snapInner=document.getElementById("snap-inner");
-  if(camMode==="price"){
-    if(photoUI)photoUI.style.display="flex";
-    if(snapInner)snapInner.style.display="none";
-  } else {
-    if(photoUI)photoUI.style.display="none";
-    if(snapInner)snapInner.style.display="flex";
-  }
 }
 
 function confirmSearch(){
@@ -2937,15 +2929,8 @@ function retakePhoto(){
   document.getElementById("cam-title").textContent=camMode==="barcode"?(lt.scan_barcode||"Nuskaityti barkodą"):(lt.scan_price||"Nuskaityti kainų etiketę");
   document.getElementById("cp-wrap").style.display="none";
   document.getElementById("vf-wrap").style.display="none";
-  if(camMode==="price"){
-    const photoUI=document.getElementById("photo-capture-ui");
-    const snapInner=document.getElementById("snap-inner");
-    if(photoUI)photoUI.style.display="flex";
-    if(snapInner)snapInner.style.display="none";
-  } else {
-    resetSnap();
-    startCam();
-  }
+  resetSnap();
+  startCam();
 }
 // ── END NEW SCAN FLOW ─────────────────────────────────────────
 
