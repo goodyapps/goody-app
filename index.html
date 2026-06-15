@@ -2115,6 +2115,17 @@ function renderResults(d,q,opts){opts=opts||{};
   let html="";
 
   if(!results.length){
+    // Auto-retry with simpler query if backend suggests one
+    const _suggestion=d.search_suggestion||d.alternative||"";
+    if(_suggestion&&_suggestion.toLowerCase()!==q.toLowerCase()){
+      document.getElementById("res-body").innerHTML=`<div style="text-align:center;padding:48px 24px;">
+        <div style="font-size:36px;margin-bottom:14px;">🔄</div>
+        <div style="font-size:15px;font-weight:700;color:var(--ink);">${{"lt":"Nieko nerasta, ieškau paprasčiau...","de":"Nichts gefunden, versuche kürzer...","pl":"Nic nie znaleziono, próbuję krócej..."}[lang]||"Nothing found, trying shorter query..."}</div>
+        <div style="font-size:13px;color:var(--green);margin-top:8px;font-weight:600;">${escHtml(_suggestion)}</div>
+      </div>`;
+      setTimeout(()=>{document.getElementById("srch-inp").value=_suggestion;doSearch();},1200);
+      return;
+    }
     const _nr={
       title:{"lt":"Nieko nerasta","de":"Nichts gefunden","pl":"Nic nie znaleziono"}[lang]||"Nothing found",
       sub:{"lt":"Nepavyko rasti kainų šiam produktui","de":"Keine Preise gefunden für","pl":"Nie znaleziono cen dla"}[lang]||"Could not find prices for",
@@ -2128,8 +2139,7 @@ function renderResults(d,q,opts){opts=opts||{};
     };
     const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
     const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
-    const _suggestion=d.search_suggestion||d.alternative||"";
-    const _suggBtn=_suggestion&&_suggestion!==q?`<div style="margin:12px 0;"><span style="font-size:12px;color:var(--ink3);">${{"lt":"Pabandyk:","de":"Versuche:","pl":"Spróbuj:"}[lang]||"Try:"}</span> <button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(_suggestion))};doSearch()" style="background:var(--green-l);border:1px solid var(--green);border-radius:20px;padding:5px 12px;color:var(--green);font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;">${escHtml(_suggestion)}</button></div>`:"";
+    const _suggBtn="";
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
