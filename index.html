@@ -2140,23 +2140,28 @@ function renderResults(d,q,opts){opts=opts||{};
     };
     const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
     const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
-    const _suggBtn="";
+    const _retryId="nr-retry-inp-"+Date.now();
+    const _retryLbl={"lt":"🔍 Ieškoti","de":"🔍 Suchen","pl":"🔍 Szukaj"}[lang]||"🔍 Search";
+    const _editLbl={"lt":"Keisti ir bandyti dar kartą","de":"Ändern und erneut suchen","pl":"Zmień i spróbuj ponownie"}[lang]||"Edit and try again";
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
       <div class="nr-sub">${_nr.sub}: <strong>${escHtml(q)}</strong>.</div>
-      ${_suggBtn}
-      <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:16px 0;">
-        <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.tips}</div>
+      <div style="margin:18px 0 6px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;">${_editLbl}</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <input id="${_retryId}" type="text" value="${escHtml(q)}" style="flex:1;background:var(--bg3);border:1.5px solid var(--green);border-radius:var(--r-sm);padding:11px 14px;color:var(--ink);font-family:var(--ff);font-size:15px;font-weight:600;outline:none;" onkeydown="if(event.key==='Enter'){document.getElementById('srch-inp').value=this.value;doSearch();}">
+        <button onclick="document.getElementById('srch-inp').value=document.getElementById('${_retryId}').value;doSearch()" style="flex-shrink:0;padding:11px 18px;background:var(--green);border:none;border-radius:var(--r-sm);color:#121A24;font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">${_retryLbl}</button>
+      </div>
+      <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px;">
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${_nr.tip1}</span></div>
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>${_nr.tip2}</span></div>
       </div>
-      <a href="https://www.amazon.de/s?k=${encodeURIComponent(q)}&tag=goody-21" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);font-family:var(--ff);font-size:14px;font-weight:700;color:var(--ink2);text-decoration:none;margin-bottom:10px;">🔎 ${ {"lt":"Ieškoti Amazon.de","de":"Auf Amazon.de suchen","pl":"Szukaj na Amazon.de"}[lang]||"Search on Amazon.de" }</a>
+      <a href="https://www.amazon.de/s?k=${encodeURIComponent(q)}&tag=goody-21" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);font-family:var(--ff);font-size:14px;font-weight:700;color:var(--ink2);text-decoration:none;margin-bottom:14px;">🔎 ${ {"lt":"Ieškoti Amazon.de","de":"Auf Amazon.de suchen","pl":"Szukaj na Amazon.de"}[lang]||"Search on Amazon.de" }</a>
       <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.popular}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;">${sugHtml}</div>
-      <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--green);color:#121A24;border:none;border-radius:var(--r);font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;">← ${_nr.again}</button>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:4px;">${sugHtml}</div>
     </div>`;
     document.getElementById("res-body").innerHTML=html;
+    setTimeout(()=>{const inp=document.getElementById(_retryId);if(inp){inp.focus();inp.select();}},150);
     return;
   }
 
