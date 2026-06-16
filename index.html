@@ -2282,7 +2282,13 @@ function renderResults(d,q,opts){opts=opts||{};
     const score=d.deal_score||50;
     if(score>=75&&navigator.vibrate)navigator.vibrate([40,20,40]);
     const hasAI=!!(d.verdict_reason||d.buy_recommendation);
-    const label=score>=75?"🔥 GOOD DEAL":score>=50?(hasAI?"👌 FAIR DEAL":"📊 MARKET PRICE"):"⚠️ MAYBE WAIT";
+    const label=score>=75
+      ?({"lt":"🔥 GERAS SANDORIS","de":"🔥 TOP PREIS","pl":"🔥 DOBRA CENA","ru":"🔥 ВЫГОДНО"}[lang]||"🔥 GOOD DEAL")
+      :score>=50
+        ?(hasAI
+          ?({"lt":"👌 NORMALI KAINA","de":"👌 NORMALER PREIS","pl":"👌 NORMALNA CENA","ru":"👌 НОРМАЛЬНО"}[lang]||"👌 FAIR DEAL")
+          :({"lt":"📊 RINKOS KAINA","de":"📊 MARKTPREIS","pl":"📊 CENA RYNKOWA","ru":"📊 РЫНОЧНАЯ ЦЕНА"}[lang]||"📊 MARKET PRICE"))
+        :({"lt":"⚠️ GALBŪT PALAUKTI","de":"⚠️ VIELLEICHT WARTEN","pl":"⚠️ MOŻE POCZEKAĆ","ru":"⚠️ ПОДОЖДИТЕ"}[lang]||"⚠️ MAYBE WAIT");
     const title=score>=75
       ?({"lt":"Rasta gera kaina","de":"Guter Preis gefunden","pl":"Znaleziono dobrą cenę"}[lang]||"Good price found")
       :score>=50
