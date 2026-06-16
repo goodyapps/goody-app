@@ -1239,7 +1239,7 @@ let wl = JSON.parse(localStorage.getItem("gy_wl")||"[]");
 let hist = JSON.parse(localStorage.getItem("gy_hist")||"[]");
 let camMode="price", camStream=null, scanLoop=null, _bcLoopTimer=null, capturedB64=null;
 let lastData=null, lastQ="";
-let _pendingStorePrice=0;
+let _pendingStorePrice=0, _searchSource='manual';
 let _curSort='cheapest';
 let _budgetMax=0; // 0 = no filter
 
@@ -1953,7 +1953,9 @@ async function doSearch(){
   if(_activeSearchCtrl){try{_activeSearchCtrl.abort();}catch(e){}}_activeSearchCtrl=null;
   const q=document.getElementById("srch-inp").value.trim();
   if(!q){toast({"lt":"Įveskite produkto pavadinimą","de":"Produktname eingeben","pl":"Wpisz nazwę produktu"}[curLang]||"Enter a product name");return;}
-  lastQ=q;_budgetMax=0;_curSort='cheapest';_pendingStorePrice=0;
+  if(_searchSource!=='scan')_pendingStorePrice=0;
+  _searchSource='manual';
+  lastQ=q;_budgetMax=0;_curSort='cheapest';
   if(!_skipHistoryPush)history.pushState({q},"","/?q="+encodeURIComponent(q));
   _skipHistoryPush=false;
   navTo("results");
@@ -2988,6 +2990,7 @@ function confirmSearch(){
   if(!q)return;
   if(navigator.vibrate)navigator.vibrate([40,30,40]);
   _pendingStorePrice=Number(data.scanned_price||0);
+  _searchSource='scan';
   closeCam();
   _hideConfirmPanel();
   document.getElementById("srch-inp").value=q;
