@@ -2085,32 +2085,32 @@ function renderResults(d,q,opts){opts=opts||{};
     }
     const _nr={
       title:{"lt":"Nieko nerasta","de":"Nichts gefunden","pl":"Nic nie znaleziono"}[lang]||"Nothing found",
-      sub:{"lt":"Nepavyko rasti kainų šiam produktui","de":"Keine Preise gefunden für","pl":"Nie znaleziono cen dla"}[lang]||"Could not find prices for",
-      tips:{"lt":"Patarimai","de":"Tipps","pl":"Wskazówki"}[lang]||"Tips",
+      searched:{"lt":"Ieškojome","de":"Gesucht nach","pl":"Szukaliśmy"}[lang]||"Searched for",
+      editLbl:{"lt":"Redaguoti ir ieškoti","de":"Bearbeiten & suchen","pl":"Edytuj i szukaj"}[lang]||"Edit & search",
       tip1:(/^\d{8,14}$/.test((q||"").replace(/\s/g,"")))?
         ({"lt":"Barkodas neatpažintas — įveskite produkto pavadinimą rankiniu būdu","de":"Barcode unbekannt — Produktname manuell eingeben","pl":"Kod kreskowy nieznany — wpisz nazwę ręcznie"}[lang]||"Barcode not found — type product name manually")
-        :({"lt":"Bandyk trumpesnį pavadinimą (pvz. Samsung S24)","de":"Kürzeren Namen versuchen (Marke + Modell)","pl":"Spróbuj krótszej nazwy (marka + model)"}[lang]||"Try a shorter product name (brand + model)"),
-      tip2:{"lt":"Parduotuvės gali neturėti šio produkto","de":"Einige Shops führen diesen Artikel möglicherweise nicht","pl":"Niektóre sklepy mogą nie posiadać tego produktu"}[lang]||"Some shops may not carry this item",
+        :({"lt":"Sutrumpink pavadinimą (pvz. Samsung RB34) arba įvesk tik modelio pradžią","de":"Kürzeren Namen versuchen (Marke + Modell-Präfix)","pl":"Spróbuj krótszej nazwy (marka + prefiks modelu)"}[lang]||"Try a shorter model name (brand + model prefix)"),
+      tip2:{"lt":"Parduotuvės gali neturėti šio modelio — pabandyk be regiono kodo (pvz. be /EF)","de":"Shops führen diesen Artikel evtl. nicht — versuche ohne Ländercode (z.B. ohne /EF)","pl":"Sklepy mogą nie mieć tego modelu — spróbuj bez kodu regionu (np. bez /EF)"}[lang]||"Shops may not list this exact model — try without regional suffix (e.g. without /EF)",
       popular:{"lt":"Populiarūs produktai","de":"Beliebte Suchen","pl":"Popularne wyszukiwania"}[lang]||"Popular searches",
-      again:{"lt":"Ieškoti dar kartą","de":"Erneut suchen","pl":"Szukaj ponownie"}[lang]||"Search again",
     };
+    const _triedQ = d.tried_query || q;
     const _liveSugs=(_popularItems.length?_popularItems:POPULAR_FALLBACK).slice(0,5).map(p=>p.q);
     const sugHtml=_liveSugs.map(s=>`<button onclick="document.getElementById('srch-inp').value=${escHtml(JSON.stringify(s))};doSearch()" style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--ink2);font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">${escHtml(s)}</button>`).join("");
     const _scanAgainLbl={"lt":"📷 Fotografuoti dar kartą","de":"📷 Erneut fotografieren","pl":"📷 Zrób zdjęcie ponownie"}[lang]||"📷 Scan again";
-    const _searchAgainLbl={"lt":"🔍 Ieškoti dar kartą","de":"🔍 Erneut suchen","pl":"🔍 Szukaj ponownie"}[lang]||"🔍 Search again";
     html+=`<div class="no-results">
       <div class="nr-ico">🔍</div>
       <div class="nr-title">${_nr.title}</div>
-      <div class="nr-sub">${_nr.sub}: <strong>${escHtml(q)}</strong>.</div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin:20px 0;">
-        <button onclick="navTo('scan')" style="width:100%;padding:15px;background:var(--green);border:none;border-radius:var(--r);color:#121A24;font-family:var(--ff);font-size:16px;font-weight:800;cursor:pointer;">${_scanAgainLbl}</button>
-        <button onclick="navTo('home')" style="width:100%;padding:14px;background:var(--card2);border:1.5px solid var(--border2);border-radius:var(--r);color:var(--ink);font-family:var(--ff);font-size:15px;font-weight:700;cursor:pointer;">${_searchAgainLbl}</button>
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:14px;">${_nr.searched}: <strong style="color:var(--ink2);">${escHtml(_triedQ)}</strong></div>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <input id="nr-edit-q" type="text" value="${escHtml(_triedQ).replace(/"/g,'&quot;')}" style="flex:1;padding:11px 13px;background:var(--card);border:1.5px solid var(--border2);border-radius:var(--r-sm);color:var(--ink);font-family:var(--ff);font-size:15px;min-height:44px;outline:none;" />
+        <button onclick="document.getElementById('srch-inp').value=document.getElementById('nr-edit-q').value;doSearch()" style="padding:11px 16px;background:var(--green);border:none;border-radius:var(--r-sm);color:#121A24;font-family:var(--ff);font-size:14px;font-weight:800;cursor:pointer;min-height:44px;white-space:nowrap;">${_nr.editLbl}</button>
       </div>
+      <button onclick="navTo('scan')" style="width:100%;padding:14px;background:var(--card2);border:1.5px solid var(--border2);border-radius:var(--r);color:var(--ink);font-family:var(--ff);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:14px;">${_scanAgainLbl}</button>
       <div style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px;">
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">💡 <span>${_nr.tip1}</span></div>
         <div style="font-size:13px;color:var(--ink2);padding:4px 0;display:flex;gap:8px;">🌐 <span>${_nr.tip2}</span></div>
       </div>
-      <a href="https://www.amazon.de/s?k=${encodeURIComponent(q)}&tag=goody-21" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);font-family:var(--ff);font-size:14px;font-weight:700;color:var(--ink2);text-decoration:none;margin-bottom:14px;">🔎 ${ {"lt":"Ieškoti Amazon.de","de":"Auf Amazon.de suchen","pl":"Szukaj na Amazon.de"}[lang]||"Search on Amazon.de" }</a>
+      <a href="https://www.amazon.de/s?k=${encodeURIComponent(_triedQ)}&tag=goody-21" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);font-family:var(--ff);font-size:14px;font-weight:700;color:var(--ink2);text-decoration:none;margin-bottom:14px;">🔎 ${ {"lt":"Ieškoti Amazon.de","de":"Auf Amazon.de suchen","pl":"Szukaj na Amazon.de"}[lang]||"Search on Amazon.de" }</a>
       <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">${_nr.popular}</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:4px;">${sugHtml}</div>
     </div>`;
