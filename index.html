@@ -2262,6 +2262,12 @@ function renderResults(d,q,opts){opts=opts||{};
     </div>`;
   }
 
+  // Key specs line: product identity confirmation, shown between verdict and shop list
+  // Only when identify-product returned key_specs (photo flow) — never for text searches
+  if(_identifyResult&&_identifyResult.key_specs&&_searchSource==='scan'){
+    html+=`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-sm);margin-bottom:10px;font-size:12px;color:var(--ink3);" class="fade-up">📋 <span style="color:var(--ink2);">${escHtml(_identifyResult.key_specs)}</span></div>`;
+  }
+
   if(d.price_min&&d.price_max&&d.price_max>d.price_min){
     const spread=d.price_max-d.price_min;
     const pct=Math.round((spread/d.price_max)*100);
