@@ -1081,17 +1081,22 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
         <button class="ccf-btn-retake" onclick="retakePhoto()" id="ccf-retake-btn">↻ <span id="ccf-retake-lbl">Fotografuoti iš naujo</span></button>
       </div>
       <div id="ccf-error" style="display:none;">
-        <div style="text-align:center;padding:20px 0 16px;">
+        <div style="text-align:center;padding:20px 0 10px;">
           <div style="font-size:40px;margin-bottom:12px;">🔍</div>
           <div id="ccf-err-title" style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;"></div>
-          <div id="ccf-err-sub" style="font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.5;"></div>
+          <div id="ccf-err-sub" style="font-size:13px;color:var(--ink3);margin-bottom:14px;line-height:1.5;"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <input id="ccf-err-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off"
+                 style="flex:1;padding:12px 13px;background:var(--card);border:1.5px solid var(--green);border-radius:var(--r-sm);color:var(--ink);font-family:var(--ff);font-size:15px;min-height:44px;outline:none;" />
+          <button id="ccf-err-search-btn" onclick="_errManualSearch()"
+                  style="padding:12px 16px;background:var(--green);border:none;border-radius:var(--r-sm);color:#121A24;font-family:var(--ff);font-size:14px;font-weight:800;cursor:pointer;min-height:44px;white-space:nowrap;">Ieškoti</button>
         </div>
         <div class="ccf-hint-box">
           <div class="ccf-hint-row">💡 <span id="ccf-h1"></span></div>
           <div class="ccf-hint-row">🔆 <span id="ccf-h2"></span></div>
-          <div class="ccf-hint-row">✏️ <span id="ccf-h3"></span></div>
         </div>
-        <button class="ccf-btn-retake" onclick="retakePhoto()" style="margin-top:16px;">↻ <span id="ccf-err-retake-lbl">Fotografuoti iš naujo</span></button>
+        <button class="ccf-btn-retake" onclick="retakePhoto()" style="margin-top:14px;">↻ <span id="ccf-err-retake-lbl">Fotografuoti iš naujo</span></button>
       </div>
     </div>
   </div>
@@ -2865,13 +2870,13 @@ async function runIdentify(){
     clearTimeout(_st);
     const data=await resp.json();
     if(data.error||!data.product_name){
-      _showConfirmError();
+      _showConfirmError(data);
     } else {
       _identifyResult=data;
       _showConfirmResult(data);
     }
   }catch(e){
-    _showConfirmError();
+    _showConfirmError(null);
   }
 }
 
@@ -2911,18 +2916,35 @@ function _showConfirmResult(data){
   }
 }
 
-function _showConfirmError(){
+function _showConfirmError(partialData){
   document.getElementById("ccf-loading").style.display="none";
   document.getElementById("ccf-result").style.display="none";
   document.getElementById("ccf-error").style.display="block";
   document.getElementById("cam-title").textContent={"lt":"Neatpažinta","en":"Not recognized","ru":"Не распознано","pl":"Nie rozpoznano","de":"Nicht erkannt"}[curLang]||"Not recognized";
   document.getElementById("ccf-err-title").textContent={"lt":"Produktas neatpažintas","en":"Product not recognized","ru":"Продукт не распознан","pl":"Produkt nie rozpoznany","de":"Produkt nicht erkannt"}[curLang]||"Product not recognized";
-  document.getElementById("ccf-err-sub").textContent={"lt":"Nepavyko atpažinti produkto iš nuotraukos","en":"Could not identify the product from your photo","ru":"Не удалось определить продукт по фото","pl":"Nie udało się rozpoznać produktu ze zdjęcia","de":"Produkt konnte aus dem Foto nicht erkannt werden"}[curLang]||"Could not identify product";
+  document.getElementById("ccf-err-sub").textContent={"lt":"Įvesk pavadinimą arba fotografuok iš arčiau","en":"Type the name below or take a closer photo","ru":"Введите название или сфотографируйте ближе","pl":"Wpisz nazwę lub zrób bliższe zdjęcie","de":"Tippen Sie den Namen ein oder nehmen Sie ein näheres Foto"}[curLang]||"Type the name or take a closer photo";
   document.getElementById("ccf-h1").textContent={"lt":"Įsitikink, kad produkto pavadinimas aiškiai matomas","en":"Make sure the product name is clearly visible","ru":"Убедитесь, что название продукта хорошо видно","pl":"Upewnij się, że nazwa produktu jest wyraźnie widoczna"}[curLang]||"Make sure product label is visible";
   document.getElementById("ccf-h2").textContent={"lt":"Pabandyk geresnį apšvietimą arba priartink","en":"Try better lighting or a closer shot","ru":"Попробуйте лучшее освещение или снимите ближе","pl":"Spróbuj lepszego oświetlenia lub zbliż aparat"}[curLang]||"Try better lighting or closer";
-  document.getElementById("ccf-h3").textContent={"lt":"Arba įvesk produkto pavadinimą rankiniu būdu","en":"Or just type the product name manually","ru":"Или введите название продукта вручную","pl":"Albo wpisz nazwę produktu ręcznie"}[curLang]||"Or type product name manually";
+  const inp=document.getElementById("ccf-err-input");
+  const sbtn=document.getElementById("ccf-err-search-btn");
+  if(inp){
+    inp.placeholder={"lt":"Įvesk prekės pavadinimą","en":"Type product name","ru":"Введите название","pl":"Wpisz nazwę produktu","de":"Produktname eingeben"}[curLang]||"Type product name";
+    const partial=partialData&&(partialData.brand||"");
+    inp.value=partial;
+  }
+  if(sbtn){sbtn.textContent={"lt":"Ieškoti","en":"Search","ru":"Поиск","pl":"Szukaj","de":"Suchen"}[curLang]||"Search";}
   const rl={"lt":"Fotografuoti iš naujo","en":"Retake photo","ru":"Сфотографировать заново","pl":"Zrób zdjęcie ponownie","de":"Neu fotografieren"}[curLang]||"Retake photo";
   document.getElementById("ccf-err-retake-lbl").textContent=rl;
+}
+
+function _errManualSearch(){
+  const inp=document.getElementById("ccf-err-input");
+  const q=inp&&inp.value.trim();
+  if(!q)return;
+  closeCam();
+  _hideConfirmPanel();
+  document.getElementById("srch-inp").value=q;
+  doSearch();
 }
 
 function _hideConfirmPanel(){
