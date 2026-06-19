@@ -71,7 +71,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .notif-btn:active{transform:scale(0.94);}
 
 /* Hero headline + subtitle (Perplexity-style) */
-.hero-head{padding:44px 22px 14px;display:flex;flex-direction:column;gap:8px;}
+.hero-head{padding:28px 22px 8px;display:flex;flex-direction:column;gap:6px;}
 .hero-headline{font-size:38px;font-weight:600;letter-spacing:-1.1px;color:var(--ink);line-height:1.05;margin:0;}
 .hero-subtitle{font-size:15px;color:rgba(255,255,255,0.58);font-weight:400;line-height:1.5;letter-spacing:-0.1px;margin:0;}
 
@@ -87,8 +87,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 
 /* ── Central Scan Hero (premium, inviting) ── */
 .hero-scan{
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-  padding:18px 22px 22px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:10px 22px 12px;
 }
 .hero-scan-wrap{
   position:relative;width:120px;height:120px;
@@ -273,7 +273,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .cat-n{font-size:11px;font-weight:600;color:rgba(255,255,255,0.65);text-align:center;letter-spacing:0.01em;}
 
 /* Social proof — quiet trust list with time-context qualifier */
-.proof-list{display:flex;flex-direction:column;gap:11px;padding:16px 22px 32px;}
+.proof-list{display:flex;flex-direction:column;gap:8px;padding:10px 22px 20px;}
 .proof-row{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:-0.05px;}
 .proof-check{
   width:20px;height:20px;border-radius:50%;
@@ -880,53 +880,6 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <p class="hero-subtitle" id="hero-subtitle">Nufotografuok bet ką → GOODY randa pigiausią kainą.</p>
     </div>
 
-    <!-- Demo card: looping 3-phase preview of what GOODY does -->
-    <div class="hero-demo" id="hero-demo" aria-hidden="true">
-      <div class="hd-card">
-        <!-- Phase 1: Scanning -->
-        <div class="hd-phase hd-p1">
-          <div class="hd-row1">
-            <div class="hd-icon-sm">📦</div>
-            <div class="hd-scan-wrap">
-              <div class="hd-scan-lbl" id="hd-lbl1">Nufotografuok produktą</div>
-              <div class="hd-scan-track"><div class="hd-scan-beam"></div></div>
-              <div class="hd-scan-sub" id="hd-sub1">GOODY AI atpažįsta iš nuotraukos</div>
-            </div>
-          </div>
-        </div>
-        <!-- Phase 2: Recognized -->
-        <div class="hd-phase hd-p2">
-          <div class="hd-found-row">
-            <div class="hd-found-ic">
-              <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div>
-              <div class="hd-found-name" id="hd-found-name">Dyson V15 Detect</div>
-              <div class="hd-found-tag" id="hd-found-tag">Atpažinta iš nuotraukos</div>
-            </div>
-          </div>
-        </div>
-        <!-- Phase 3: Prices -->
-        <div class="hd-phase hd-p3">
-          <div class="hd-prices">
-            <div class="hd-pr best">
-              <span class="hd-pr-shop">Amazon.DE</span>
-              <span class="hd-pr-price">€499</span>
-              <span class="hd-pr-tag" id="hd-save-tag">taupai €100</span>
-            </div>
-            <div class="hd-pr">
-              <span class="hd-pr-shop">Elesen.lt</span>
-              <span class="hd-pr-price">€559</span>
-            </div>
-            <div class="hd-pr">
-              <span class="hd-pr-shop">Varle.lt</span>
-              <span class="hd-pr-price">€599</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Central Scan Hero — primary action -->
     <div class="hero-scan">
       <div class="hero-scan-wrap">
@@ -944,8 +897,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
           </svg>
         </button>
       </div>
-      <div class="hero-scan-invite" id="hero-scan-invite">📷 Fotografuok ir taupyk</div>
-      <div class="hero-scan-invite-sub" id="hero-scan-invite-sub">rask pigiausią kainą</div>
+      <div class="hero-scan-invite" id="hero-scan-invite">📷 Spustelk fotografuoti</div>
     </div>
 
     <!-- Premium AI Search Card -->
@@ -3246,7 +3198,7 @@ const LANGS = {
     no_history:"Dar nėra paieškų istorijos",
     lowest_price:"Pigiausia",
     saved_short:"Išsaugota",
-    scan_invite:"📷 Fotografuok ir taupyk",
+    scan_invite:"📷 Spustelk fotografuoti",
     back_to_goody:"Atgal į Goody",
   },
   de: {
