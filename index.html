@@ -1844,9 +1844,11 @@ function copyPrice(price){
   }).catch(()=>toast(price));
 }
 
+let _currentSearchId = null;
+
 function trackClick(shop, q){
   sessionStorage.setItem('gy_lastClick', JSON.stringify({shop, q, ts: Date.now()}));
-  try{fetch(`${API_BASE}/api/track`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({shop,q}),keepalive:true});}catch(e){}
+  try{fetch(`${API_BASE}/api/track`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({shop,q,intent_id:_currentSearchId}),keepalive:true});}catch(e){}
 }
 
 // ── RETURN FROM SHOP ──────────────────────────────────────
@@ -1973,6 +1975,7 @@ async function doSearch(){
           }else if(msg.type==="complete"){
             clearInterval(loadTimer);gotResult=true;
             lastData=msg.payload;
+            _currentSearchId=msg.payload.search_id||null;
             addToHist(q,msg.payload);
             renderResults(msg.payload,q);
             if(msg.payload._rate)updateRateUI(msg.payload._rate);
