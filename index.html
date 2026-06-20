@@ -2408,7 +2408,7 @@ function renderResults(d,q,opts){opts=opts||{};
     if(r.is_cheapest&&!r.is_suspicious&&!r.ai_filtered&&!scan&&reliableOnline.length>=2){
       const savings=d.price_max-r.price;
       if(savings>=1){
-        const saveLbl={"lt":`Sutaupi ${money(savings)}`,"en":`Save ${money(savings)}`,"ru":`Экономия ${money(savings)}`,"de":`${money(savings)} gespart`,"pl":`Oszczędzasz ${money(savings)}`}[lang]||`Save ${money(savings)}`;
+        const saveLbl={"lt":`Sutaupai ${money(savings)}`,"en":`Save ${money(savings)}`,"ru":`Экономия ${money(savings)}`,"de":`${money(savings)} gespart`,"pl":`Oszczędzasz ${money(savings)}`}[lang]||`Save ${money(savings)}`;
         saveRibbon=`<div class="save-ribbon">${saveLbl}</div>`;
       }
     }
@@ -3183,7 +3183,7 @@ const LANGS = {
     saved_empty:"Nieko neišsaugota",
     saved_empty_sub:"Rask gerą pasiūlymą ir paspausk ♥, kad išsaugotum",
     ai_verdict:"AI patarimas",
-    you_save:"Sutaupi lyginant su brangiausiąja kaina",
+    you_save:"Sutaupai lyginant su brangiausiąja kaina",
     buy_now:"Pirkti dabar →",
     view:"Peržiūrėti →",
     categories:"Kategorijos",
@@ -3437,7 +3437,7 @@ function fireConfetti(savings){
     wrap.appendChild(el);
   }
   const st=document.getElementById("save-toast");
-  const saveMsg={"lt":`🎉 Sutaupi €${savings}!`,"de":`🎉 Du sparst €${savings}!`,"pl":`🎉 Oszczędzasz €${savings}!`}[curLang]||`🎉 You save €${savings}!`;
+  const saveMsg={"lt":`🎉 Sutaupai €${savings}!`,"de":`🎉 Du sparst €${savings}!`,"pl":`🎉 Oszczędzasz €${savings}!`}[curLang]||`🎉 You save €${savings}!`;
   st.textContent=saveMsg;
   st.classList.add("on");
   setTimeout(()=>{st.classList.remove("on");wrap.innerHTML="";},3000);
