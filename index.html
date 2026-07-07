@@ -38,7 +38,7 @@
   --ink:#F1F4F8;
   --ink2:rgba(241,244,248,0.72);
   --ink3:rgba(241,244,248,0.52);
-  --ink4:rgba(241,244,248,0.36);
+  --ink4:rgba(241,244,248,0.50);
   --green:#27E08A;
   --green-l:rgba(39,224,138,0.08);
   --green-m:rgba(39,224,138,0.16);
@@ -282,7 +282,36 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   font-size:11px;font-weight:900;flex-shrink:0;
 }
 .proof-row strong{color:rgba(255,255,255,0.88);font-weight:600;}
-.proof-when{color:rgba(255,255,255,0.32);font-size:12.5px;font-weight:400;margin-left:auto;letter-spacing:0;}
+.proof-when{color:rgba(255,255,255,0.52);font-size:12.5px;font-weight:400;margin-left:auto;letter-spacing:0;}
+
+/* ── PRICE ALERTS (watchlist on home) ── */
+.alerts-section{padding:0 18px;margin-bottom:20px;}
+.alerts-label{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+.alert-item{
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,rgba(39,224,138,0.07) 0%,rgba(39,224,138,0.03) 100%);
+  border:1px solid rgba(39,224,138,0.20);
+  border-radius:16px;padding:12px 14px;margin-bottom:8px;cursor:pointer;
+  transition:background var(--dur),transform var(--dur),border-color var(--dur);
+}
+.alert-item:hover{background:rgba(39,224,138,0.12);border-color:rgba(39,224,138,0.35);transform:translateY(-1px);}
+.alert-item:active{transform:scale(0.98);}
+.alert-ico{font-size:18px;flex-shrink:0;}
+.alert-info{flex:1;min-width:0;}
+.alert-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alert-meta{font-size:11px;color:var(--ink3);margin-top:2px;}
+.alert-chk{font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;flex-shrink:0;}
+/* Keyboard shortcut hint tooltip */
+.kbd-hint{
+  position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:rgba(13,20,32,0.95);border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;padding:9px 16px;font-size:12px;color:var(--ink2);
+  white-space:nowrap;z-index:900;opacity:0;pointer-events:none;
+  transition:opacity 0.25s,transform 0.25s;backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.kbd-hint.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.kbd-hint kbd{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;margin:0 2px;}
 
 .recent{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
 .rec-item{
@@ -785,7 +814,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 @keyframes pulse-r{0%,100%{opacity:1;}50%{opacity:0.5;}}
 
 /* ── COPY PRICE BUTTON ── */
-.copy-price-btn{background:none;border:none;cursor:pointer;color:var(--ink4);padding:4px;border-radius:6px;transition:color var(--dur),background var(--dur);display:inline-flex;align-items:center;}
+.copy-price-btn{background:none;border:none;cursor:pointer;color:var(--ink4);padding:10px 8px;min-width:44px;min-height:44px;border-radius:8px;transition:color var(--dur),background var(--dur);display:inline-flex;align-items:center;justify-content:center;}
 .copy-price-btn:hover{color:var(--green);background:var(--green-l);}
 .copy-price-btn.copied{color:var(--green);}
 
@@ -936,6 +965,9 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
       <div class="proof-row"><span class="proof-check">✓</span><span id="sp-shops">7 stebimos parduotuvės</span><span class="proof-when" id="sp-shops-when">live</span></div>
     </div>
 
+    <!-- Price alerts / watchlist quick-access -->
+    <div class="alerts-section" id="price-alerts-section" style="display:none;"></div>
+
     <div class="sec-head" id="popular-head">
       <div class="sec-title" id="popular-title">Populiariausi</div>
     </div>
@@ -1015,7 +1047,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
   <div class="cam-sheet" id="cam-sheet">
     <div class="cam-head">
       <div class="cam-title" id="cam-title">Nuskaityti kainų etiketę</div>
-      <button class="cam-close" onclick="closeCam()">✕</button>
+      <button class="cam-close" onclick="closeCam()" aria-label="Uždaryti kamerą">✕</button>
     </div>
     <div class="cam-modes">
       <button class="cam-mode on" id="cm-pr" onclick="switchCM('price')">📷 <span id="cm-pr-lbl">Kainos nuotrauka</span></button>
@@ -1254,7 +1286,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   // Honour ?lang= from shared URLs (overrides stored lang for this session)
   const _lp=new URLSearchParams(location.search).get("lang");
   if(_lp&&["lt","de","pl","en"].includes(_lp))curLang=_lp;
-  setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved(); _updateWlBadge();
+  setLang(curLang); buildCats(); buildPopular(); buildRecent(); buildSaved(); _updateWlBadge(); buildPriceAlerts();
   document.getElementById("be-url").textContent=API_BASE;
   const tick=()=>{const d=new Date();document.getElementById("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");};
   tick(); setInterval(tick,30000);
@@ -1608,6 +1640,50 @@ async function buildPopular(){
   _renderPopular(POPULAR_FALLBACK);
 }
 
+/* ── PRICE ALERTS ON HOME ── */
+function buildPriceAlerts(){
+  const watches=JSON.parse(localStorage.getItem("gy_watch")||"[]");
+  const sec=document.getElementById("price-alerts-section");
+  if(!sec)return;
+  if(!watches.length){sec.style.display="none";return;}
+  const titleStr={"lt":"Stebimi produktai","de":"Preisbeobachtung","pl":"Obserwowane ceny"}[curLang]||"Watching";
+  const checkStr={"lt":"Tikrinti →","de":"Prüfen →","pl":"Sprawdź →"}[curLang]||"Check →";
+  const targetLbl={"lt":"Tikslas","de":"Ziel","pl":"Cel"}[curLang]||"Target";
+  const priceLbl={"lt":"Paskutinė kaina","de":"Letzte Preis","pl":"Ostatnia cena"}[curLang]||"Last price";
+  const maxShow=Math.min(watches.length,3);
+  const moreCount=watches.length-maxShow;
+  let html=`<div class="alerts-label">🔔 ${titleStr}</div>`;
+  html+=watches.slice(0,maxShow).map(w=>{
+    const safeName=escHtml(w.name.length>38?w.name.slice(0,38)+"…":w.name);
+    const metaParts=[];
+    if(w.target)metaParts.push(`${targetLbl}: €${w.target}`);
+    else if(w.price)metaParts.push(`${priceLbl}: €${w.price}`);
+    return `<div class="alert-item" onclick="document.getElementById('srch-inp').value=${JSON.stringify(w.name)};doSearch()">
+      <div class="alert-ico">🔔</div>
+      <div class="alert-info"><div class="alert-name">${safeName}</div>${metaParts.length?`<div class="alert-meta">${metaParts.join(" · ")}</div>`:""}</div>
+      <div class="alert-chk">${checkStr}</div>
+    </div>`;
+  }).join("");
+  if(moreCount>0){
+    const moreStr={"lt":`+ dar ${moreCount}`,"de":`+ ${moreCount} weitere`,"pl":`+ ${moreCount} więcej`}[curLang]||`+ ${moreCount} more`;
+    html+=`<div style="text-align:center;font-size:12px;color:var(--ink3);margin-top:4px;cursor:pointer;" onclick="navTo('saved')">${moreStr}</div>`;
+  }
+  sec.innerHTML=html;
+  sec.style.display="block";
+}
+
+/* ── KEYBOARD SHORTCUT HINT ── */
+function _showKbdHint(){
+  if(localStorage.getItem("gy_kbd_hint"))return;
+  localStorage.setItem("gy_kbd_hint","1");
+  const el=document.getElementById("kbd-hint");
+  if(!el)return;
+  const msg={"lt":"💡 Spausk <kbd>/</kbd> norėdamas ieškoti","de":"💡 Drücke <kbd>/</kbd> zum Suchen","pl":"💡 Naciśnij <kbd>/</kbd> by szukać"}[curLang]||"💡 Press <kbd>/</kbd> to search instantly";
+  el.innerHTML=msg;
+  el.classList.add("on");
+  setTimeout(()=>el.classList.remove("on"),4000);
+}
+
 function _relTime(ts){
   if(!ts)return"";
   const diff=Math.floor((Date.now()-ts)/1000);
@@ -1707,7 +1783,11 @@ function navTo(id){
   const nb=document.getElementById("nav-"+navId);
   if(nb)nb.classList.add("on");
   if(id==="saved")buildSaved();
-  if(id==="home")document.title="Goody — Never overpay again";
+  if(id==="home"){
+    document.title="Goody — Never overpay again";
+    buildPriceAlerts();
+    setTimeout(_showKbdHint,1800);
+  }
 }
 window.addEventListener("popstate",()=>{
   const p=new URLSearchParams(location.search).get("q");
@@ -1900,9 +1980,19 @@ function _showSearchError(){
   document.getElementById("res-meta").textContent={"lt":"Klaida","de":"Fehler","pl":"Błąd"}[curLang]||"Error";
 }
 function _showRateLimitError(e){
-  const msg={"lt":"Viršytas dienos paieškų limitas. Limitas atsinaujins rytoj.","de":"Tageslimit für Suchen erreicht. Limit wird morgen zurückgesetzt.","pl":"Osiągnięto dzienny limit wyszukiwań. Limit zostanie zresetowany jutro."}[curLang]||"Daily search limit reached. Limit resets tomorrow.";
-  const homeBtn={"lt":"Grįžti į pradžią","de":"Zur Startseite","pl":"Wróć do strony głównej"}[curLang]||"Go to home";
-  document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card"><div class="error-ico">⏳</div><div class="error-title">${{"lt":"Limitas pasiektas","de":"Limit erreicht","pl":"Limit osiągnięty"}[curLang]||"Limit reached"}</div><div class="error-msg">${msg}</div><button class="retry-btn" onclick="navTo('home')">${homeBtn}</button></div></div>`;
+  const now=new Date();
+  const midnight=new Date(now);midnight.setUTCHours(24,0,0,0);
+  const hoursLeft=Math.ceil((midnight-now)/3600000);
+  const resetStr={"lt":`Atsinaujins po ~${hoursLeft}h`,"de":`Reset in ~${hoursLeft}h`,"pl":`Odnowi się za ~${hoursLeft}h`}[curLang]||`Resets in ~${hoursLeft}h`;
+  const msg={"lt":"Pasiektas dienos paieškų limitas.","de":"Tageslimit für Suchen erreicht.","pl":"Osiągnięto dzienny limit wyszukiwań."}[curLang]||"Daily search limit reached.";
+  const homeBtn={"lt":"Grįžti į pradžią","de":"Zur Startseite","pl":"Wróć do strony głównej"}[curLang]||"Go home";
+  const title={"lt":"Limitas pasiektas","de":"Limit erreicht","pl":"Limit osiągnięty"}[curLang]||"Limit reached";
+  document.getElementById("res-body").innerHTML=`<div style="padding:22px;"><div class="error-card">
+    <div class="error-ico">⏳</div>
+    <div class="error-title">${title}</div>
+    <div class="error-msg">${msg}<br><span style="color:var(--ink3);font-size:12px;">${resetStr}</span></div>
+    <button class="retry-btn" onclick="navTo('home')" style="margin-top:12px;">${homeBtn}</button>
+  </div></div>`;
   document.getElementById("res-meta").textContent={"lt":"Limitas","de":"Limit","pl":"Limit"}[curLang]||"Limit";
 }
 
@@ -3433,7 +3523,7 @@ function fireConfetti(savings){
   for(let i=0;i<40;i++){
     const el=document.createElement("div");
     el.className="conf";
-    el.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.2}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;`;
+    el.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.6+Math.random()*1.0}s;animation-delay:${Math.random()*0.15}s;animation-fill-mode:forwards;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;`;
     wrap.appendChild(el);
   }
   const st=document.getElementById("save-toast");
@@ -3848,5 +3938,7 @@ document.addEventListener("keydown",e=>{
   if(_act==="scan")window.addEventListener("DOMContentLoaded",()=>setTimeout(()=>openCam("price"),800));
 })();
 </script>
+<!-- Keyboard shortcut hint -->
+<div class="kbd-hint" id="kbd-hint" role="status" aria-live="polite"></div>
 </body>
 </html>
