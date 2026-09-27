@@ -1652,7 +1652,7 @@ function buildPriceAlerts(){
     const metaParts=[];
     if(w.target)metaParts.push(`${targetLbl}: €${w.target}`);
     else if(w.price)metaParts.push(`${priceLbl}: €${w.price}`);
-    return `<div class="alert-item" onclick="document.getElementById('srch-inp').value=${JSON.stringify(w.name)};doSearch()">
+    return `<div class="alert-item" data-q="${escHtml(w.name)}">
       <div class="alert-ico">🔔</div>
       <div class="alert-info"><div class="alert-name">${safeName}</div>${metaParts.length?`<div class="alert-meta">${metaParts.join(" · ")}</div>`:""}</div>
       <div class="alert-chk">${checkStr}</div>
@@ -1660,10 +1660,18 @@ function buildPriceAlerts(){
   }).join("");
   if(moreCount>0){
     const moreStr={"lt":`+ dar ${moreCount}`,"de":`+ ${moreCount} weitere`,"pl":`+ ${moreCount} więcej`}[curLang]||`+ ${moreCount} more`;
-    html+=`<div style="text-align:center;font-size:12px;color:var(--ink3);margin-top:4px;cursor:pointer;" onclick="navTo('saved')">${moreStr}</div>`;
+    html+=`<div class="alert-more" style="text-align:center;font-size:12px;color:var(--ink3);margin-top:4px;cursor:pointer;">${moreStr}</div>`;
   }
   sec.innerHTML=html;
   sec.style.display="block";
+  // Inline onclick with JSON.stringify(w.name) previously broke the attribute
+  // the moment the name contained a double quote (JSON.stringify always wraps
+  // in "..."), silently no-oping the button — attach real listeners instead.
+  sec.querySelectorAll(".alert-item[data-q]").forEach(el=>{
+    el.onclick=()=>{document.getElementById("srch-inp").value=el.dataset.q;doSearch();};
+  });
+  const moreEl=sec.querySelector(".alert-more");
+  if(moreEl)moreEl.onclick=()=>navTo("saved");
 }
 
 /* ── KEYBOARD SHORTCUT HINT ── */
