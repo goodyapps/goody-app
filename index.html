@@ -657,6 +657,8 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .coach-ico{width:32px;height:32px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .coach-title{font-size:13px;font-weight:800;color:var(--green);}
 .coach-body{font-size:13px;color:var(--ink2);line-height:1.6;}
+.price-chart-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:14px 16px 8px;margin-bottom:16px;}
+.price-chart-title{font-size:12px;font-weight:700;color:var(--ink3);margin-bottom:4px;}
 
 /* ── ONBOARDING ── */
 .onboard-overlay{position:fixed;inset:0;background:rgba(13,17,23,0.92);z-index:500;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
@@ -2171,6 +2173,46 @@ function nudgeHtml(r,lang){
   return `<div class="pc-nudge">${t}</div>`;
 }
 
+// Single-series price-history sparkline. Inline SVG, no chart library —
+// one line, one hue (brand green), thin stroke, minimal direct labels
+// (lowest + latest point only), native <title> tooltip per point.
+function priceHistoryChartHtml(series, lang){
+  if(!series||series.length<3)return "";
+  const W=300,H=92,padL=6,padR=6,padT=10,padB=18;
+  const prices=series.map(p=>p.price);
+  const realLo=Math.min(...prices);
+  let lo=realLo, hi=Math.max(...prices);
+  if(lo===hi){lo-=1;hi+=1;} // flat line guard: avoid div-by-zero, give it visible height (display still uses realLo)
+  const innerW=W-padL-padR, innerH=H-padT-padB;
+  const x=i=>padL+(series.length===1?innerW/2:innerW*i/(series.length-1));
+  const y=p=>padT+innerH-((p-lo)/(hi-lo))*innerH;
+  const pts=series.map((p,i)=>[x(i),y(p.price)]);
+  const linePath=pts.map((p,i)=>(i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const areaPath=linePath+` L${pts[pts.length-1][0].toFixed(1)},${(padT+innerH).toFixed(1)} L${pts[0][0].toFixed(1)},${(padT+innerH).toFixed(1)} Z`;
+  const loIdx=prices.indexOf(realLo);
+  const lastIdx=series.length-1;
+  const fmtDate=d=>{const dt=new Date(d+"T00:00:00");return dt.toLocaleDateString(lang==='lt'?'lt-LT':lang==='de'?'de-DE':lang==='pl'?'pl-PL':'en-US',{day:'numeric',month:'short'});};
+  const dots=pts.map((p,i)=>{
+    const isLo=i===loIdx, isLast=i===lastIdx;
+    const r=(isLo||isLast)?3.5:0;
+    if(!r)return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="8" fill="transparent"><title>${fmtDate(series[i].date)}: ${money(series[i].price)}</title></circle>`;
+    return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${r}" fill="${isLo?'#27E08A':'#fff'}" stroke="#27E08A" stroke-width="1.5"><title>${fmtDate(series[i].date)}: ${money(series[i].price)}</title></circle>`;
+  }).join("");
+  const loLbl=`<text x="${pts[loIdx][0].toFixed(1)}" y="${(pts[loIdx][1]-7).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="#27E08A">${money(realLo)}</text>`;
+  const lastLbl=loIdx===lastIdx?"":`<text x="${pts[lastIdx][0].toFixed(1)}" y="${(pts[lastIdx][1]-7).toFixed(1)}" text-anchor="end" font-size="9" font-weight="700" fill="rgba(241,244,248,0.72)">${money(series[lastIdx].price)}</text>`;
+  const xAxis=`<text x="${padL}" y="${H-4}" font-size="9" fill="rgba(241,244,248,0.42)">${fmtDate(series[0].date)}</text>
+    <text x="${W-padR}" y="${H-4}" text-anchor="end" font-size="9" fill="rgba(241,244,248,0.42)">${fmtDate(series[lastIdx].date)}</text>`;
+  const title={"lt":"Kainos pokytis","de":"Preisverlauf","pl":"Historia cen"}[lang]||"Price history";
+  return `<div class="price-chart-card fade-up">
+    <div class="price-chart-title">${title}</div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="overflow:visible;">
+      <path d="${areaPath}" fill="#27E08A" opacity="0.10"/>
+      <path d="${linePath}" fill="none" stroke="#27E08A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${loLbl}${lastLbl}${xAxis}${dots}
+    </svg>
+  </div>`;
+}
+
 function findScannedPrice(d,results){
   if(Number(d.store_price)>1)return Number(d.store_price);
   if(_pendingStorePrice>1)return _pendingStorePrice;
@@ -2578,6 +2620,7 @@ function renderResults(d,q,opts){opts=opts||{};
         </div>`;
       }
     }
+    html+=priceHistoryChartHtml((d.price_history||{}).series, lang);
   }
 
   document.getElementById("res-body").innerHTML=html;
