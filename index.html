@@ -1609,25 +1609,14 @@ function _getIcon(q){
 }
 
 async function buildPopular(){
-  // Tier 1: real bestsellers scraped from Amazon (see server.py refresh_bestsellers) —
-  // actual products people buy, not a guess.
-  try{
-    const rb=await fetch(`${API_BASE}/api/bestsellers`,{signal:AbortSignal.timeout(4000)});
-    if(rb.ok){
-      const db=await rb.json();
-      const items=db.items||[];
-      if(items.length>=3){
-        const byCat={};
-        items.forEach(it=>{if(!byCat[it.category]||it.rank<byCat[it.category].rank)byCat[it.category]=it;});
-        const picked=Object.values(byCat).sort((a,b)=>a.rank-b.rank).slice(0,6);
-        _renderPopular(picked.map(it=>({
-          ic:_getIcon(it.product_name), q:it.product_name,
-          priceN: typeof it.price==='number'?it.price:undefined,
-        })),"bestsellers");
-        return;
-      }
-    }
-  }catch(e){}
+  // Tier 1 (Amazon bestsellers) disabled for now: the top-level category URLs
+  // return real Amazon data, but it's the wrong kind of "real" — gift cards,
+  // cleaning wipes, bedsheets show up under Games/Photo/Appliances because
+  // those are broad top-level bestseller lists, not this app's categories.
+  // Showing that as "🏆 Bestseller" would be as misleading as a fake number.
+  // Re-enable once category mapping is precise (exact Amazon node IDs) or a
+  // relevance filter is added. Data still accumulates daily in Supabase.
+  //
   // Tier 2: what this app's own users actually searched for (real, but self-referential).
   try{
     const r=await fetch(`${API_BASE}/api/popular-searches?limit=6`,{signal:AbortSignal.timeout(4000)});
