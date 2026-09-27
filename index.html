@@ -1419,17 +1419,24 @@ function _formatLowest(n){
 }
 
 let _popularItems = [];
-function _renderPopular(items){
+let _popularSource = "trending";
+function _renderPopular(items, source){
   _popularItems=items;
+  _popularSource=source||"trending";
   const t=getLang();
   const g=document.getElementById("popular-list"); if(!g)return;
   g.innerHTML="";
+  // Label matches how real the data actually is — never claim "trending"/"🔥"
+  // for the static seed list (see POPULAR_FALLBACK).
+  const metaLbl = source==='bestsellers' ? (t.bestseller||"🏆 Bestseller")
+                : source==='fallback'    ? (t.popular_static||"Popular")
+                : `🔥 ${t.trending||"Trending"}`;
   items.forEach(p=>{
     const el=document.createElement("div"); el.className="rec-item fade-up";
     let priceTxt="";
     if(typeof p.priceN==='number')priceTxt=_formatLowest(p.priceN);
     else if(p.price)priceTxt=String(p.price).replace(/^from\s+/i,(t.lowest_price||"Lowest")+" ");
-    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${escHtml(p.ic||"🔍")}</div><div><div class="rec-name">${escHtml(p.q)}</div><div class="rec-meta">🔥 ${t.trending||"Trending"}</div></div></div><div class="rec-price">${escHtml(priceTxt)}</div>`;
+    el.innerHTML=`<div class="rec-left"><div class="rec-ico">${escHtml(p.ic||"🔍")}</div><div><div class="rec-name">${escHtml(p.q)}</div><div class="rec-meta">${metaLbl}</div></div></div><div class="rec-price">${escHtml(priceTxt)}</div>`;
     el.onclick=()=>{document.getElementById("srch-inp").value=p.q;doSearch();};
     g.appendChild(el);
   });
@@ -1602,17 +1609,38 @@ function _getIcon(q){
 }
 
 async function buildPopular(){
+  // Tier 1: real bestsellers scraped from Amazon (see server.py refresh_bestsellers) —
+  // actual products people buy, not a guess.
+  try{
+    const rb=await fetch(`${API_BASE}/api/bestsellers`,{signal:AbortSignal.timeout(4000)});
+    if(rb.ok){
+      const db=await rb.json();
+      const items=db.items||[];
+      if(items.length>=3){
+        const byCat={};
+        items.forEach(it=>{if(!byCat[it.category]||it.rank<byCat[it.category].rank)byCat[it.category]=it;});
+        const picked=Object.values(byCat).sort((a,b)=>a.rank-b.rank).slice(0,6);
+        _renderPopular(picked.map(it=>({
+          ic:_getIcon(it.product_name), q:it.product_name,
+          priceN: typeof it.price==='number'?it.price:undefined,
+        })),"bestsellers");
+        return;
+      }
+    }
+  }catch(e){}
+  // Tier 2: what this app's own users actually searched for (real, but self-referential).
   try{
     const r=await fetch(`${API_BASE}/api/popular-searches?limit=6`,{signal:AbortSignal.timeout(4000)});
     if(r.ok){
       const d=await r.json();
       if(d.searches&&d.searches.length>=3){
-        _renderPopular(d.searches.map(s=>({ic:_getIcon(s.query),q:s.query,price:""})));
+        _renderPopular(d.searches.map(s=>({ic:_getIcon(s.query),q:s.query,price:""})),"trending");
         return;
       }
     }
   }catch(e){}
-  _renderPopular(POPULAR_FALLBACK);
+  // Tier 3: static seed list — labeled plainly, never as "trending"/"🔥".
+  _renderPopular(POPULAR_FALLBACK,"fallback");
 }
 
 /* ── PRICE ALERTS ON HOME ── */
@@ -3269,6 +3297,8 @@ const LANGS = {
     recent_scans:"Recent searches",
     clear:"Clear all",
     trending:"Trending",
+    bestseller:"🏆 Bestseller",
+    popular_static:"Popular",
     shops:"shops",
     recently:"recently",
     items_saved:"saved",
@@ -3327,6 +3357,8 @@ const LANGS = {
     recent_scans:"Paskutinės paieškos",
     clear:"Išvalyti",
     trending:"Populiaru",
+    bestseller:"🏆 Perkamiausia",
+    popular_static:"Populiaru",
     shops:"parduotuvių",
     recently:"neseniai",
     items_saved:"išsaugota",
@@ -3385,6 +3417,8 @@ const LANGS = {
     recent_scans:"Letzte Suchen",
     clear:"Löschen",
     trending:"Beliebt",
+    bestseller:"🏆 Bestseller",
+    popular_static:"Beliebt",
     shops:"Shops",
     recently:"kürzlich",
     items_saved:"gespeichert",
@@ -3443,6 +3477,8 @@ const LANGS = {
     recent_scans:"Ostatnie wyszukiwania",
     clear:"Wyczyść",
     trending:"Popularne",
+    bestseller:"🏆 Bestseller",
+    popular_static:"Popularne",
     shops:"sklepów",
     recently:"niedawno",
     items_saved:"zapisane",
@@ -3539,7 +3575,7 @@ function applyLang(){
   const pcl=document.getElementById("photo-cam-lbl");if(pcl)pcl.textContent={"lt":"Fotografuoti kainą","en":"Photograph price","de":"Preis fotografieren","pl":"Sfotografuj cenę"}[curLang]||"Photograph price";
   const pgl=document.getElementById("photo-gallery-lbl");if(pgl)pgl.textContent={"lt":"Pasirinkti iš galerijos","en":"Choose from gallery","de":"Aus Galerie wählen","pl":"Wybierz z galerii"}[curLang]||"Choose from gallery";
   const uploadBtn=document.querySelector(".upload-btn");if(uploadBtn){const svg=uploadBtn.querySelector("svg");uploadBtn.innerHTML=(svg?svg.outerHTML:"")+" "+({"lt":"Įkelti nuotrauką","de":"Foto hochladen","pl":"Prześlij zdjęcie"}[curLang]||"Upload photo");}
-  if(_popularItems.length)_renderPopular(_popularItems);
+  if(_popularItems.length)_renderPopular(_popularItems,_popularSource);
   buildCats();
   buildRecent();
   buildSaved();
