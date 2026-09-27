@@ -474,6 +474,10 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--ff
 .pc-delivery{font-size:11px;color:var(--ink3);margin-top:1px;}
 .pc-price{font-size:22px;font-weight:900;letter-spacing:-0.3px;}
 .p-card.best .pc-price{color:var(--green);font-size:26px;letter-spacing:-0.5px;}
+.pc-shipping{font-size:11px;color:var(--ink3);margin-top:2px;}
+.pc-shipping.free{color:var(--green);font-weight:700;}
+.pc-shipping.unknown{font-style:italic;}
+.pc-nudge{width:100%;font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-l);padding:5px 10px;border-radius:8px;margin-top:8px;text-align:center;}
 .pc-bot{display:flex;align-items:center;justify-content:space-between;}
 .pc-badges{display:flex;gap:6px;flex-wrap:wrap;}
 .badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
@@ -2120,6 +2124,35 @@ function money(v){
   return "€"+n.toFixed(2);
 }
 
+// Delivered price = item price + shipping when known, else just the item price
+// (never treated as free — the badge shows "+ pristatymas" instead, see shippingHtml()).
+function tp(r){
+  const s=Number(r.shipping_cost);
+  return Number.isFinite(s)?Number(r.price||0)+s:Number(r.total_price!=null?r.total_price:r.price||0);
+}
+
+function shippingHtml(r,lang){
+  if(r.shipping_cost==null){
+    return `<div class="pc-shipping unknown">${{"lt":"+ pristatymas","de":"+ Versand","pl":"+ dostawa"}[lang]||"+ shipping"}</div>`;
+  }
+  const approx=r.shipping_source==='rule'?'~':'';
+  if(r.shipping_cost===0){
+    const free={"lt":"nemokamas pristatymas","de":"kostenloser Versand","pl":"darmowa dostawa"}[lang]||"free shipping";
+    return `<div class="pc-shipping free">${approx}${free}</div>`;
+  }
+  const total=Number(r.price||0)+r.shipping_cost;
+  return `<div class="pc-shipping">${approx}${money(r.price)} + ${approx}${money(r.shipping_cost)} = <b>${approx}${money(total)}</b></div>`;
+}
+
+function nudgeHtml(r,lang){
+  if(!r.free_shipping_nudge)return "";
+  const t={"lt":`Pridėk ${money(r.free_shipping_nudge)} — pristatymas nemokamas`,
+           "de":`${money(r.free_shipping_nudge)} mehr — kostenloser Versand`,
+           "pl":`Dodaj ${money(r.free_shipping_nudge)} — darmowa dostawa`}[lang]
+          ||`Add ${money(r.free_shipping_nudge)} for free shipping`;
+  return `<div class="pc-nudge">${t}</div>`;
+}
+
 function findScannedPrice(d,results){
   if(Number(d.store_price)>1)return Number(d.store_price);
   if(_pendingStorePrice>1)return _pendingStorePrice;
@@ -2148,12 +2181,12 @@ function renderResults(d,q,opts){opts=opts||{};
   const _scanR=results.filter(r=>isScanResult(r));
   let _onlineR=results.filter(r=>!isScanResult(r));
   if(_sm==='rating')_onlineR.sort((a,b)=>(b.rating||0)-(a.rating||0));
-  else if(_sm==='expensive')_onlineR.sort((a,b)=>(b.price||0)-(a.price||0));
-  else _onlineR.sort((a,b)=>(a.price||0)-(b.price||0));
+  else if(_sm==='expensive')_onlineR.sort((a,b)=>tp(b)-tp(a));
+  else _onlineR.sort((a,b)=>tp(a)-tp(b));
   results=[..._scanR,..._onlineR];
   const onlineResults=results.filter(r=>!isScanResult(r)&&Number(r.price)>0);
   const scannedPrice=findScannedPrice(d,results);
-  const bestOnline=onlineResults.length?[...onlineResults].sort((a,b)=>a.price-b.price)[0]:null;
+  const bestOnline=onlineResults.length?[...onlineResults].sort((a,b)=>tp(a)-tp(b))[0]:null;
   const now=new Date();
   const timeStr=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
   const lang=curLang||"en";
@@ -2376,7 +2409,7 @@ function renderResults(d,q,opts){opts=opts||{};
     // % delta vs cheapest (only for non-cheapest, non-scan cards)
     let pctDeltaHtml="";
     if(!scan&&!best&&bestOnline&&r.price>0&&bestOnline.price>0){
-      const pctAbove=Math.round((r.price-bestOnline.price)/bestOnline.price*100);
+      const pctAbove=Math.round((tp(r)-tp(bestOnline))/tp(bestOnline)*100);
       if(pctAbove>0)pctDeltaHtml=`<span class="pct-delta expensive">+${pctAbove}%</span>`;
     }
     // Copy price button
@@ -2411,6 +2444,7 @@ function renderResults(d,q,opts){opts=opts||{};
             <div class="pc-price">${r.price>0?money(r.price):"—"}</div>
             ${copyBtn}
           </div>
+          ${!scan&&r.price>0?shippingHtml(r,lang):""}
           ${origPriceHtml}${pctDeltaHtml}
         </div>
       </div>
@@ -2419,6 +2453,7 @@ function renderResults(d,q,opts){opts=opts||{};
         ${btnHtml}
       </div>
       ${rating&&badges?`<div class="pc-rating-extra">${rating}</div>`:""}
+      ${!scan&&r.price>0?nudgeHtml(r,lang):""}
     </div>`;
   });
   html+='</div>';
